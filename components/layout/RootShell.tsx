@@ -32,68 +32,77 @@ export default function RootShell({
     return <SessionProvider session={session}>{children}</SessionProvider>
   }
 
-  // Image facts (px):
-  // LeftBorder.png  176 × 1496  — leaf content fills full width, scale to 50px
-  // RightBorder.png  86 ×  666  — leaf content fills full width, render at 50px
-  // DarkBorder.png  373 ×  669  — leaf content on RIGHT side of canvas, anchor right
-
   return (
     <SessionProvider session={session}>
       <Navbar />
+      {/* Wrapper: borders are fixed to viewport sides, main content scrolls normally */}
       <div className="relative">
         {/* ── LEFT border ── */}
-        {isDark ? (
-          // Dark: DarkBorder leaf is on the right side of its 373px canvas
-          <div
-            className="pointer-events-none absolute inset-y-0 left-0 z-10 hidden w-[80px] xl:block"
-            style={{
-              backgroundImage: 'url(/DarkBorder.png)',
-              backgroundRepeat: 'repeat-y',
-              backgroundSize: '80px auto',
-              backgroundPosition: 'right top',
-            }}
-          />
-        ) : (
-          // Light: LeftBorder 176px wide, scale to 50px
-          <div
-            className="pointer-events-none absolute inset-y-0 left-0 z-10 hidden w-[50px] xl:block"
-            style={{
-              backgroundImage: 'url(/LeftBorder.png)',
-              backgroundRepeat: 'repeat-y',
-              backgroundSize: '50px auto',
-              backgroundPosition: 'left top',
-            }}
-          />
-        )}
+        <div className="pointer-events-none fixed inset-y-0 left-0 z-10 hidden w-[88px] xl:block">
+          {isDark ? (
+            // DarkBorder: leaf content is on the right side of the 373px canvas
+            // We show it at 88px wide — the leaf portion is roughly the right ~88px
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                backgroundImage: 'url(/DarkBorder.png)',
+                backgroundRepeat: 'repeat-y',
+                backgroundSize: '373px auto',
+                backgroundPosition: 'right top',
+              }}
+            />
+          ) : (
+            // LeftBorder: 176×1496 — render at natural 88px (half) for crisp pixels
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                backgroundImage: 'url(/LeftBorder.png)',
+                backgroundRepeat: 'repeat-y',
+                backgroundSize: '88px auto',
+                backgroundPosition: 'left top',
+              }}
+            />
+          )}
+        </div>
 
         {/* ── RIGHT border ── */}
-        {isDark ? (
-          // Dark: DarkBorder flipped — leaf content on right side, anchor left so it shows
-          <div
-            className="pointer-events-none absolute inset-y-0 right-0 z-10 hidden w-[80px] xl:block"
-            style={{
-              backgroundImage: 'url(/DarkBorder.png)',
-              backgroundRepeat: 'repeat-y',
-              backgroundSize: '80px auto',
-              backgroundPosition: 'left top',
-            }}
-          />
-        ) : (
-          // Light: RightBorder 86px wide, scale to 50px
-          <div
-            className="pointer-events-none absolute inset-y-0 right-0 z-10 hidden w-[50px] xl:block"
-            style={{
-              backgroundImage: 'url(/RightBorder.png)',
-              backgroundRepeat: 'repeat-y',
-              backgroundSize: '50px auto',
-              backgroundPosition: 'left top',
-            }}
-          />
-        )}
+        <div className="pointer-events-none fixed inset-y-0 right-0 z-10 hidden w-[88px] xl:block">
+          {isDark ? (
+            // DarkBorder mirrored: scaleX(-1) so the leaf (right side) now faces inward
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                backgroundImage: 'url(/DarkBorder.png)',
+                backgroundRepeat: 'repeat-y',
+                backgroundSize: '373px auto',
+                backgroundPosition: 'left top',
+                transform: 'scaleX(-1)',
+              }}
+            />
+          ) : (
+            // RightBorder: 86×666 — render at natural 86px for crisp pixels
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                backgroundImage: 'url(/RightBorder.png)',
+                backgroundRepeat: 'repeat-y',
+                backgroundSize: '86px auto',
+                backgroundPosition: 'left top',
+              }}
+            />
+          )}
+        </div>
 
         <main className="min-h-screen bg-white pt-[73px] dark:bg-slate-950">{children}</main>
       </div>
-      <Footer />
+      {/* Footer sits above the fixed borders */}
+      <div className="relative z-20">
+        <Footer />
+      </div>
     </SessionProvider>
   )
 }

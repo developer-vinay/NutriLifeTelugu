@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { Types } from 'mongoose'
 import { auth } from '@/auth'
 import { connectDB } from '@/lib/mongodb'
@@ -16,50 +16,44 @@ async function ensureAdmin() {
 }
 
 export async function GET(
-  _request: Request,
-  { params }: { params: { id: string } },
+  _request: NextRequest,
+  context: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await context.params
   const session = await ensureAdmin()
   if (!session) return new NextResponse('Unauthorized', { status: 401 })
 
   await connectDB()
 
-  if (!Types.ObjectId.isValid(params.id)) {
+  if (!Types.ObjectId.isValid(id)) {
     return new NextResponse('Invalid id', { status: 400 })
   }
 
-  const post = await Post.findById(params.id).lean()
-  if (!post) {
-    return new NextResponse('Not found', { status: 404 })
-  }
+  const post = await Post.findById(id).lean()
+  if (!post) return new NextResponse('Not found', { status: 404 })
 
   return NextResponse.json(post)
 }
 
 export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } },
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await context.params
   const session = await ensureAdmin()
   if (!session) return new NextResponse('Unauthorized', { status: 401 })
 
   await connectDB()
 
-  if (!Types.ObjectId.isValid(params.id)) {
+  if (!Types.ObjectId.isValid(id)) {
     return new NextResponse('Invalid id', { status: 400 })
   }
 
   const body = await request.json()
 
   try {
-    const updated = await Post.findByIdAndUpdate(params.id, body, {
-      new: true,
-    }).lean()
-
-    if (!updated) {
-      return new NextResponse('Not found', { status: 404 })
-    }
-
+    const updated = await Post.findByIdAndUpdate(id, body, { new: true }).lean()
+    if (!updated) return new NextResponse('Not found', { status: 404 })
     return NextResponse.json(updated)
   } catch (error) {
     console.error('Failed to update post', error)
@@ -68,31 +62,24 @@ export async function PUT(
 }
 
 export async function PATCH(
-  request: Request,
-  { params }: { params: { id: string } },
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await context.params
   const session = await ensureAdmin()
   if (!session) return new NextResponse('Unauthorized', { status: 401 })
 
   await connectDB()
 
-  if (!Types.ObjectId.isValid(params.id)) {
+  if (!Types.ObjectId.isValid(id)) {
     return new NextResponse('Invalid id', { status: 400 })
   }
 
   const body = await request.json()
 
   try {
-    const updated = await Post.findByIdAndUpdate(
-      params.id,
-      { $set: body },
-      { new: true },
-    ).lean()
-
-    if (!updated) {
-      return new NextResponse('Not found', { status: 404 })
-    }
-
+    const updated = await Post.findByIdAndUpdate(id, { $set: body }, { new: true }).lean()
+    if (!updated) return new NextResponse('Not found', { status: 404 })
     return NextResponse.json(updated)
   } catch (error) {
     console.error('Failed to patch post', error)
@@ -101,23 +88,22 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  _request: Request,
-  { params }: { params: { id: string } },
+  _request: NextRequest,
+  context: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await context.params
   const session = await ensureAdmin()
   if (!session) return new NextResponse('Unauthorized', { status: 401 })
 
   await connectDB()
 
-  if (!Types.ObjectId.isValid(params.id)) {
+  if (!Types.ObjectId.isValid(id)) {
     return new NextResponse('Invalid id', { status: 400 })
   }
 
   try {
-    const post = await Post.findByIdAndDelete(params.id).lean()
-    if (!post) {
-      return new NextResponse('Not found', { status: 404 })
-    }
+    const post = await Post.findByIdAndDelete(id).lean()
+    if (!post) return new NextResponse('Not found', { status: 404 })
 
     if (post.heroImagePublicId) {
       await deleteImage(post.heroImagePublicId)
@@ -129,4 +115,3 @@ export async function DELETE(
     return new NextResponse('Failed to delete post', { status: 500 })
   }
 }
-
