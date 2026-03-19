@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { Model as MongooseModel } from 'mongoose'
 import { auth } from '@/auth'
 import { connectDB } from '@/lib/mongodb'
 import { User } from '@/models/User'
@@ -17,7 +18,7 @@ export async function POST(req: NextRequest) {
   const userField = type === 'recipe' ? 'likedRecipes' : type === 'video' ? 'likedVideos' : 'likedPosts'
   const userOp = action === 'unlike' ? { $pull: { [userField]: id } } : { $addToSet: { [userField]: id } }
   const countOp = action === 'unlike' ? { $inc: { likes: -1 } } : { $inc: { likes: 1 } }
-  const Model = type === 'recipe' ? Recipe : type === 'video' ? Video : Post
+  const Model = (type === 'recipe' ? Recipe : type === 'video' ? Video : Post) as MongooseModel<{ likes?: number }>
 
   await connectDB()
   await Promise.all([
