@@ -26,7 +26,7 @@ const UI = {
     empty: 'వీడియోలు త్వరలో వస్తాయి.',
     watch: 'YouTube లో చూడండి →',
     ytBanner: 'రోజూ కొత్త వీడియోలు',
-    ytSub: 'YouTube లో NutriLife Telugu ను ఫాలో అవ్వండి.',
+    ytSub: 'YouTube లో NutriLifeMithra ను ఫాలో అవ్వండి.',
     subscribe: 'Subscribe on YouTube →',
   },
   en: {
@@ -35,7 +35,7 @@ const UI = {
     empty: 'Videos coming soon.',
     watch: 'Watch on YouTube →',
     ytBanner: 'New videos every day',
-    ytSub: 'Follow NutriLife Telugu on YouTube.',
+    ytSub: 'Follow NutriLifeMithra on YouTube.',
     subscribe: 'Subscribe on YouTube →',
   },
 }

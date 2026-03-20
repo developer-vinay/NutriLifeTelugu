@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
 import ThemeToggle from '@/components/ThemeToggle'
 import LanguageToggle from '@/components/LanguageToggle'
-import { useLanguage, LANG_SUBTITLE, LANG_LOGOS } from '@/components/LanguageProvider'
+import { useLanguage, LANG_LOGOS, BRAND_NAME } from '@/components/LanguageProvider'
 
 type Item = { label: string; description: string; href: string; icon: string }
 
@@ -204,6 +204,49 @@ function UserMenu() {
   )
 }
 
+function MobileUserSection({ session, onClose }: { session: ReturnType<typeof useSession>['data']; onClose: () => void }) {
+  const [open, setOpen] = useState(false)
+  if (!session?.user) return null
+  const initials = (session.user.name?.[0] ?? session.user.email?.[0] ?? 'U').toUpperCase()
+  return (
+    <div>
+      {/* Clickable user row — toggles menu */}
+      <button
+        type="button"
+        onClick={() => setOpen((p) => !p)}
+        className="flex w-full items-center gap-3 rounded-xl bg-emerald-50 px-3 py-2.5 transition hover:bg-emerald-100 dark:bg-emerald-900/20 dark:hover:bg-emerald-900/30"
+      >
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#1A5C38] text-xs font-bold text-white">
+          {session.user.image
+            ? <img src={session.user.image} alt="" className="h-full w-full object-cover" />
+            : initials}
+        </div>
+        <div className="min-w-0 flex-1 text-left">
+          <p className="truncate text-[13px] font-semibold text-gray-900 dark:text-slate-100">{session.user.name ?? 'User'}</p>
+          <p className="truncate text-[11px] text-gray-500 dark:text-slate-400">{session.user.email}</p>
+        </div>
+        <ChevronDown open={open} />
+      </button>
+
+      {/* Collapsible links */}
+      {open && (
+        <div className="mt-1 space-y-0.5">
+          <Link href="/profile" onClick={onClose} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800">👤 My Profile</Link>
+          <Link href="/profile#saved" onClick={onClose} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800">🔖 Saved Posts</Link>
+          <Link href="/profile#liked" onClick={onClose} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800">❤️ Liked Posts</Link>
+          <button
+            type="button"
+            onClick={() => { onClose(); signOut({ callbackUrl: '/' }) }}
+            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+          >
+            🚪 Sign Out
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
@@ -211,9 +254,7 @@ export default function Navbar() {
   const { language } = useLanguage()
   const pathname = usePathname()
 
-  const siteName = LANG_SUBTITLE[language]
-    ? `NUTRILIFE ${LANG_SUBTITLE[language]}`
-    : 'NUTRILIFE'
+  const siteName = BRAND_NAME
 
   // Disable language toggle while reading a blog post (language is set by the article)
   const isReadingPost = /^\/blog\/[^/]+/.test(pathname)
@@ -231,7 +272,7 @@ export default function Navbar() {
         <Link href="/" className="flex shrink-0 items-center gap-3">
           <img
             src={LANG_LOGOS[language]}
-            alt="NutriLife"
+            alt="NutriLifeMithra"
             className="h-11 w-11 rounded-full object-cover ring-2 ring-[#1A5C38]/20"
           />
           <span className="hidden font-nunito text-[15px] font-bold tracking-wide text-[#1A5C38] sm:block dark:text-emerald-400">
@@ -265,72 +306,71 @@ export default function Navbar() {
           <UserMenu />
         </div>
 
-        {/* Mobile hamburger */}
-        <button
-          type="button"
-          onClick={() => setMobileOpen((p) => !p)}
-          aria-label="Toggle menu"
-          className="flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 text-gray-700 transition hover:bg-gray-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 xl:hidden"
-        >
-          {mobileOpen
-            ? <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18M6 6l12 12" /></svg>
-            : <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="18" y2="18" /></svg>
-          }
-        </button>
+        {/* Mobile right — ThemeToggle + hamburger */}
+        <div className="flex items-center gap-2 xl:hidden">
+          <ThemeToggle />
+          <button
+            type="button"
+            onClick={() => setMobileOpen((p) => !p)}
+            aria-label="Toggle menu"
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 text-gray-700 transition hover:bg-gray-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="18" y2="18" /></svg>
+          </button>
+        </div>
       </div>
 
-      {/* Mobile menu */}
-      {mobileOpen && (
-        <div className="border-t border-gray-100 bg-white dark:border-slate-700 dark:bg-slate-900 xl:hidden">
-          <div className="max-h-[75vh] space-y-0.5 overflow-y-auto px-4 py-4">
-            <MobileDropdown label="Recipes" items={recipeItems} />
-            <MobileDropdown label="Health Tips" items={healthItems} />
-            <MobileDropdown label="Diet Plans" items={dietItems} />
-            <MobileDropdown label="Videos" items={videoItems} />
-            <MobileDropdown label="Shop" items={shopItems} />
-            <Link href="/blog" onClick={() => setMobileOpen(false)} className="block rounded-lg px-3 py-2.5 text-sm font-medium text-gray-800 hover:bg-gray-50 dark:text-slate-200 dark:hover:bg-slate-800">Blog</Link>
-            <Link href="/about" onClick={() => setMobileOpen(false)} className="block rounded-lg px-3 py-2.5 text-sm font-medium text-gray-800 hover:bg-gray-50 dark:text-slate-200 dark:hover:bg-slate-800">About</Link>
-            <Link href="/search" onClick={() => setMobileOpen(false)} className="block rounded-lg px-3 py-2.5 text-sm font-medium text-gray-800 hover:bg-gray-50 dark:text-slate-200 dark:hover:bg-slate-800">Search</Link>
-
-            <div className="border-t border-gray-100 pt-3 dark:border-slate-700">
-              <div className="mb-3 flex items-center gap-2">
-                <ThemeToggle />
-                <LanguageToggle disabled={isReadingPost} />
-              </div>
-              {session?.user ? (
-                <div className="space-y-1">
-                  <div className="flex items-center gap-3 rounded-xl bg-emerald-50 px-3 py-2.5 dark:bg-emerald-900/20">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#1A5C38] text-xs font-bold text-white">
-                      {session.user.image
-                        ? <img src={session.user.image} alt="" className="h-full w-full object-cover" />
-                        : (session.user.name?.[0] ?? 'U').toUpperCase()
-                      }
-                    </div>
-                    <div className="min-w-0">
-                      <p className="truncate text-[13px] font-semibold text-gray-900 dark:text-slate-100">{session.user.name ?? 'User'}</p>
-                      <p className="truncate text-[11px] text-gray-500 dark:text-slate-400">{session.user.email}</p>
-                    </div>
-                  </div>
-                  <Link href="/profile" onClick={() => setMobileOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800">👤 My Profile</Link>
-                  <Link href="/profile#saved" onClick={() => setMobileOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800">🔖 Saved Posts</Link>
-                  <Link href="/profile#liked" onClick={() => setMobileOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800">❤️ Liked Posts</Link>
-                  <button
-                    type="button"
-                    onClick={() => { setMobileOpen(false); signOut({ callbackUrl: '/' }) }}
-                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
-                  >
-                    🚪 Sign Out
-                  </button>
-                </div>
-              ) : (
-                <div className="flex gap-2">
-                  <Link href="/login" onClick={() => setMobileOpen(false)} className="flex-1 rounded-full bg-[#1A5C38] py-2.5 text-center text-sm font-semibold text-white">Sign In / Sign Up</Link>
-                </div>
-              )}
-            </div>
-          </div>
+      {/* Mobile drawer — slides in from right */}
+      {/* Backdrop */}
+      <div
+        onClick={() => setMobileOpen(false)}
+        className={`fixed inset-0 z-40 bg-black/40 backdrop-blur-sm transition-opacity duration-300 xl:hidden ${mobileOpen ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
+      />
+      {/* Drawer panel */}
+      <div
+        className={`fixed bottom-0 right-0 top-0 z-50 flex w-[80vw] max-w-sm flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out dark:bg-slate-900 xl:hidden ${mobileOpen ? 'translate-x-0' : 'translate-x-full'}`}
+      >
+        {/* Drawer header */}
+        <div className="flex items-center justify-between border-b border-gray-100 px-4 py-4 dark:border-slate-700">
+          <Link href="/" onClick={() => setMobileOpen(false)} className="flex items-center gap-2">
+            <img src={LANG_LOGOS[language]} alt="NutriLifeMithra" className="h-8 w-8 rounded-full object-cover ring-2 ring-[#1A5C38]/20" />
+            <span className="font-nunito text-[14px] font-bold text-[#1A5C38] dark:text-emerald-400">{BRAND_NAME}</span>
+          </Link>
+          <button
+            type="button"
+            onClick={() => setMobileOpen(false)}
+            aria-label="Close menu"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 dark:text-slate-400 dark:hover:bg-slate-800"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+          </button>
         </div>
-      )}
+
+        {/* Drawer body — scrollable */}
+        <div className="flex-1 space-y-0.5 overflow-y-auto px-4 py-3">
+          <MobileDropdown label="Recipes" items={recipeItems} />
+          <MobileDropdown label="Health Tips" items={healthItems} />
+          <MobileDropdown label="Diet Plans" items={dietItems} />
+          <MobileDropdown label="Videos" items={videoItems} />
+          <MobileDropdown label="Shop" items={shopItems} />
+          <Link href="/blog" onClick={() => setMobileOpen(false)} className="block rounded-lg px-3 py-2.5 text-sm font-medium text-gray-800 hover:bg-gray-50 dark:text-slate-200 dark:hover:bg-slate-800">Blog</Link>
+          <Link href="/about" onClick={() => setMobileOpen(false)} className="block rounded-lg px-3 py-2.5 text-sm font-medium text-gray-800 hover:bg-gray-50 dark:text-slate-200 dark:hover:bg-slate-800">About</Link>
+          <Link href="/search" onClick={() => setMobileOpen(false)} className="block rounded-lg px-3 py-2.5 text-sm font-medium text-gray-800 hover:bg-gray-50 dark:text-slate-200 dark:hover:bg-slate-800">🔍 Search</Link>
+        </div>
+
+        {/* Drawer footer */}
+        <div className="border-t border-gray-100 px-4 py-4 dark:border-slate-700">
+          {session?.user ? (
+            <MobileUserSection session={session} onClose={() => setMobileOpen(false)} />
+          ) : (
+            <Link href="/login" onClick={() => setMobileOpen(false)} className="block w-full rounded-full bg-[#1A5C38] py-2.5 text-center text-sm font-semibold text-white">
+              Sign In / Sign Up
+            </Link>
+          )}
+        </div>
+      </div>
     </header>
   )
 }

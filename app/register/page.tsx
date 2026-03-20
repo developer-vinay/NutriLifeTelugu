@@ -35,9 +35,9 @@ export default function RegisterPage() {
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 pt-20 dark:bg-slate-950">
       <div className="w-full max-w-sm rounded-2xl border border-gray-200 bg-white p-8 shadow-sm dark:border-slate-700 dark:bg-slate-900">
         <div className="mb-6 text-center">
-          <img src="/logo.png" alt="NutriLife Telugu" className="mx-auto mb-3 h-14 w-14 rounded-full object-cover" />
+          <img src="/logo.png" alt="NutriLifeMithra" className="mx-auto mb-3 h-14 w-14 rounded-full object-cover" />
           <h1 className="font-nunito text-xl font-bold text-gray-900 dark:text-slate-50">Create your account</h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">Join the NutriLife Telugu community</p>
+          <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">Join the NutriLifeMithra community</p>
         </div>
 
         {/* Social logins */}
@@ -54,17 +54,6 @@ export default function RegisterPage() {
               <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
             </svg>
             Sign up with Google
-          </button>
-
-          <button
-            type="button"
-            onClick={() => signIn('facebook', { callbackUrl: '/profile' })}
-            className="flex w-full items-center justify-center gap-3 rounded-xl border border-[#1877F2] bg-[#1877F2] py-2.5 text-sm font-medium text-white transition hover:bg-[#166FE5]"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
-              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-            </svg>
-            Sign up with Facebook
           </button>
         </div>
 

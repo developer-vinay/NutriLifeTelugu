@@ -65,6 +65,11 @@ export default function HomeMainLayout({ latestVideo }: { latestVideo: DBVideo |
   const [posts, setPosts] = useState<DBPost[]>([])
   const [recipes, setRecipes] = useState<DBRecipe[]>([])
   const [loading, setLoading] = useState(true)
+  const [subscriberCount, setSubscriberCount] = useState<number | null>(null)
+
+  useEffect(() => {
+    fetch('/api/subscribers/count').then(r => r.json()).then(d => setSubscriberCount(d.count)).catch(() => {})
+  }, [])
 
   useEffect(() => {
     setLoading(true)
@@ -92,11 +97,11 @@ export default function HomeMainLayout({ latestVideo }: { latestVideo: DBVideo |
           <section id="latest">
             <SectionHeader title={language === 'te' ? 'తాజా వ్యాసాలు' : 'Latest Articles'} href="/blog" />
             {loading ? (
-              <div className="grid gap-4 md:grid-cols-3">{[...Array(6)].map((_, i) => <PostSkeleton key={i} />)}</div>
+              <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">{[...Array(6)].map((_, i) => <PostSkeleton key={i} />)}</div>
             ) : mainPosts.length === 0 ? (
               <p className="text-sm text-gray-500 dark:text-slate-400">{language === 'te' ? 'వ్యాసాలు త్వరలో వస్తాయి.' : 'Articles coming soon.'}</p>
             ) : (
-              <div className="grid gap-4 md:grid-cols-3">
+              <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
                 {mainPosts.map((post) => (
                   <Link key={post._id} href={`/blog/${post.slug}`}
                     className="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white p-3 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-800/60 dark:hover:border-emerald-600">
@@ -156,7 +161,7 @@ export default function HomeMainLayout({ latestVideo }: { latestVideo: DBVideo |
           {tipPosts.length > 0 && (
             <section>
               <SectionHeader title={language === 'te' ? 'హెల్త్ టిప్స్' : 'Health Tips'} href="/health-tips/weight-loss" />
-              <div className="grid gap-4 md:grid-cols-3">
+              <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
                 {tipPosts.map((post) => (
                   <Link key={post._id} href={`/blog/${post.slug}`}
                     className="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white p-3 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-300 dark:border-slate-700 dark:bg-slate-800/60 dark:hover:border-emerald-600">
@@ -173,7 +178,7 @@ export default function HomeMainLayout({ latestVideo }: { latestVideo: DBVideo |
         </div>
 
         {/* Sidebar */}
-        <aside className="w-full space-y-4 md:w-[30%]">
+        <aside className="w-full md:w-[30%] md:sticky md:top-20 md:self-start md:max-h-[calc(100vh-5rem)] md:overflow-y-auto space-y-4 scrollbar-thin">
           {/* Ad */}
           <div className="rounded-2xl border border-gray-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800/60">
             <div className="flex h-48 items-center justify-center rounded-xl border border-dashed border-gray-300 bg-gray-50 dark:border-slate-600 dark:bg-slate-900/40">
@@ -184,7 +189,9 @@ export default function HomeMainLayout({ latestVideo }: { latestVideo: DBVideo |
           {/* Newsletter */}
           <div className="space-y-2 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/60">
             <h3 className="text-xs font-semibold text-gray-900 dark:text-slate-50">Get free weekly recipes</h3>
-            <p className="text-[11px] text-gray-500 dark:text-slate-400">Join 10,000+ readers getting weekly Telugu nutrition tips.</p>
+            <p className="text-[11px] text-gray-500 dark:text-slate-400">
+              {subscriberCount !== null ? `Join ${subscriberCount.toLocaleString('en-IN')}+ readers getting weekly Telugu nutrition tips.` : 'Join readers getting weekly Telugu nutrition tips.'}
+            </p>
             <form action="/api/subscribe" method="post" className="space-y-2 text-xs">
               <input type="email" name="email" placeholder="Your email address"
                 className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-[11px] text-gray-900 placeholder:text-gray-400 focus:border-[#1A5C38] focus:outline-none focus:ring-1 focus:ring-[#1A5C38] dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500" />

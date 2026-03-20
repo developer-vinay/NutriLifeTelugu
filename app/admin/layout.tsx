@@ -37,7 +37,7 @@ export default async function AdminLayout({
         <div className="flex items-center gap-2 px-4 py-5">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-sm font-bold text-[#1A5C38]">NL</div>
           <div>
-            <div className="text-sm font-semibold uppercase tracking-wide">NutriLife Telugu</div>
+            <div className="text-sm font-semibold uppercase tracking-wide">NutriLifeMithra</div>
             <div className="text-xs text-emerald-100">Admin Panel</div>
           </div>
         </div>

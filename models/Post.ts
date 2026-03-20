@@ -24,6 +24,7 @@ export interface IPost extends Document {
   heroImage?: string
   heroImagePublicId?: string
   youtubeUrl?: string
+  contentImages?: string[]
   readTimeMinutes?: number
   views: number
   likes: number
@@ -49,12 +50,13 @@ const PostSchema = new Schema<IPost>(
     heroImage: { type: String },
     heroImagePublicId: { type: String },
     youtubeUrl: { type: String },
+    contentImages: [{ type: String }],
     readTimeMinutes: { type: Number },
     views: { type: Number, default: 0 },
     likes: { type: Number, default: 0 },
     isPublished: { type: Boolean, default: false },
     isFeatured: { type: Boolean, default: false },
-    author: { type: String, default: 'NutriLife Telugu' },
+    author: { type: String, default: 'NutriLifeMithra' },
   },
   { timestamps: true },
 )

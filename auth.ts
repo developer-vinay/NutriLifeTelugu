@@ -1,7 +1,6 @@
 import NextAuth from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import Google from 'next-auth/providers/google'
-import Facebook from 'next-auth/providers/facebook'
 import bcrypt from 'bcryptjs'
 import { connectDB } from '@/lib/mongodb'
 import { User } from '@/models/User'
@@ -38,14 +37,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       clientId: process.env.GOOGLE_CLIENT_ID ?? '',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
     }),
-    Facebook({
-      clientId: process.env.FACEBOOK_CLIENT_ID ?? '',
-      clientSecret: process.env.FACEBOOK_CLIENT_SECRET ?? '',
-    }),
   ],
   callbacks: {
     async signIn({ user, account }) {
-      if (account?.provider === 'google' || account?.provider === 'facebook') {
+      if (account?.provider === 'google') {
         await connectDB()
         const existing = await User.findOne({ email: user.email as string }).exec()
         const adminEmail = process.env.ADMIN_EMAIL

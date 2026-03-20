@@ -21,6 +21,7 @@ type DBRecipe = {
   ingredients: string[]
   nutritionFacts?: Record<string, number>
   likes?: number
+  views: number
   isPublished: boolean
 }
 
@@ -88,6 +89,7 @@ export default function RecipeDetailClient({ recipe, related }: Props) {
               {recipe.prepTimeMinutes && <span>{t.prep}: {recipe.prepTimeMinutes} min</span>}
               {recipe.cookTimeMinutes && <span>{t.cook}: {recipe.cookTimeMinutes} min</span>}
               {recipe.servings && <span>{t.servings}: {recipe.servings}</span>}
+              {recipe.views > 0 && <span>👁 {recipe.views.toLocaleString('en-IN')} views</span>}
             </div>
             {/* Like / Save */}
             <LikeSaveButtons

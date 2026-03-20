@@ -19,11 +19,13 @@ type ProfileData = {
   likedVideos: Video[]
 }
 
+type TabKey = 'saved' | 'liked' | 'recipes' | 'videos'
+
 export default function ProfileClient() {
   const { data: session, update } = useSession()
   const { language, setLanguage } = useLanguage()
   const [data, setData] = useState<ProfileData | null>(null)
-  const [tab, setTab] = useState<'saved' | 'liked' | 'recipes' | 'videos'>('saved')
+  const [tab, setTab] = useState<TabKey>('saved')
   const [name, setName] = useState('')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -56,108 +58,112 @@ export default function ProfileClient() {
     )
   }
 
-  const tabs = [
-    { key: 'saved' as const, label: '🔖 Saved Posts', count: data.savedPosts.length },
-    { key: 'liked' as const, label: '❤️ Liked Posts', count: data.likedPosts.length },
-    { key: 'recipes' as const, label: '🍲 Saved Recipes', count: data.savedRecipes.length },
-    { key: 'videos' as const, label: '🎬 Saved Videos', count: data.savedVideos.length },
+  const initials = (data.user.name?.[0] ?? data.user.email[0]).toUpperCase()
+
+  const tabs: { key: TabKey; icon: string; label: string; count: number }[] = [
+    { key: 'saved',   icon: '🔖', label: 'Saved Posts',    count: data.savedPosts.length },
+    { key: 'liked',   icon: '❤️', label: 'Liked Posts',    count: data.likedPosts.length },
+    { key: 'recipes', icon: '🍲', label: 'Saved Recipes',  count: data.savedRecipes.length },
+    { key: 'videos',  icon: '🎬', label: 'Saved Videos',   count: data.savedVideos.length },
+  ]
+
+  const stats = [
+    { icon: '🔖', label: 'Saved',   val: data.savedPosts.length,   color: 'bg-blue-50 dark:bg-blue-900/20' },
+    { icon: '❤️', label: 'Liked',   val: data.likedPosts.length,   color: 'bg-red-50 dark:bg-red-900/20' },
+    { icon: '🍲', label: 'Recipes', val: data.savedRecipes.length, color: 'bg-amber-50 dark:bg-amber-900/20' },
+    { icon: '🎬', label: 'Videos',  val: data.savedVideos.length,  color: 'bg-purple-50 dark:bg-purple-900/20' },
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-16 dark:bg-slate-950">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-        <div className="grid gap-6 md:grid-cols-[300px_1fr]">
+    <div className="min-h-screen w-full overflow-x-hidden bg-gray-50 dark:bg-slate-950">
 
-          {/* Left: Profile card */}
-          <div className="space-y-4">
-            <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-              <div className="mb-4 flex flex-col items-center text-center">
-                <div className="mb-3 flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-emerald-100 text-3xl font-bold text-[#1A5C38] dark:bg-emerald-900/40 dark:text-emerald-400">
-                  {data.user.image
-                    ? <img src={data.user.image} alt={data.user.name ?? ''} className="h-full w-full object-cover" />
-                    : (data.user.name?.[0] ?? data.user.email[0]).toUpperCase()
-                  }
-                </div>
-                <p className="font-nunito text-lg font-bold text-gray-900 dark:text-slate-50">{data.user.name ?? 'User'}</p>
-                <p className="text-xs text-gray-500 dark:text-slate-400">{data.user.email}</p>
-              </div>
+      {/* Hero banner */}
+      <div className="relative w-full overflow-hidden bg-gradient-to-br from-[#1A5C38] via-emerald-700 to-emerald-500 pb-16 pt-8">
+        <div className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/5" />
+        <div className="absolute -left-10 bottom-0 h-40 w-40 rounded-full bg-white/5" />
+        <div className="relative mx-auto max-w-4xl px-4 text-center">
+          <div className="mx-auto mb-3 flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-4 border-white/30 bg-white/20 text-3xl font-bold text-white shadow-xl">
+            {data.user.image
+              ? <img src={data.user.image} alt={data.user.name ?? ''} className="h-full w-full object-cover" />
+              : initials}
+          </div>
+          <h1 className="font-nunito text-xl font-bold text-white">{data.user.name ?? 'User'}</h1>
+          <p className="mt-0.5 text-xs text-emerald-100">{data.user.email}</p>
+        </div>
+      </div>
 
-              <form onSubmit={handleSaveProfile} className="space-y-3">
+      {/* Stats row — overlaps hero */}
+      <div className="mx-auto -mt-10 max-w-4xl px-3">
+        <div className="grid grid-cols-2 gap-2 rounded-2xl border border-gray-200 bg-white p-3 shadow-lg dark:border-slate-700 dark:bg-slate-900 sm:grid-cols-4">
+          {stats.map((s) => (
+            <button key={s.label} type="button"
+              onClick={() => setTab(s.label.toLowerCase() === 'saved' ? 'saved' : s.label.toLowerCase() === 'liked' ? 'liked' : s.label.toLowerCase() === 'recipes' ? 'recipes' : 'videos')}
+              className={`flex flex-col items-center rounded-xl p-2.5 transition hover:scale-105 ${s.color}`}>
+              <span className="text-lg">{s.icon}</span>
+              <span className="mt-0.5 text-base font-bold text-gray-900 dark:text-slate-50">{s.val}</span>
+              <span className="text-[10px] text-gray-500 dark:text-slate-400">{s.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-4xl px-3 py-4">
+        <div className="grid gap-4 md:grid-cols-[240px_1fr]">
+
+          {/* Left sidebar — 2-col on mobile, stacked on md+ */}
+          <div className="grid grid-cols-2 gap-3 md:block md:space-y-3">
+            {/* Edit profile */}
+            <div className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+              <h3 className="mb-2 text-[11px] font-semibold text-gray-900 dark:text-slate-50">Edit Profile</h3>
+              <form onSubmit={handleSaveProfile} className="space-y-2">
                 <div>
-                  <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-slate-300">Display Name</label>
+                  <label className="mb-1 block text-[10px] font-medium text-gray-600 dark:text-slate-400">Display Name</label>
                   <input
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-[#1A5C38] focus:outline-none focus:ring-1 focus:ring-[#1A5C38] dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+                    className="w-full rounded-lg border border-gray-300 bg-white px-2 py-1.5 text-xs text-gray-900 placeholder:text-gray-400 focus:border-[#1A5C38] focus:outline-none focus:ring-1 focus:ring-[#1A5C38] dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
                   />
                 </div>
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="w-full rounded-xl bg-[#1A5C38] py-2 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:opacity-60"
-                >
-                  {saved ? '✓ Saved' : saving ? 'Saving…' : 'Save Changes'}
+                <button type="submit" disabled={saving}
+                  className="w-full rounded-lg bg-[#1A5C38] py-1.5 text-xs font-semibold text-white transition hover:bg-emerald-800 disabled:opacity-60">
+                  {saved ? '✓ Saved' : saving ? 'Saving…' : 'Save'}
                 </button>
               </form>
             </div>
 
-            {/* Language preference */}
-            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-              <h3 className="mb-3 text-sm font-semibold text-gray-900 dark:text-slate-50">Content Language</h3>
-              <p className="mb-3 text-xs text-gray-500 dark:text-slate-400">Choose the language for articles, recipes, and videos.</p>
-              <div className="flex gap-2">
+            {/* Language */}
+            <div className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+              <h3 className="mb-1 text-[11px] font-semibold text-gray-900 dark:text-slate-50">Language</h3>
+              <p className="mb-2 text-[10px] text-gray-500 dark:text-slate-400">Content language.</p>
+              <div className="flex gap-1.5">
                 {(['te', 'en'] as Language[]).map((l) => (
-                  <button
-                    key={l}
-                    type="button"
-                    onClick={() => setLanguage(l)}
-                    className={`flex-1 rounded-xl border py-2.5 text-sm font-semibold transition ${
+                  <button key={l} type="button" onClick={() => setLanguage(l)}
+                    className={`flex-1 rounded-lg border py-1.5 text-xs font-semibold transition ${
                       language === l
                         ? 'border-[#1A5C38] bg-[#1A5C38] text-white'
                         : 'border-gray-300 bg-white text-gray-700 hover:border-[#1A5C38] hover:text-[#1A5C38] dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300'
-                    }`}
-                  >
+                    }`}>
                     {LANG_LABELS[l]}
                   </button>
                 ))}
               </div>
             </div>
-
-            {/* Stats */}
-            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-              <h3 className="mb-3 text-sm font-semibold text-gray-900 dark:text-slate-50">Activity</h3>
-              <div className="grid grid-cols-2 gap-2 text-center">
-                {[
-                  { label: 'Saved', val: data.savedPosts.length },
-                  { label: 'Liked', val: data.likedPosts.length },
-                  { label: 'Recipes', val: data.savedRecipes.length },
-                  { label: 'Videos', val: data.savedVideos.length },
-                ].map((s) => (
-                  <div key={s.label} className="rounded-xl bg-gray-50 p-3 dark:bg-slate-800">
-                    <p className="text-lg font-bold text-[#1A5C38] dark:text-emerald-400">{s.val}</p>
-                    <p className="text-[10px] text-gray-500 dark:text-slate-400">{s.label}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
 
-          {/* Right: tabs */}
-          <div className="flex flex-col">
-            <div className="mb-4 flex gap-2 overflow-x-auto">
+          {/* Right: tabs + horizontal scroll content */}
+          <div>
+            {/* Tab bar — horizontal scroll */}
+            <div className="mb-4 flex gap-2 overflow-x-auto pb-1 scrollbar-none">
               {tabs.map((t) => (
-                <button
-                  key={t.key}
-                  type="button"
-                  onClick={() => setTab(t.key)}
-                  className={`flex shrink-0 items-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-medium transition ${
+                <button key={t.key} type="button" onClick={() => setTab(t.key)}
+                  className={`flex shrink-0 items-center gap-1.5 rounded-full px-3 py-2 text-xs font-medium transition ${
                     tab === t.key
-                      ? 'bg-[#1A5C38] text-white'
-                      : 'bg-white text-gray-700 hover:bg-gray-100 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
-                  }`}
-                >
-                  {t.label}
+                      ? 'bg-[#1A5C38] text-white shadow-md'
+                      : 'bg-white text-gray-700 shadow-sm hover:bg-gray-50 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
+                  }`}>
+                  <span>{t.icon}</span>
+                  <span>{t.label}</span>
                   <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold ${tab === t.key ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-600 dark:bg-slate-700 dark:text-slate-400'}`}>
                     {t.count}
                   </span>
@@ -165,12 +171,11 @@ export default function ProfileClient() {
               ))}
             </div>
 
-            <div className="flex-1">
-              {tab === 'saved' && <PostGrid posts={data.savedPosts} emptyMsg="No saved posts yet. Click 🔖 on any article to save it." />}
-              {tab === 'liked' && <PostGrid posts={data.likedPosts} emptyMsg="No liked posts yet. Click ❤️ on any article to like it." />}
-              {tab === 'recipes' && <RecipeGrid recipes={data.savedRecipes} emptyMsg="No saved recipes yet. Click 🔖 on any recipe to save it." />}
-              {tab === 'videos' && <VideoGrid videos={data.savedVideos} emptyMsg="No saved videos yet. Click 🔖 on any video to save it." />}
-            </div>
+            {/* Content — horizontal scroll row */}
+            {tab === 'saved'   && <HScrollRow items={data.savedPosts}   renderItem={(p: Post)   => <PostCard   key={p._id} item={p} />} emptyMsg="No saved posts yet. Click 🔖 on any article." />}
+            {tab === 'liked'   && <HScrollRow items={data.likedPosts}   renderItem={(p: Post)   => <PostCard   key={p._id} item={p} />} emptyMsg="No liked posts yet. Click ❤️ on any article." />}
+            {tab === 'recipes' && <HScrollRow items={data.savedRecipes} renderItem={(r: Recipe) => <RecipeCard key={r._id} item={r} />} emptyMsg="No saved recipes yet. Click 🔖 on any recipe." />}
+            {tab === 'videos'  && <HScrollRow items={data.savedVideos}  renderItem={(v: Video)  => <VideoCard  key={v._id} item={v} />} emptyMsg="No saved videos yet. Click 🔖 on any video." />}
           </div>
         </div>
       </div>
@@ -178,69 +183,80 @@ export default function ProfileClient() {
   )
 }
 
-function PostGrid({ posts, emptyMsg }: { posts: Post[]; emptyMsg: string }) {
-  if (posts.length === 0) return <EmptyState msg={emptyMsg} />
+function HScrollRow<T>({ items, renderItem, emptyMsg }: { items: T[]; renderItem: (item: T) => React.ReactNode; emptyMsg: string }) {
+  if (items.length === 0) {
+    return (
+      <div className="flex min-h-[180px] items-center justify-center rounded-2xl border border-dashed border-gray-300 bg-white dark:border-slate-700 dark:bg-slate-900">
+        <p className="text-sm text-gray-400 dark:text-slate-500">{emptyMsg}</p>
+      </div>
+    )
+  }
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {posts.map((p) => (
-        <Link key={p._id} href={`/blog/${p.slug}`} className="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:border-emerald-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-900 dark:hover:border-emerald-600">
-          <div className="h-40 w-full overflow-hidden bg-emerald-50 dark:bg-emerald-900/30">
-            {p.heroImage ? <img src={p.heroImage} alt={p.title} className="h-full w-full object-cover transition group-hover:scale-105" /> : <div className="flex h-full items-center justify-center text-4xl">📄</div>}
-          </div>
-          <div className="flex flex-1 flex-col p-4">
-            {p.tag && <span className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-[#1A5C38] dark:text-emerald-400">{p.tag}</span>}
-            <p className="line-clamp-2 flex-1 text-sm font-semibold text-gray-900 group-hover:text-[#1A5C38] dark:text-slate-100 dark:group-hover:text-emerald-400">{p.title}</p>
-            {p.readTimeMinutes && <p className="mt-2 text-[11px] text-gray-400 dark:text-slate-500">{p.readTimeMinutes} min read</p>}
-          </div>
-        </Link>
-      ))}
-    </div>
+    <>
+      {/* Mobile: 2-col grid */}
+      <div className="grid grid-cols-2 gap-3 md:hidden">
+        {items.map(renderItem)}
+      </div>
+      {/* Desktop: horizontal scroll */}
+      <div className="hidden gap-4 overflow-x-auto pb-3 md:flex scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-200 dark:scrollbar-thumb-slate-700">
+        {items.map(renderItem)}
+      </div>
+    </>
   )
 }
 
-function RecipeGrid({ recipes, emptyMsg }: { recipes: Recipe[]; emptyMsg: string }) {
-  if (recipes.length === 0) return <EmptyState msg={emptyMsg} />
+function PostCard({ item }: { item: Post }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {recipes.map((r) => (
-        <Link key={r._id} href={`/recipes/${r.slug}`} className="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:border-emerald-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-900 dark:hover:border-emerald-600">
-          <div className="h-40 w-full overflow-hidden bg-emerald-50 dark:bg-emerald-900/30">
-            {r.heroImage ? <img src={r.heroImage} alt={r.title} className="h-full w-full object-cover transition group-hover:scale-105" /> : <div className="flex h-full items-center justify-center text-4xl">🍲</div>}
-          </div>
-          <div className="flex flex-1 flex-col p-4">
-            {r.tag && <span className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-[#1A5C38] dark:text-emerald-400">{r.tag}</span>}
-            <p className="line-clamp-2 flex-1 text-sm font-semibold text-gray-900 group-hover:text-[#1A5C38] dark:text-slate-100 dark:group-hover:text-emerald-400">{r.title}</p>
-          </div>
-        </Link>
-      ))}
-    </div>
+    <Link href={`/blog/${item.slug}`}
+      className="group flex w-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-emerald-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-900 dark:hover:border-emerald-600 md:w-56 md:shrink-0">
+      <div className="h-28 w-full overflow-hidden bg-emerald-50 dark:bg-emerald-900/30 md:h-36">
+        {item.heroImage
+          ? <img src={item.heroImage} alt={item.title} className="h-full w-full object-cover transition group-hover:scale-105" />
+          : <div className="flex h-full items-center justify-center text-3xl">📄</div>}
+      </div>
+      <div className="flex flex-1 flex-col p-3">
+        {item.tag && <span className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-[#1A5C38] dark:text-emerald-400">{item.tag}</span>}
+        <p className="line-clamp-2 flex-1 text-[12px] font-semibold text-gray-900 group-hover:text-[#1A5C38] dark:text-slate-100 dark:group-hover:text-emerald-400 md:text-[13px]">{item.title}</p>
+        {item.readTimeMinutes && <p className="mt-2 text-[10px] text-gray-400 dark:text-slate-500">{item.readTimeMinutes} min read</p>}
+      </div>
+    </Link>
   )
 }
 
-function VideoGrid({ videos, emptyMsg }: { videos: Video[]; emptyMsg: string }) {
-  if (videos.length === 0) return <EmptyState msg={emptyMsg} />
+function RecipeCard({ item }: { item: Recipe }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {videos.map((v) => (
-        <a key={v._id} href={v.youtubeUrl} target="_blank" rel="noreferrer" className="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:border-emerald-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-900 dark:hover:border-emerald-600">
-          <div className="relative flex h-40 w-full items-center justify-center overflow-hidden bg-gray-900">
-            {v.thumbnailUrl ? <img src={v.thumbnailUrl} alt={v.title} className="h-full w-full object-cover transition group-hover:scale-105" /> : <span className="text-4xl text-white">▶</span>}
-          </div>
-          <div className="flex flex-1 flex-col p-4">
-            {v.tag && <span className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-[#1A5C38] dark:text-emerald-400">{v.tag}</span>}
-            <p className="line-clamp-2 flex-1 text-sm font-semibold text-gray-900 group-hover:text-[#1A5C38] dark:text-slate-100 dark:group-hover:text-emerald-400">{v.title}</p>
-            <p className="mt-2 text-[11px] font-semibold text-[#1A5C38] dark:text-emerald-400">Watch on YouTube →</p>
-          </div>
-        </a>
-      ))}
-    </div>
+    <Link href={`/recipes/${item.slug}`}
+      className="group flex w-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-emerald-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-900 dark:hover:border-emerald-600 md:w-56 md:shrink-0">
+      <div className="h-28 w-full overflow-hidden bg-amber-50 dark:bg-amber-900/20 md:h-36">
+        {item.heroImage
+          ? <img src={item.heroImage} alt={item.title} className="h-full w-full object-cover transition group-hover:scale-105" />
+          : <div className="flex h-full items-center justify-center text-3xl">🍲</div>}
+      </div>
+      <div className="flex flex-1 flex-col p-3">
+        {item.tag && <span className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400">{item.tag}</span>}
+        <p className="line-clamp-2 flex-1 text-[12px] font-semibold text-gray-900 group-hover:text-[#1A5C38] dark:text-slate-100 dark:group-hover:text-emerald-400 md:text-[13px]">{item.title}</p>
+      </div>
+    </Link>
   )
 }
 
-function EmptyState({ msg }: { msg: string }) {
+function VideoCard({ item }: { item: Video }) {
   return (
-    <div className="flex min-h-[400px] items-center justify-center rounded-2xl border border-dashed border-gray-300 bg-white dark:border-slate-700 dark:bg-slate-900">
-      <p className="text-sm text-gray-500 dark:text-slate-400">{msg}</p>
-    </div>
+    <a href={item.youtubeUrl} target="_blank" rel="noreferrer"
+      className="group flex w-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-emerald-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-900 dark:hover:border-emerald-600 md:w-56 md:shrink-0">
+      <div className="relative flex h-28 w-full items-center justify-center overflow-hidden bg-gray-900 md:h-36">
+        {item.thumbnailUrl
+          ? <img src={item.thumbnailUrl} alt={item.title} className="h-full w-full object-cover transition group-hover:scale-105" />
+          : <span className="text-3xl text-white">▶</span>}
+        <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition group-hover:opacity-100">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-gray-900 text-sm">▶</div>
+        </div>
+      </div>
+      <div className="flex flex-1 flex-col p-3">
+        {item.tag && <span className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-purple-600 dark:text-purple-400">{item.tag}</span>}
+        <p className="line-clamp-2 flex-1 text-[12px] font-semibold text-gray-900 group-hover:text-[#1A5C38] dark:text-slate-100 dark:group-hover:text-emerald-400 md:text-[13px]">{item.title}</p>
+        <p className="mt-2 text-[11px] font-semibold text-[#1A5C38] dark:text-emerald-400">Watch →</p>
+      </div>
+    </a>
   )
 }

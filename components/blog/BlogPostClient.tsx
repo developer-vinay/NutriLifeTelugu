@@ -16,6 +16,7 @@ export type DBPost = {
   language?: string
   heroImage?: string
   youtubeUrl?: string
+  contentImages?: string[]
   readTimeMinutes?: number
   views: number
   likes?: number
@@ -34,6 +35,11 @@ export default function BlogPostClient({ post, related }: Props) {
   const [progress, setProgress] = useState(0)
   const [copied, setCopied] = useState(false)
   const [newsletterState, setNewsletterState] = useState<'idle' | 'success'>('idle')
+  const [subscriberCount, setSubscriberCount] = useState<number | null>(null)
+
+  useEffect(() => {
+    fetch('/api/subscribers/count').then(r => r.json()).then(d => setSubscriberCount(d.count)).catch(() => {})
+  }, [])
 
   // Sync navbar language to match the post's language
   useEffect(() => {
@@ -134,6 +140,15 @@ export default function BlogPostClient({ post, related }: Props) {
                   month: 'short',
                   day: 'numeric',
                 })}
+                {' · '}
+                {(() => {
+                  const days = Math.floor((Date.now() - new Date(post.createdAt).getTime()) / 86400000)
+                  if (days === 0) return 'Today'
+                  if (days === 1) return '1 day ago'
+                  if (days < 30) return `${days} days ago`
+                  if (days < 365) return `${Math.floor(days / 30)} months ago`
+                  return `${Math.floor(days / 365)} years ago`
+                })()}
               </span>
               <span className="mx-1">•</span>
               <span>{post.readTimeMinutes ?? 5} min read</span>
@@ -183,6 +198,21 @@ export default function BlogPostClient({ post, related }: Props) {
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
 
+            {/* Content images — shown only if admin uploaded them */}
+            {post.contentImages && post.contentImages.length > 0 && (
+              <div className="mt-6 space-y-4">
+                {post.contentImages.map((img, i) => (
+                  <figure key={i} className="overflow-hidden rounded-2xl">
+                    <img
+                      src={img}
+                      alt={`${post.title} — image ${i + 1}`}
+                      className="w-full object-cover"
+                    />
+                  </figure>
+                ))}
+              </div>
+            )}
+
             {/* Author box */}
             <section className="mt-8 rounded-2xl bg-gray-100 p-5 dark:bg-slate-900/70">
               <div className="flex items-start gap-3">
@@ -190,7 +220,7 @@ export default function BlogPostClient({ post, related }: Props) {
                   NL
                 </div>
                 <div>
-                  <p className="font-semibold text-gray-900 dark:text-slate-50">NutriLife Telugu</p>
+                  <p className="font-semibold text-gray-900 dark:text-slate-50">NutriLifeMithra</p>
                   <p className="text-[13px] text-gray-600 dark:text-slate-300">
                     Evidence-based nutrition content for Telugu families. Follow us on YouTube and Instagram.
                   </p>
@@ -213,7 +243,11 @@ export default function BlogPostClient({ post, related }: Props) {
                       href={`/blog/${rp.slug}`}
                       className="group flex flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-gray-200 transition-transform duration-200 hover:scale-105 hover:ring-emerald-400 dark:bg-slate-900/70 dark:ring-slate-800 dark:hover:ring-emerald-600"
                     >
-                      <div className="h-36 w-full bg-gray-200 dark:bg-slate-800" />
+                      {rp.heroImage ? (
+                        <img src={rp.heroImage} alt={rp.title} className="h-36 w-full object-cover" />
+                      ) : (
+                        <div className="flex h-36 items-center justify-center bg-gray-100 text-3xl dark:bg-slate-800">🍲</div>
+                      )}
                       <div className="p-3">
                         <span className="mb-1 inline-block text-[10px] font-semibold uppercase tracking-wide text-[#1A5C38] dark:text-emerald-300">{rp.tag}</span>
                         <p className="mb-1 line-clamp-2 text-[13px] font-semibold text-gray-900 dark:text-slate-50">{rp.title}</p>
@@ -227,7 +261,7 @@ export default function BlogPostClient({ post, related }: Props) {
           </article>
 
           {/* Sidebar */}
-          <aside className="w-full space-y-4 md:w-[32%] lg:sticky lg:top-20">
+          <aside className="w-full space-y-4 md:w-[32%] lg:sticky lg:top-20 lg:self-start lg:max-h-[calc(100vh-5rem)] lg:overflow-y-auto">
             <div className="rounded-2xl border border-gray-200 bg-white p-3 text-xs text-gray-700 dark:border-slate-700 dark:bg-slate-900">
               <div className="flex h-64 items-center justify-center rounded-xl border border-dashed border-gray-300 bg-gray-50 text-[11px] text-gray-400 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-500">
                 Advertisement — Google AdSense 300×250
@@ -236,7 +270,9 @@ export default function BlogPostClient({ post, related }: Props) {
 
             <div className="rounded-2xl border border-gray-200 bg-white p-4 text-xs text-gray-800 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
               <p className="mb-1 text-[13px] font-semibold text-gray-900 dark:text-slate-50">Free weekly recipes</p>
-              <p className="mb-2 text-[12px] text-gray-600 dark:text-slate-400">Join 10,000+ Telugu health readers.</p>
+              <p className="mb-2 text-[12px] text-gray-600 dark:text-slate-400">
+                {subscriberCount !== null ? `Join ${subscriberCount.toLocaleString('en-IN')}+ Telugu health readers.` : 'Join Telugu health readers.'}
+              </p>
               <form onSubmit={handleNewsletterSubmit} className="space-y-2">
                 <input
                   type="email"

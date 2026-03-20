@@ -35,14 +35,14 @@ export default function RootShell({
   return (
     <SessionProvider session={session}>
       <Navbar />
-      <div className="relative">
+      <div className="relative overflow-x-hidden">
 
-        {/* LEFT — small, attached to left edge, repeat-y to footer */}
+        {/* LEFT border — fixed to viewport edges, above content */}
         <div
           aria-hidden
-          className="pointer-events-none absolute bottom-0 left-0 top-0 z-10 hidden xl:block"
+          className="pointer-events-none fixed bottom-0 left-0 top-0 z-30"
           style={{
-            width: isDark ? '70px' : '60px',
+            width: 'clamp(16px, 3.5vw, 60px)',
             backgroundImage: isDark ? 'url(/DarkBorder.png)' : 'url(/LeftBorder.png)',
             backgroundRepeat: 'repeat-y',
             backgroundSize: '100% auto',
@@ -50,12 +50,12 @@ export default function RootShell({
           }}
         />
 
-        {/* RIGHT — small, attached to right edge, repeat-y to footer */}
+        {/* RIGHT border — fixed to viewport edges, above content */}
         <div
           aria-hidden
-          className="pointer-events-none absolute bottom-0 right-0 top-0 z-10 hidden xl:block"
+          className="pointer-events-none fixed bottom-0 right-0 top-0 z-30"
           style={{
-            width: isDark ? '70px' : '50px',
+            width: 'clamp(14px, 3vw, 50px)',
             backgroundImage: isDark ? 'url(/DarkBorder.png)' : 'url(/RightBorder.png)',
             backgroundRepeat: 'repeat-y',
             backgroundSize: '100% auto',

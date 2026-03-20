@@ -34,6 +34,7 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
   const [heroImage, setHeroImage] = useState(initialData?.heroImage ?? '')
   const [heroImagePublicId, setHeroImagePublicId] = useState(initialData?.heroImagePublicId ?? '')
   const [youtubeUrl, setYoutubeUrl] = useState(initialData?.youtubeUrl ?? '')
+  const [contentImages, setContentImages] = useState<string[]>(initialData?.contentImages ?? [])
   const [content, setContent] = useState(initialData?.content ?? '')
   const [isFeatured, setIsFeatured] = useState(initialData?.isFeatured ?? false)
   const [isPublished, setIsPublished] = useState(initialData?.isPublished ?? false)
@@ -47,7 +48,17 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [title])
 
-  const handleUploadImage = async (file: File) => {
+  const handleUploadImage = async (file: File): Promise<string> => {
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('folder', 'posts')
+    const res = await fetch('/api/upload', { method: 'POST', body: formData })
+    if (!res.ok) throw new Error('Upload failed')
+    const data = await res.json()
+    return data.url
+  }
+
+  const handleUploadHero = async (file: File) => {
     const formData = new FormData()
     formData.append('file', file)
     formData.append('folder', 'posts')
@@ -67,7 +78,7 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
       const body = {
         title, slug, excerpt, category, language, tag,
         heroImage, heroImagePublicId, youtubeUrl, content,
-        isFeatured, isPublished: publish, readTimeMinutes,
+        isFeatured, isPublished: publish, readTimeMinutes, contentImages,
       }
       const url = mode === 'create' ? '/api/admin/posts' : `/api/admin/posts/${initialData._id}`
       const res = await fetch(url, {
@@ -158,10 +169,40 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
           <input type="file" accept="image/*" onChange={async (e) => {
             const file = e.target.files?.[0]
             if (!file) return
-            try { await handleUploadImage(file) } catch { setError('Image upload failed') }
+            try { await handleUploadHero(file) } catch { setError('Image upload failed') }
           }} className="text-sm" />
           {heroImage && <img src={heroImage} alt="" className="h-12 w-20 rounded object-cover" />}
         </div>
+      </div>
+
+      {/* Content images */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-gray-800">Content Images (optional — shown after article text)</label>
+        <div className="flex flex-wrap gap-3">
+          {contentImages.map((img, i) => (
+            <div key={i} className="relative">
+              <img src={img} alt="" className="h-20 w-28 rounded-lg object-cover" />
+              <button
+                type="button"
+                onClick={() => setContentImages((prev) => prev.filter((_, idx) => idx !== i))}
+                className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] text-white hover:bg-red-600"
+              >✕</button>
+            </div>
+          ))}
+          <label className="flex h-20 w-28 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 text-xs text-gray-500 hover:border-[#1A5C38] hover:text-[#1A5C38]">
+            <span className="text-xl">+</span>
+            <span>Add image</span>
+            <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
+              const file = e.target.files?.[0]
+              if (!file) return
+              try {
+                const url = await handleUploadImage(file)
+                setContentImages((prev) => [...prev, url])
+              } catch { setError('Image upload failed') }
+            }} />
+          </label>
+        </div>
+        <p className="text-xs text-gray-400">These images appear below the article content. Only uploaded images are shown — none if empty.</p>
       </div>
 
       <div className="space-y-1">

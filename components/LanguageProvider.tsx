@@ -5,8 +5,8 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 export type Language = 'te' | 'en'
 
 export const LANG_LABELS: Record<Language, string> = {
-  te: 'తెలుగు',
-  en: 'English',
+  te: 'తె',
+  en: 'EN',
 }
 
 export const LANG_LOGOS: Record<Language, string> = {
@@ -14,10 +14,7 @@ export const LANG_LOGOS: Record<Language, string> = {
   en: '/EnglishLogo.png',
 }
 
-export const LANG_SUBTITLE: Record<Language, string> = {
-  te: 'తెలుగు',
-  en: '',
-}
+export const BRAND_NAME = 'NutriLifeMithra'
 
 const LanguageContext = createContext<{
   language: Language
