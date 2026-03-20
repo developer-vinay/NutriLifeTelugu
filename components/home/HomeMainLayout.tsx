@@ -178,7 +178,7 @@ export default function HomeMainLayout({ latestVideo }: { latestVideo: DBVideo |
         </div>
 
         {/* Sidebar */}
-        <aside className="w-full md:w-[30%] md:sticky md:top-20 md:self-start md:max-h-[calc(100vh-5rem)] md:overflow-y-auto space-y-4 scrollbar-thin">
+        <aside className="w-full space-y-4 md:w-[30%] md:sticky md:top-20 md:self-start">
           {/* Ad */}
           <div className="rounded-2xl border border-gray-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800/60">
             <div className="flex h-48 items-center justify-center rounded-xl border border-dashed border-gray-300 bg-gray-50 dark:border-slate-600 dark:bg-slate-900/40">

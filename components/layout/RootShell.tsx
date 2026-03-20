@@ -35,7 +35,7 @@ export default function RootShell({
   return (
     <SessionProvider session={session}>
       <Navbar />
-      <div className="relative overflow-x-hidden">
+      <div className="relative">
 
         {/* LEFT border — fixed to viewport edges, above content */}
         <div
