@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from 'react'
 import Link from 'next/link'
+import { Search, UtensilsCrossed, FileText } from 'lucide-react'
 
 type Item = {
   _id: string
@@ -158,7 +159,7 @@ export default function SearchClient({
 
         {filtered.length === 0 && (
           <div className="py-16 text-center">
-            <p className="text-4xl">🔍</p>
+            <Search size={40} className="mx-auto text-gray-300 dark:text-slate-600" />
             <p className="mt-3 text-base font-medium text-gray-700 dark:text-slate-300">No results found</p>
             <p className="mt-1 text-sm text-gray-500 dark:text-slate-500">Try a different search term or category</p>
           </div>
@@ -180,8 +181,8 @@ function ResultCard({ item }: { item: Item }) {
         {item.heroImage ? (
           <img src={item.heroImage} alt={item.title} className="h-full w-full object-cover" />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-2xl">
-            {item.type === 'recipe' ? '🍲' : '📝'}
+          <div className="flex h-full w-full items-center justify-center">
+            {item.type === 'recipe' ? <UtensilsCrossed size={22} className="text-emerald-300" /> : <FileText size={22} className="text-gray-400" />}
           </div>
         )}
       </div>
@@ -193,8 +194,8 @@ function ResultCard({ item }: { item: Item }) {
               {item.tag}
             </span>
           )}
-          <span className="text-[10px] text-gray-400 dark:text-slate-500">
-            {item.type === 'recipe' ? '🍳 Recipe' : '📄 Article'}
+          <span className="text-[10px] text-gray-400 dark:text-slate-500 flex items-center gap-1">
+            {item.type === 'recipe' ? <><UtensilsCrossed size={10} /> Recipe</> : <><FileText size={10} /> Article</>}
           </span>
         </div>
         <p className="mt-0.5 line-clamp-2 text-sm font-semibold text-gray-900 group-hover:text-[#1A5C38] dark:text-slate-100 dark:group-hover:text-emerald-400">

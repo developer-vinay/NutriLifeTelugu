@@ -3,6 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { useLanguage } from '@/components/LanguageProvider'
+import { Leaf, Home, Heart, Users, Salad, BookOpen, Stethoscope } from 'lucide-react'
 
 const content = {
   en: {
@@ -24,10 +25,10 @@ const content = {
     ],
     values_title: 'Our Values',
     values: [
-      { icon: '🌿', title: 'Evidence-Based', desc: 'Every tip and recipe is grounded in nutritional science, not trends.' },
-      { icon: '🏡', title: 'Culturally Rooted', desc: 'We celebrate local ingredients and traditional cooking methods.' },
-      { icon: '💚', title: 'Accessible to All', desc: 'Free content for everyone — no paywalls on the basics.' },
-      { icon: '🤝', title: 'Community First', desc: 'Built with and for our readers, not just for them.' },
+      { icon: 'leaf', title: 'Evidence-Based', desc: 'Every tip and recipe is grounded in nutritional science, not trends.' },
+      { icon: 'home', title: 'Culturally Rooted', desc: 'We celebrate local ingredients and traditional cooking methods.' },
+      { icon: 'heart', title: 'Accessible to All', desc: 'Free content for everyone — no paywalls on the basics.' },
+      { icon: 'users', title: 'Community First', desc: 'Built with and for our readers, not just for them.' },
     ],
     team_title: 'Behind NutriLife',
     team_body:
@@ -55,10 +56,10 @@ const content = {
     ],
     values_title: 'మా విలువలు',
     values: [
-      { icon: '🌿', title: 'సాక్ష్యం-ఆధారిత', desc: 'ప్రతి చిట్కా మరియు వంటకం పోషకాహార శాస్త్రంలో ఆధారపడి ఉంటుంది.' },
-      { icon: '🏡', title: 'సాంస్కృతికంగా పాతుకుపోయిన', desc: 'మేము స్థానిక పదార్థాలు మరియు సాంప్రదాయ వంట పద్ధతులను జరుపుకుంటాం.' },
-      { icon: '💚', title: 'అందరికీ అందుబాటులో', desc: 'అందరికీ ఉచిత కంటెంట్ — ప్రాథమిక విషయాలపై పేవాల్‌లు లేవు.' },
-      { icon: '🤝', title: 'కమ్యూనిటీ ఫస్ట్', desc: 'మా పాఠకులతో మరియు వారి కోసం నిర్మించబడింది.' },
+      { icon: 'leaf', title: 'సాక్ష్యం-ఆధారిత', desc: 'ప్రతి చిట్కా మరియు వంటకం పోషకాహార శాస్త్రంలో ఆధారపడి ఉంటుంది.' },
+      { icon: 'home', title: 'సాంస్కృతికంగా పాతుకుపోయిన', desc: 'మేము స్థానిక పదార్థాలు మరియు సాంప్రదాయ వంట పద్ధతులను జరుపుకుంటాం.' },
+      { icon: 'heart', title: 'అందరికీ అందుబాటులో', desc: 'అందరికీ ఉచిత కంటెంట్ — ప్రాథమిక విషయాలపై పేవాల్‌లు లేవు.' },
+      { icon: 'users', title: 'కమ్యూనిటీ ఫస్ట్', desc: 'మా పాఠకులతో మరియు వారి కోసం నిర్మించబడింది.' },
     ],
     team_title: 'న్యూట్రిలైఫ్ వెనుక',
     team_body:
@@ -96,14 +97,14 @@ export default function AboutClient() {
             <p className="leading-relaxed text-gray-600 dark:text-slate-400">{t.mission_body}</p>
           </div>
           <div className="flex items-center justify-center rounded-2xl bg-emerald-50 p-10 dark:bg-emerald-900/20">
-            <span className="text-7xl">🥗</span>
+            <Salad size={72} className="text-emerald-400" />
           </div>
         </section>
 
         {/* Story */}
         <section className="grid gap-8 md:grid-cols-2 md:items-center">
           <div className="order-2 flex items-center justify-center rounded-2xl bg-amber-50 p-10 dark:bg-amber-900/10 md:order-1">
-            <span className="text-7xl">📖</span>
+            <BookOpen size={72} className="text-amber-400" />
           </div>
           <div className="order-1 md:order-2">
             <span className="mb-3 inline-block rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">
@@ -131,20 +132,30 @@ export default function AboutClient() {
         <section>
           <h2 className="mb-6 font-nunito text-2xl font-bold text-gray-900 dark:text-slate-50">{t.values_title}</h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {t.values.map((v, i) => (
-              <div key={i} className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-                <div className="mb-3 text-3xl">{v.icon}</div>
-                <h3 className="mb-1 font-nunito text-sm font-bold text-gray-900 dark:text-slate-50">{v.title}</h3>
-                <p className="text-xs leading-relaxed text-gray-500 dark:text-slate-400">{v.desc}</p>
-              </div>
-            ))}
+            {t.values.map((v, i) => {
+              const iconMap: Record<string, React.ReactNode> = {
+                leaf: <Leaf size={24} className="text-[#1A5C38] dark:text-emerald-400" />,
+                home: <Home size={24} className="text-[#1A5C38] dark:text-emerald-400" />,
+                heart: <Heart size={24} className="text-[#1A5C38] dark:text-emerald-400" />,
+                users: <Users size={24} className="text-[#1A5C38] dark:text-emerald-400" />,
+              }
+              return (
+                <div key={i} className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+                  <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-900/20">{iconMap[v.icon]}</div>
+                  <h3 className="mb-1 font-nunito text-sm font-bold text-gray-900 dark:text-slate-50">{v.title}</h3>
+                  <p className="text-xs leading-relaxed text-gray-500 dark:text-slate-400">{v.desc}</p>
+                </div>
+              )
+            })}
           </div>
         </section>
 
         {/* Team */}
         <section className="rounded-2xl bg-gradient-to-r from-emerald-50 to-white p-8 dark:from-emerald-900/20 dark:to-slate-950">
           <div className="flex items-start gap-5">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#1A5C38] text-2xl text-white">👨‍⚕️</div>
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#1A5C38]">
+              <Stethoscope size={24} className="text-white" />
+            </div>
             <div>
               <h2 className="mb-2 font-nunito text-xl font-bold text-gray-900 dark:text-slate-50">{t.team_title}</h2>
               <p className="leading-relaxed text-gray-600 dark:text-slate-400">{t.team_body}</p>

@@ -46,6 +46,7 @@ export default async function AdminLayout({
           <NavItem href="/admin/posts">Posts</NavItem>
           <NavItem href="/admin/recipes">Recipes</NavItem>
           <NavItem href="/admin/videos">Videos</NavItem>
+          <NavItem href="/admin/plans">Premium Plans</NavItem>
           <NavItem href="/admin/subscribers">Subscribers</NavItem>
           <NavItem href="/admin/profile">Profile</NavItem>
         </nav>

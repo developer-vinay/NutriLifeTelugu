@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useLanguage } from '@/components/LanguageProvider'
+import { FileText } from 'lucide-react'
 
 type Post = {
   _id: string
@@ -77,7 +78,7 @@ export default function BlogListClient() {
                 <div className="h-36 w-full overflow-hidden bg-emerald-50 dark:bg-emerald-900/30">
                   {post.heroImage
                     ? <img src={post.heroImage} alt={post.title} className="h-full w-full object-cover" />
-                    : <div className="flex h-full items-center justify-center text-3xl">📄</div>
+                    : <div className="flex h-full items-center justify-center bg-emerald-50 dark:bg-emerald-900/30"><FileText size={28} className="text-emerald-300" /></div>
                   }
                 </div>
                 <div className="p-4">

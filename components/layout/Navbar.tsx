@@ -7,39 +7,48 @@ import { useSession, signOut } from 'next-auth/react'
 import ThemeToggle from '@/components/ThemeToggle'
 import LanguageToggle from '@/components/LanguageToggle'
 import { useLanguage, LANG_LOGOS, BRAND_NAME } from '@/components/LanguageProvider'
+import {
+  Sunrise, UtensilsCrossed, Moon, GlassWater, Wheat, Leaf,
+  Scale, Stethoscope, Wind, Microscope, Shield, Baby,
+  FileText, Star, Video, GraduationCap, Zap,
+  Flame, Candy, Droplets, Ruler, Salad,
+  User, Bookmark, Heart, Settings, LogOut,
+} from 'lucide-react'
 
-type Item = { label: string; description: string; href: string; icon: string }
+type Item = { label: string; description: string; href: string; icon: React.ReactNode }
 
 const recipeItems: Item[] = [
-  { label: 'Breakfast', description: 'High-fiber millet breakfasts', href: '/recipes?category=breakfast', icon: '🌅' },
-  { label: 'Lunch', description: 'Balanced Telugu lunch plates', href: '/recipes?category=lunch', icon: '🍱' },
-  { label: 'Dinner', description: 'Light, gut-friendly dinners', href: '/recipes?category=dinner', icon: '🌙' },
-  { label: 'Snacks & Juices', description: 'Quick evening tiffins & drinks', href: '/recipes?category=snacks-juices', icon: '🥤' },
-  { label: 'Millets & Superfoods', description: 'Ragi, jowar, foxtail ideas', href: '/recipes?category=millets-superfoods', icon: '🌾' },
-  { label: 'Diabetic Friendly', description: 'Low GI recipes your doctor loves', href: '/recipes?category=diabetic-friendly', icon: '💚' },
+  { label: 'Breakfast', description: 'High-fiber millet breakfasts', href: '/recipes?category=breakfast', icon: <Sunrise size={16} /> },
+  { label: 'Lunch', description: 'Balanced Telugu lunch plates', href: '/recipes?category=lunch', icon: <UtensilsCrossed size={16} /> },
+  { label: 'Dinner', description: 'Light, gut-friendly dinners', href: '/recipes?category=dinner', icon: <Moon size={16} /> },
+  { label: 'Snacks & Juices', description: 'Quick evening tiffins & drinks', href: '/recipes?category=snacks-juices', icon: <GlassWater size={16} /> },
+  { label: 'Millets & Superfoods', description: 'Ragi, jowar, foxtail ideas', href: '/recipes?category=millets-superfoods', icon: <Wheat size={16} /> },
+  { label: 'Diabetic Friendly', description: 'Low GI recipes your doctor loves', href: '/recipes?category=diabetic-friendly', icon: <Leaf size={16} /> },
 ]
 const healthItems: Item[] = [
-  { label: 'Weight Loss', description: 'Evidence-based Telugu fat loss tips', href: '/health-tips/weight-loss', icon: '⚖️' },
-  { label: 'Diabetes', description: 'Sugar control with Indian meals', href: '/health-tips/diabetes', icon: '🩺' },
-  { label: 'Gut Health', description: 'Simple habits for better digestion', href: '/health-tips/gut-health', icon: '🫁' },
-  { label: 'Thyroid & Hormones', description: 'Food support for hormones', href: '/health-tips/thyroid', icon: '🔬' },
-  { label: 'Immunity', description: 'Daily immunity-building foods', href: '/health-tips/immunity', icon: '🛡️' },
-  { label: 'Kids Nutrition', description: 'Tiffin box & growth tips', href: '/health-tips/kids-nutrition', icon: '👶' },
+  { label: 'Weight Loss', description: 'Evidence-based Telugu fat loss tips', href: '/health-tips/weight-loss', icon: <Scale size={16} /> },
+  { label: 'Diabetes', description: 'Sugar control with Indian meals', href: '/health-tips/diabetes', icon: <Stethoscope size={16} /> },
+  { label: 'Gut Health', description: 'Simple habits for better digestion', href: '/health-tips/gut-health', icon: <Wind size={16} /> },
+  { label: 'Thyroid & Hormones', description: 'Food support for hormones', href: '/health-tips/thyroid', icon: <Microscope size={16} /> },
+  { label: 'Immunity', description: 'Daily immunity-building foods', href: '/health-tips/immunity', icon: <Shield size={16} /> },
+  { label: 'Kids Nutrition', description: 'Tiffin box & growth tips', href: '/health-tips/kids-nutrition', icon: <Baby size={16} /> },
 ]
 const dietItems: Item[] = [
-  { label: 'Free Plans', description: 'Downloadable PDFs for beginners', href: '/diet-plans#free', icon: '📄' },
-  { label: 'Premium Plans', description: 'Structured 4-week transformations', href: '/diet-plans#premium', icon: '⭐' },
+  { label: 'Free Plans', description: 'Downloadable PDFs for beginners', href: '/diet-plans#free', icon: <FileText size={16} /> },
+  { label: 'Premium Plans', description: 'Structured 4-week transformations', href: '/diet-plans#premium', icon: <Star size={16} /> },
 ]
 const videoItems: Item[] = [
-  { label: 'Cooking Videos', description: 'Step-by-step Telugu recipes', href: '/videos?type=cooking', icon: '🎬' },
-  { label: 'Health Education', description: 'Doctor-backed explainer videos', href: '/videos?type=education', icon: '🎓' },
-  { label: 'Reels & Shorts', description: 'Quick tips under 60 seconds', href: '/videos?type=shorts', icon: '⚡' },
+  { label: 'Cooking Videos', description: 'Step-by-step Telugu recipes', href: '/videos?type=cooking', icon: <Video size={16} /> },
+  { label: 'Health Education', description: 'Doctor-backed explainer videos', href: '/videos?type=education', icon: <GraduationCap size={16} /> },
+  { label: 'Reels & Shorts', description: 'Quick tips under 60 seconds', href: '/videos?type=shorts', icon: <Zap size={16} /> },
 ]
-const shopItems: Item[] = [
-  { label: 'Ebooks', description: 'Deep-dive guides on nutrition', href: '/shop?type=ebooks', icon: '📚' },
-  { label: 'Meal Plan PDFs', description: 'Printable weekly diet charts', href: '/shop?type=meal-plans', icon: '📋' },
-  { label: 'Online Courses', description: 'Video programs with workbooks', href: '/shop?type=courses', icon: '🎯' },
-  { label: 'Recommendations', description: 'Kitchen tools & healthy staples', href: '/shop?type=recommendations', icon: '🛒' },
+const healthToolItems: Item[] = [
+  { label: 'BMI Calculator', description: 'Check your Body Mass Index', href: '/health-tools', icon: <Scale size={16} /> },
+  { label: 'Calorie Calculator', description: 'Find your daily calorie needs (TDEE)', href: '/health-tools', icon: <Flame size={16} /> },
+  { label: 'Sugar Intake Checker', description: 'Daily sugar limit & food check', href: '/health-tools', icon: <Candy size={16} /> },
+  { label: 'Water Intake', description: 'How much water you need daily', href: '/health-tools', icon: <Droplets size={16} /> },
+  { label: 'Waist-Hip Ratio', description: 'Abdominal obesity risk check', href: '/health-tools', icon: <Ruler size={16} /> },
+  { label: 'Diet Plans', description: 'Free & premium meal plans', href: '/diet-plans', icon: <Salad size={16} /> },
 ]
 
 function ChevronDown({ open }: { open: boolean }) {
@@ -173,19 +182,19 @@ function UserMenu() {
           </div>
           <div className="p-2">
             <Link href="/profile" onClick={() => setOpen(false)} className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 transition hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800">
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-100 text-sm dark:bg-emerald-900/40">👤</span>
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-900/40"><User size={14} className="text-[#1A5C38] dark:text-emerald-400" /></span>
               My Profile
             </Link>
             <Link href="/profile#saved" onClick={() => setOpen(false)} className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 transition hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800">
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-100 text-sm dark:bg-blue-900/40">🔖</span>
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/40"><Bookmark size={14} className="text-blue-600 dark:text-blue-400" /></span>
               Saved Posts
             </Link>
             <Link href="/profile#liked" onClick={() => setOpen(false)} className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 transition hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800">
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-100 text-sm dark:bg-red-900/40">❤️</span>
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-100 dark:bg-red-900/40"><Heart size={14} className="text-red-500 dark:text-red-400" /></span>
               Liked Posts
             </Link>
             <Link href="/profile#settings" onClick={() => setOpen(false)} className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 transition hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800">
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gray-100 text-sm dark:bg-slate-700">⚙️</span>
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gray-100 dark:bg-slate-700"><Settings size={14} className="text-gray-500 dark:text-slate-400" /></span>
               Settings
             </Link>
             <div className="my-1.5 border-t border-gray-100 dark:border-slate-700" />
@@ -194,7 +203,7 @@ function UserMenu() {
               onClick={() => { setOpen(false); signOut({ callbackUrl: '/' }) }}
               className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] text-red-600 transition hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
             >
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-100 text-sm dark:bg-red-900/40">🚪</span>
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-100 dark:bg-red-900/40"><LogOut size={14} className="text-red-500 dark:text-red-400" /></span>
               Sign Out
             </button>
           </div>
@@ -231,15 +240,15 @@ function MobileUserSection({ session, onClose }: { session: ReturnType<typeof us
       {/* Collapsible links */}
       {open && (
         <div className="mt-1 space-y-0.5">
-          <Link href="/profile" onClick={onClose} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800">👤 My Profile</Link>
-          <Link href="/profile#saved" onClick={onClose} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800">🔖 Saved Posts</Link>
-          <Link href="/profile#liked" onClick={onClose} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800">❤️ Liked Posts</Link>
+          <Link href="/profile" onClick={onClose} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800"><User size={14} /> My Profile</Link>
+          <Link href="/profile#saved" onClick={onClose} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800"><Bookmark size={14} /> Saved Posts</Link>
+          <Link href="/profile#liked" onClick={onClose} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800"><Heart size={14} /> Liked Posts</Link>
           <button
             type="button"
             onClick={() => { onClose(); signOut({ callbackUrl: '/' }) }}
             className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
           >
-            🚪 Sign Out
+            <LogOut size={14} /> Sign Out
           </button>
         </div>
       )}
@@ -285,7 +294,7 @@ export default function Navbar() {
           <Dropdown label="Health Tips" items={healthItems} {...dd('Health Tips')} />
           <Dropdown label="Diet Plans" items={dietItems} {...dd('Diet Plans')} />
           <Dropdown label="Videos" items={videoItems} {...dd('Videos')} />
-          <Dropdown label="Shop" items={shopItems} {...dd('Shop')} />
+          <Dropdown label="Health Tools" items={healthToolItems} {...dd('Health Tools')} />
           <NavLink href="/blog" pathname={pathname}>Blog</NavLink>
           <NavLink href="/about" pathname={pathname}>About</NavLink>
         </nav>
@@ -354,10 +363,13 @@ export default function Navbar() {
           <MobileDropdown label="Health Tips" items={healthItems} />
           <MobileDropdown label="Diet Plans" items={dietItems} />
           <MobileDropdown label="Videos" items={videoItems} />
-          <MobileDropdown label="Shop" items={shopItems} />
+          <MobileDropdown label="Health Tools" items={healthToolItems} />
           <Link href="/blog" onClick={() => setMobileOpen(false)} className="block rounded-lg px-3 py-2.5 text-sm font-medium text-gray-800 hover:bg-gray-50 dark:text-slate-200 dark:hover:bg-slate-800">Blog</Link>
           <Link href="/about" onClick={() => setMobileOpen(false)} className="block rounded-lg px-3 py-2.5 text-sm font-medium text-gray-800 hover:bg-gray-50 dark:text-slate-200 dark:hover:bg-slate-800">About</Link>
-          <Link href="/search" onClick={() => setMobileOpen(false)} className="block rounded-lg px-3 py-2.5 text-sm font-medium text-gray-800 hover:bg-gray-50 dark:text-slate-200 dark:hover:bg-slate-800">🔍 Search</Link>
+          <Link href="/search" onClick={() => setMobileOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-800 hover:bg-gray-50 dark:text-slate-200 dark:hover:bg-slate-800">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" /></svg>
+            Search
+          </Link>
         </div>
 
         {/* Drawer footer */}

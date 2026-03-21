@@ -35,31 +35,33 @@ export default function RootShell({
   return (
     <SessionProvider session={session}>
       <Navbar />
+
+      {/* Outer wrapper — borders are absolute inside this, scroll with page */}
       <div className="relative">
 
-        {/* LEFT border — fixed to viewport edges, above content */}
+        {/* LEFT border — scrolls with page */}
         <div
           aria-hidden
-          className="pointer-events-none fixed bottom-0 left-0 top-0 z-30"
+          className="pointer-events-none absolute bottom-0 left-0 top-0 z-30"
           style={{
             width: 'clamp(16px, 3.5vw, 60px)',
             backgroundImage: isDark ? 'url(/DarkBorder.png)' : 'url(/LeftBorder.png)',
             backgroundRepeat: 'repeat-y',
             backgroundSize: '100% auto',
-            backgroundPosition: 'left top',
+            backgroundPosition: 'top left',
           }}
         />
 
-        {/* RIGHT border — fixed to viewport edges, above content */}
+        {/* RIGHT border — scrolls with page */}
         <div
           aria-hidden
-          className="pointer-events-none fixed bottom-0 right-0 top-0 z-30"
+          className="pointer-events-none absolute bottom-0 right-0 top-0 z-30"
           style={{
             width: 'clamp(14px, 3vw, 50px)',
             backgroundImage: isDark ? 'url(/DarkBorder.png)' : 'url(/RightBorder.png)',
             backgroundRepeat: 'repeat-y',
             backgroundSize: '100% auto',
-            backgroundPosition: 'left top',
+            backgroundPosition: 'top left',
             transform: isDark ? 'scaleX(-1)' : undefined,
           }}
         />
@@ -67,8 +69,7 @@ export default function RootShell({
         <main className="min-h-screen bg-white pt-[73px] dark:bg-slate-950">
           {children}
         </main>
-      </div>
-      <div className="relative z-20">
+
         <Footer />
       </div>
     </SessionProvider>

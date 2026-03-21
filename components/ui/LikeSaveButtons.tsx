@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { Heart, Bookmark } from 'lucide-react'
 
 type Props = {
   contentId: string
@@ -60,7 +61,7 @@ export default function LikeSaveButtons({ contentId, contentType, initialLikes =
             : 'border-gray-200 bg-white text-gray-600 hover:border-red-300 hover:text-red-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:border-red-700 dark:hover:text-red-400'
         }`}
       >
-        <span>{liked ? '❤️' : '🤍'}</span>
+        <span><Heart size={14} className={liked ? 'fill-current' : ''} /></span>
         <span>{likes}</span>
       </button>
       <button
@@ -73,7 +74,7 @@ export default function LikeSaveButtons({ contentId, contentType, initialLikes =
             : 'border-gray-200 bg-white text-gray-600 hover:border-[#1A5C38] hover:text-[#1A5C38] dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:border-emerald-700 dark:hover:text-emerald-400'
         }`}
       >
-        <span>{saved ? '🔖' : '📌'}</span>
+        <span><Bookmark size={14} className={saved ? 'fill-current' : ''} /></span>
         <span>{saved ? 'Saved' : 'Save'}</span>
       </button>
     </div>

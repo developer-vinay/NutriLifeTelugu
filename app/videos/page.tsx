@@ -4,6 +4,7 @@ import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { useLanguage } from '@/components/LanguageProvider'
 import LikeSaveButtons from '@/components/ui/LikeSaveButtons'
+import { Play } from 'lucide-react'
 
 type DBVideo = {
   _id: string
@@ -87,7 +88,7 @@ export default function VideosPage() {
                   {v.thumbnailUrl ? (
                     <img src={v.thumbnailUrl} alt={v.title} className="h-full w-full object-cover" />
                   ) : (
-                    <span className="text-3xl">▶</span>
+                    <div className="flex h-full w-full items-center justify-center"><Play size={32} className="text-white/70" /></div>
                   )}
                   {v.durationSeconds && (
                     <span className="absolute bottom-2 right-2 rounded bg-black/70 px-2 py-0.5 text-[11px]">

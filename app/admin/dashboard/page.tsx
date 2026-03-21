@@ -41,6 +41,7 @@ export default async function AdminDashboardPage() {
         <Link href="/admin/posts/new" className="inline-flex items-center rounded-md bg-[#1A5C38] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800">New Post →</Link>
         <Link href="/admin/recipes/new" className="inline-flex items-center rounded-md bg-[#1A5C38] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800">New Recipe →</Link>
         <Link href="/admin/videos/new" className="inline-flex items-center rounded-md bg-[#1A5C38] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800">New Video →</Link>
+        <Link href="/admin/plans/new" className="inline-flex items-center rounded-md bg-amber-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-amber-700">New Plan →</Link>
       </section>
 
       {/* Recent Posts + Recipes */}

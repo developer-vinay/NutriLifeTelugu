@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import LikeSaveButtons from '@/components/ui/LikeSaveButtons'
 import { useLanguage } from '@/components/LanguageProvider'
+import { UtensilsCrossed } from 'lucide-react'
 
 export type DBPost = {
   _id: string
@@ -110,8 +111,8 @@ export default function BlogPostClient({ post, related }: Props) {
                 className="mb-4 h-56 w-full rounded-2xl object-cover md:h-96"
               />
             ) : (
-              <div className="mb-4 flex h-56 items-center justify-center rounded-2xl bg-gray-200 text-4xl dark:bg-slate-900 md:h-80">
-                🍲
+              <div className="mb-4 flex h-56 items-center justify-center rounded-2xl bg-gray-200 dark:bg-slate-900 md:h-80">
+                <UtensilsCrossed size={40} className="text-gray-400 dark:text-slate-600" />
               </div>
             )}
 
@@ -246,7 +247,7 @@ export default function BlogPostClient({ post, related }: Props) {
                       {rp.heroImage ? (
                         <img src={rp.heroImage} alt={rp.title} className="h-36 w-full object-cover" />
                       ) : (
-                        <div className="flex h-36 items-center justify-center bg-gray-100 text-3xl dark:bg-slate-800">🍲</div>
+                        <div className="flex h-36 items-center justify-center bg-gray-100 dark:bg-slate-800"><UtensilsCrossed size={24} className="text-gray-400 dark:text-slate-600" /></div>
                       )}
                       <div className="p-3">
                         <span className="mb-1 inline-block text-[10px] font-semibold uppercase tracking-wide text-[#1A5C38] dark:text-emerald-300">{rp.tag}</span>

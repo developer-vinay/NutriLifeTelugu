@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useLanguage } from '@/components/LanguageProvider'
+import { Play } from 'lucide-react'
 
 type DBPost = {
   _id: string
@@ -228,7 +229,7 @@ export default function HomeMainLayout({ latestVideo }: { latestVideo: DBVideo |
               <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-gray-100 dark:bg-slate-700">
                 {latestVideo.thumbnailUrl
                   ? <img src={latestVideo.thumbnailUrl} alt={latestVideo.title} className="h-full w-full object-cover" />
-                  : <div className="absolute inset-0 flex items-center justify-center"><div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-gray-900">▶</div></div>
+                  : <div className="absolute inset-0 flex items-center justify-center"><div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-gray-900"><Play size={16} /></div></div>
                 }
               </div>
               <p className="text-[11px] font-medium text-gray-800 dark:text-slate-200">{latestVideo.title}</p>

@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useLanguage } from '@/components/LanguageProvider'
+import { Search, UtensilsCrossed } from 'lucide-react'
 
 type DBRecipe = {
   _id: string
@@ -97,7 +98,7 @@ export default function RecipesClient() {
           </div>
           <div className="w-full max-w-md">
             <div className="flex items-center gap-2 rounded-full border bg-white px-4 py-2 shadow-sm dark:border-slate-600 dark:bg-slate-700">
-              <span className="text-gray-400">🔎</span>
+              <Search size={16} className="text-gray-400 shrink-0" />
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -147,7 +148,7 @@ export default function RecipesClient() {
                   {featured.heroImage ? (
                     <img src={featured.heroImage} alt={featured.title} className="h-56 w-full object-cover md:h-auto md:w-1/2" />
                   ) : (
-                    <div className="flex h-56 items-center justify-center bg-emerald-100 text-5xl md:h-auto md:w-1/2 dark:bg-emerald-900/20">🍲</div>
+                    <div className="flex h-56 items-center justify-center bg-emerald-100 md:h-auto md:w-1/2 dark:bg-emerald-900/20"><UtensilsCrossed size={40} className="text-emerald-300" /></div>
                   )}
                   <div className="space-y-3 p-5 md:w-1/2">
                     <span className="inline-flex rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-800">{t.featured}</span>
@@ -175,7 +176,7 @@ export default function RecipesClient() {
                     {r.heroImage ? (
                       <img src={r.heroImage} alt={r.title} className="h-[200px] w-full object-cover" />
                     ) : (
-                      <div className="flex h-[200px] items-center justify-center bg-green-100 text-5xl dark:bg-emerald-900/20">🍲</div>
+                      <div className="flex h-[200px] items-center justify-center bg-green-100 dark:bg-emerald-900/20"><UtensilsCrossed size={36} className="text-emerald-300" /></div>
                     )}
                     <div className="space-y-2 p-4">
                       {r.tag && (

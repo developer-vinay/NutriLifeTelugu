@@ -4,6 +4,7 @@ import React, { useEffect } from 'react'
 import Link from 'next/link'
 import LikeSaveButtons from '@/components/ui/LikeSaveButtons'
 import { useLanguage } from '@/components/LanguageProvider'
+import { UtensilsCrossed, Eye } from 'lucide-react'
 
 type DBRecipe = {
   _id: string
@@ -75,7 +76,7 @@ export default function RecipeDetailClient({ recipe, related }: Props) {
           {recipe.heroImage ? (
             <img src={recipe.heroImage} alt={recipe.title} className="h-56 w-full object-cover md:h-80" />
           ) : (
-            <div className="flex h-56 items-center justify-center bg-emerald-50 text-6xl dark:bg-slate-700 md:h-80">🍲</div>
+            <div className="flex h-56 items-center justify-center bg-emerald-50 dark:bg-slate-700 md:h-80"><UtensilsCrossed size={48} className="text-emerald-300" /></div>
           )}
           <div className="space-y-4 p-6">
             {recipe.tag && (
@@ -89,7 +90,7 @@ export default function RecipeDetailClient({ recipe, related }: Props) {
               {recipe.prepTimeMinutes && <span>{t.prep}: {recipe.prepTimeMinutes} min</span>}
               {recipe.cookTimeMinutes && <span>{t.cook}: {recipe.cookTimeMinutes} min</span>}
               {recipe.servings && <span>{t.servings}: {recipe.servings}</span>}
-              {recipe.views > 0 && <span>👁 {recipe.views.toLocaleString('en-IN')} views</span>}
+              {recipe.views > 0 && <span className="flex items-center gap-1"><Eye size={13} /> {recipe.views.toLocaleString('en-IN')} views</span>}
             </div>
             {/* Like / Save */}
             <LikeSaveButtons
@@ -156,7 +157,7 @@ export default function RecipeDetailClient({ recipe, related }: Props) {
                 >
                   {r.heroImage
                     ? <img src={r.heroImage} alt={r.title} className="h-36 w-full object-cover" />
-                    : <div className="flex h-36 items-center justify-center bg-emerald-50 text-3xl dark:bg-slate-700">🍲</div>
+                    : <div className="flex h-36 items-center justify-center bg-emerald-50 dark:bg-slate-700"><UtensilsCrossed size={28} className="text-emerald-300" /></div>
                   }
                   <div className="p-4">
                     {r.tag && <span className="inline-flex rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-[#1A5C38] dark:bg-emerald-900/30 dark:text-emerald-400">{r.tag}</span>}

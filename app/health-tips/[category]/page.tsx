@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { connectDB } from '@/lib/mongodb'
 import { Post } from '@/models/Post'
+import { Salad } from 'lucide-react'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -58,7 +59,7 @@ export default async function HealthTipsCategoryPage({
                 {p.heroImage ? (
                   <img src={p.heroImage} alt={p.title} className="h-32 w-full object-cover" />
                 ) : (
-                  <div className="flex h-32 items-center justify-center bg-emerald-50 text-3xl">🥗</div>
+                  <div className="flex h-32 items-center justify-center bg-emerald-50"><Salad size={28} className="text-emerald-300" /></div>
                 )}
                 <div className="p-4">
                   {p.tag && (
