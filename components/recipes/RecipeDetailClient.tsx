@@ -1,10 +1,12 @@
 'use client'
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import LikeSaveButtons from '@/components/ui/LikeSaveButtons'
+import StarRating from '@/components/ui/StarRating'
+import CommentsSection from '@/components/ui/CommentsSection'
 import { useLanguage } from '@/components/LanguageProvider'
-import { UtensilsCrossed, Eye } from 'lucide-react'
+import { UtensilsCrossed, Eye, Printer } from 'lucide-react'
 
 type DBRecipe = {
   _id: string
@@ -53,6 +55,7 @@ const UI = {
 
 export default function RecipeDetailClient({ recipe, related }: Props) {
   const { setLanguage } = useLanguage()
+  const [copied, setCopied] = useState(false)
 
   // Sync language to match the recipe being read
   useEffect(() => {
@@ -60,6 +63,10 @@ export default function RecipeDetailClient({ recipe, related }: Props) {
       setLanguage(recipe.language)
     }
   }, [recipe.language, setLanguage])
+
+  const handleCopy = async () => {
+    try { await navigator.clipboard.writeText(window.location.href); setCopied(true); setTimeout(() => setCopied(false), 2000) } catch {}
+  }
 
   const lang = (recipe.language === 'te' ? 'te' : 'en') as 'te' | 'en'
   const t = UI[lang]
@@ -86,12 +93,51 @@ export default function RecipeDetailClient({ recipe, related }: Props) {
             )}
             <h1 className="font-nunito text-3xl font-bold text-gray-900 dark:text-slate-50">{recipe.title}</h1>
             {recipe.description && <p className="text-sm text-gray-600 dark:text-slate-400">{recipe.description}</p>}
+
+            {/* Jump to recipe */}
+            <a
+              href="#recipe-method"
+              className="inline-flex items-center gap-1.5 rounded-full bg-[#1A5C38] px-4 py-1.5 text-xs font-semibold text-white hover:opacity-90"
+            >
+              ↓ {lang === 'te' ? 'రెసిపీకి వెళ్ళు' : 'Jump to Recipe'}
+            </a>
+
             <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-slate-400">
               {recipe.prepTimeMinutes && <span>{t.prep}: {recipe.prepTimeMinutes} min</span>}
               {recipe.cookTimeMinutes && <span>{t.cook}: {recipe.cookTimeMinutes} min</span>}
               {recipe.servings && <span>{t.servings}: {recipe.servings}</span>}
               {recipe.views > 0 && <span className="flex items-center gap-1"><Eye size={13} /> {recipe.views.toLocaleString('en-IN')} views</span>}
             </div>
+
+            {/* Star rating */}
+            <StarRating contentType="recipe" contentId={recipe._id} />
+
+            {/* Share bar */}
+            <div className="flex flex-wrap items-center gap-2">
+              <a
+                href={`https://wa.me/?text=${encodeURIComponent(recipe.title + ' ' + (typeof window !== 'undefined' ? window.location.href : ''))}`}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-full bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white hover:opacity-90"
+              >
+                WhatsApp
+              </a>
+              <button
+                type="button"
+                onClick={handleCopy}
+                className="rounded-full bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-700 hover:opacity-90 dark:bg-slate-700 dark:text-slate-200"
+              >
+                {copied ? 'Copied!' : 'Copy link'}
+              </button>
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-700 hover:opacity-90 dark:bg-slate-700 dark:text-slate-200"
+              >
+                <Printer size={12} /> Print
+              </button>
+            </div>
+
             {/* Like / Save */}
             <LikeSaveButtons
               contentId={recipe._id}
@@ -136,7 +182,7 @@ export default function RecipeDetailClient({ recipe, related }: Props) {
         </div>
 
         {recipe.content && (
-          <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800">
+          <section id="recipe-method" className="mt-6 rounded-2xl border border-gray-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800">
             <h2 className="mb-3 font-nunito text-xl font-semibold text-gray-900 dark:text-slate-50">{t.method}</h2>
             <div
               className="prose max-w-none text-sm text-gray-700 dark:prose-invert dark:text-slate-300"
@@ -168,6 +214,13 @@ export default function RecipeDetailClient({ recipe, related }: Props) {
             </div>
           </section>
         )}
+
+        {/* Comments */}
+        <CommentsSection
+          contentType="recipe"
+          contentId={recipe._id}
+          lang={lang}
+        />
       </div>
     </div>
   )

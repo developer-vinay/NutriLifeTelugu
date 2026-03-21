@@ -3,8 +3,10 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import LikeSaveButtons from '@/components/ui/LikeSaveButtons'
+import StarRating from '@/components/ui/StarRating'
+import CommentsSection from '@/components/ui/CommentsSection'
 import { useLanguage } from '@/components/LanguageProvider'
-import { UtensilsCrossed } from 'lucide-react'
+import { UtensilsCrossed, Printer } from 'lucide-react'
 
 export type DBPost = {
   _id: string
@@ -157,11 +159,16 @@ export default function BlogPostClient({ post, related }: Props) {
               <span>{(post.views ?? 0).toLocaleString('en-IN')} views</span>
             </div>
 
+            {/* Star rating */}
+            <div className="mb-3">
+              <StarRating contentType="post" contentId={post._id} />
+            </div>
+
             {/* Share bar */}
             <div className="mb-5 flex flex-wrap items-center gap-3 rounded-2xl bg-gray-100 p-3 text-[11px] dark:bg-slate-900/80">
               <span className="text-gray-600 dark:text-slate-300">Share:</span>
               <a
-                href={`https://wa.me/?text=${encodeURIComponent(post.title + ' ')}`}
+                href={`https://wa.me/?text=${encodeURIComponent(post.title + ' ' + (typeof window !== 'undefined' ? window.location.href : ''))}`}
                 target="_blank"
                 rel="noreferrer"
                 className="rounded-full bg-emerald-500 px-3 py-1.5 text-xs text-white hover:opacity-90"
@@ -174,6 +181,13 @@ export default function BlogPostClient({ post, related }: Props) {
                 className="rounded-full bg-gray-200 px-3 py-1.5 text-xs text-gray-800 hover:opacity-90 dark:bg-slate-800 dark:text-slate-100"
               >
                 {copied ? 'Copied!' : 'Copy link'}
+              </button>
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="flex items-center gap-1 rounded-full bg-gray-200 px-3 py-1.5 text-xs text-gray-800 hover:opacity-90 dark:bg-slate-800 dark:text-slate-100"
+              >
+                <Printer size={12} /> Print
               </button>
               <div className="ml-auto">
                 <LikeSaveButtons contentId={post._id} contentType="post" initialLikes={post.likes ?? 0} />
@@ -274,6 +288,13 @@ export default function BlogPostClient({ post, related }: Props) {
                 </div>
               </div>
             </section>
+
+            {/* Comments */}
+            <CommentsSection
+              contentType="post"
+              contentId={post._id}
+              lang={(post.language === 'te' ? 'te' : 'en') as 'te' | 'en'}
+            />
 
             {/* Related */}
             {related.length > 0 && (

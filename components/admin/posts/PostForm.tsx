@@ -38,6 +38,7 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
   const [content, setContent] = useState(initialData?.content ?? '')
   const [isFeatured, setIsFeatured] = useState(initialData?.isFeatured ?? false)
   const [isPublished, setIsPublished] = useState(initialData?.isPublished ?? false)
+  const [author, setAuthor] = useState(initialData?.author ?? 'NutriLifeMithra')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
@@ -78,7 +79,7 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
       const body = {
         title, slug, excerpt, category, language, tag,
         heroImage, heroImagePublicId, youtubeUrl, content,
-        isFeatured, isPublished: publish, readTimeMinutes, contentImages,
+        isFeatured, isPublished: publish, readTimeMinutes, contentImages, author,
       }
       const url = mode === 'create' ? '/api/admin/posts' : `/api/admin/posts/${initialData._id}`
       const res = await fetch(url, {
@@ -153,6 +154,13 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
           <input type="url" value={youtubeUrl} onChange={(e) => setYoutubeUrl(e.target.value)}
             placeholder="https://youtube.com/..." className={inputCls} />
         </div>
+      </div>
+
+      <div className="space-y-1">
+        <label className="text-sm font-medium text-gray-800">Author Name</label>
+        <input type="text" value={author} onChange={(e) => setAuthor(e.target.value)}
+          placeholder="NutriLifeMithra"
+          className={inputCls} />
       </div>
 
       <div className="space-y-1">
