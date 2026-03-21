@@ -53,6 +53,7 @@ export default function StarRating({ contentType, contentId }: Props) {
     }
   }
 
+  // display: hover > selected > avg
   const display = hover || selected || avg
 
   return (
@@ -62,11 +63,11 @@ export default function StarRating({ contentType, contentId }: Props) {
           <button
             key={s}
             type="button"
-            disabled={submitting || selected > 0}
+            disabled={submitting}
             onClick={() => handleRate(s)}
-            onMouseEnter={() => !selected && setHover(s)}
+            onMouseEnter={() => setHover(s)}
             onMouseLeave={() => setHover(0)}
-            className="transition-transform hover:scale-110 disabled:cursor-default"
+            className="transition-transform hover:scale-110 disabled:opacity-60"
             aria-label={`Rate ${s} star${s > 1 ? 's' : ''}`}
           >
             <Star
@@ -84,7 +85,7 @@ export default function StarRating({ contentType, contentId }: Props) {
         {avg > 0 ? `${avg.toFixed(1)} (${count})` : 'Rate this'}
       </span>
       {selected > 0 && (
-        <span className="text-xs text-emerald-600 dark:text-emerald-400">Thanks!</span>
+        <span className="text-xs text-emerald-600 dark:text-emerald-400">✓ Rated</span>
       )}
     </div>
   )
