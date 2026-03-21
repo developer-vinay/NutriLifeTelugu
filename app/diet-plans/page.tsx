@@ -1,6 +1,7 @@
 import { connectDB } from '@/lib/mongodb'
 import { PremiumPlan } from '@/models/PremiumPlan'
 import Link from 'next/link'
+import BuyPlanButton from '@/components/payment/BuyPlanButton'
 
 export const dynamic = 'force-dynamic'
 
@@ -39,7 +40,7 @@ export default async function DietPlansPage() {
                   <input type="email" placeholder="మీ ఇమెయిల్"
                     className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#1A5C38] focus:outline-none focus:ring-1 focus:ring-[#1A5C38] dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder:text-slate-500" />
                   <button type="button" className="w-full rounded-lg bg-[#1A5C38] px-3 py-2 text-sm font-semibold text-white hover:opacity-90">
-                    Download (mock)
+                    Download Free PDF
                   </button>
                 </div>
               </div>
@@ -47,7 +48,7 @@ export default async function DietPlansPage() {
           </div>
         </section>
 
-        {/* Premium Plans — from DB */}
+        {/* Premium Plans */}
         <section id="premium">
           <h2 className="mb-4 font-nunito text-2xl font-bold text-gray-900 dark:text-slate-50">ప్రీమియం ప్లాన్స్</h2>
           {plans.length === 0 ? (
@@ -73,9 +74,13 @@ export default async function DietPlansPage() {
                       ))}
                     </ul>
                   )}
-                  <button type="button" className="mt-4 w-full rounded-lg bg-[#D97706] px-3 py-2 text-sm font-semibold text-white hover:opacity-90">
-                    Buy Now — {p.currency}{p.price} (Coming Soon)
-                  </button>
+                  {/* Live Razorpay buy button */}
+                  <BuyPlanButton
+                    planId={p._id.toString()}
+                    planTitle={p.title}
+                    price={p.price}
+                    currency={p.currency}
+                  />
                 </div>
               ))}
             </div>

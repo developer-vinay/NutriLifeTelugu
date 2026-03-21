@@ -18,6 +18,7 @@ export interface IUser extends Document {
   likedRecipes: mongoose.Types.ObjectId[]
   savedVideos: mongoose.Types.ObjectId[]
   likedVideos: mongoose.Types.ObjectId[]
+  purchasedPlans: mongoose.Types.ObjectId[]
   createdAt: Date
 }
 
@@ -36,6 +37,7 @@ const UserSchema = new Schema<IUser>(
     likedRecipes: [{ type: Schema.Types.ObjectId, ref: 'Recipe' }],
     savedVideos: [{ type: Schema.Types.ObjectId, ref: 'Video' }],
     likedVideos: [{ type: Schema.Types.ObjectId, ref: 'Video' }],
+    purchasedPlans: [{ type: Schema.Types.ObjectId, ref: 'PremiumPlan' }],
   },
   { timestamps: { createdAt: true, updatedAt: false } },
 )

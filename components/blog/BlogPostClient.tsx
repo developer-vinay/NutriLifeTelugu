@@ -193,26 +193,68 @@ export default function BlogPostClient({ post, related }: Props) {
               </div>
             )}
 
-            {/* Content */}
-            <div
-              className="prose prose-emerald max-w-none text-gray-700 prose-headings:text-gray-900 prose-a:text-[#1A5C38] prose-strong:text-gray-900 dark:prose-invert dark:text-slate-200 dark:prose-headings:text-slate-50 dark:prose-a:text-emerald-300 dark:prose-strong:text-slate-100"
-              dangerouslySetInnerHTML={{ __html: post.content }}
-            />
+            {/* Content — with content images injected inline between paragraphs */}
+            {(() => {
+              if (!post.contentImages || post.contentImages.length === 0) {
+                return (
+                  <div
+                    className="prose prose-emerald max-w-none text-gray-700 prose-headings:text-gray-900 prose-a:text-[#1A5C38] prose-strong:text-gray-900 dark:prose-invert dark:text-slate-200 dark:prose-headings:text-slate-50 dark:prose-a:text-emerald-300 dark:prose-strong:text-slate-100"
+                    dangerouslySetInnerHTML={{ __html: post.content }}
+                  />
+                )
+              }
 
-            {/* Content images — shown only if admin uploaded them */}
-            {post.contentImages && post.contentImages.length > 0 && (
-              <div className="mt-6 space-y-4">
-                {post.contentImages.map((img, i) => (
-                  <figure key={i} className="overflow-hidden rounded-2xl">
+              // Split content into paragraphs/blocks and interleave images
+              const blocks = post.content
+                .split(/(?<=<\/(?:p|h[1-6]|ul|ol|blockquote)>)/i)
+                .filter(Boolean)
+
+              const images = post.contentImages
+              // Distribute images evenly across the content
+              const step = Math.max(1, Math.floor(blocks.length / (images.length + 1)))
+
+              const result: React.ReactNode[] = []
+              let imgIdx = 0
+
+              blocks.forEach((block, i) => {
+                result.push(
+                  <div
+                    key={`block-${i}`}
+                    className="prose prose-emerald max-w-none text-gray-700 prose-headings:text-gray-900 prose-a:text-[#1A5C38] prose-strong:text-gray-900 dark:prose-invert dark:text-slate-200 dark:prose-headings:text-slate-50 dark:prose-a:text-emerald-300 dark:prose-strong:text-slate-100"
+                    dangerouslySetInnerHTML={{ __html: block }}
+                  />
+                )
+                // Insert an image after every `step` blocks
+                if ((i + 1) % step === 0 && imgIdx < images.length) {
+                  result.push(
+                    <figure key={`img-${imgIdx}`} className="my-6 overflow-hidden rounded-2xl">
+                      <img
+                        src={images[imgIdx]}
+                        alt={`${post.title} — image ${imgIdx + 1}`}
+                        className="w-full object-cover"
+                      />
+                    </figure>
+                  )
+                  imgIdx++
+                }
+              })
+
+              // Any remaining images go at the end
+              while (imgIdx < images.length) {
+                result.push(
+                  <figure key={`img-tail-${imgIdx}`} className="my-6 overflow-hidden rounded-2xl">
                     <img
-                      src={img}
-                      alt={`${post.title} — image ${i + 1}`}
+                      src={images[imgIdx]}
+                      alt={`${post.title} — image ${imgIdx + 1}`}
                       className="w-full object-cover"
                     />
                   </figure>
-                ))}
-              </div>
-            )}
+                )
+                imgIdx++
+              }
+
+              return <>{result}</>
+            })()}
 
             {/* Author box */}
             <section className="mt-8 rounded-2xl bg-gray-100 p-5 dark:bg-slate-900/70">

@@ -177,7 +177,7 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
 
       {/* Content images */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-800">Content Images (optional — shown after article text)</label>
+        <label className="text-sm font-medium text-gray-800">Content Images (optional — distributed inline throughout the article)</label>
         <div className="flex flex-wrap gap-3">
           {contentImages.map((img, i) => (
             <div key={i} className="relative">
@@ -202,7 +202,7 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
             }} />
           </label>
         </div>
-        <p className="text-xs text-gray-400">These images appear below the article content. Only uploaded images are shown — none if empty.</p>
+        <p className="text-xs text-gray-400">Images are automatically distributed between paragraphs throughout the article. Upload in the order you want them to appear.</p>
       </div>
 
       <div className="space-y-1">
