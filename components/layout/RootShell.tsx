@@ -6,6 +6,7 @@ import { SessionProvider } from 'next-auth/react'
 import type { Session } from 'next-auth'
 import Navbar from './Navbar'
 import Footer from './Footer'
+import ChatWidget from '@/components/chat/ChatWidget'
 
 export default function RootShell({
   children,
@@ -71,6 +72,7 @@ export default function RootShell({
         </main>
 
         <Footer />
+        <ChatWidget />
       </div>
     </SessionProvider>
   )
