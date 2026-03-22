@@ -212,10 +212,17 @@ export default function RecipesClient() {
 
         {/* Sidebar */}
         <aside className="space-y-4 md:sticky md:top-20 md:self-start">
-          <div className="rounded-2xl border bg-white p-4 dark:border-slate-700 dark:bg-slate-900">
-            <div className="flex h-64 items-center justify-center rounded-xl border border-dashed text-xs text-gray-400 dark:border-slate-600 dark:text-slate-500">
-              Advertisement — Google AdSense 300×250
-            </div>
+          {/* Newsletter signup replacing ad block */}
+          <div className="rounded-2xl border border-emerald-200 bg-gradient-to-b from-emerald-50 to-white p-5 dark:border-emerald-800/50 dark:from-emerald-900/20 dark:to-slate-900">
+            <p className="font-nunito text-base font-bold text-emerald-900 dark:text-emerald-100">Free Weekly Recipes</p>
+            <p className="mt-1 text-xs text-emerald-700 dark:text-emerald-300">Get 3 new Telugu recipes every week — free in your inbox.</p>
+            <form action="/api/subscribe" method="post" className="mt-3 space-y-2">
+              <input type="email" name="email" placeholder="Your email"
+                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#1A5C38] focus:outline-none focus:ring-1 focus:ring-[#1A5C38] dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500" />
+              <button type="submit" className="w-full rounded-lg bg-[#1A5C38] px-3 py-2 text-sm font-semibold text-white hover:opacity-90">
+                Subscribe free →
+              </button>
+            </form>
           </div>
           <div className="rounded-2xl border bg-white p-4 dark:border-slate-700 dark:bg-slate-900">
             <h4 className="mb-2 text-sm font-semibold text-gray-900 dark:text-slate-50">{t.popular}</h4>

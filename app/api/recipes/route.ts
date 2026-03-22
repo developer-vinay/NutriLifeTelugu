@@ -14,7 +14,7 @@ export async function GET(request: Request) {
   const recipes = await Recipe.find({ isPublished: true, language: lang })
     .sort({ views: -1, createdAt: -1 })
     .limit(limit)
-    .select('title slug tag language heroImage prepTimeMinutes views createdAt')
+    .select('title slug tag category language heroImage prepTimeMinutes servings description isFeatured views createdAt')
     .lean()
 
   return NextResponse.json(recipes)

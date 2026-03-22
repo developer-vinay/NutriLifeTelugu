@@ -105,14 +105,16 @@ export default function HomeMainLayout({ latestVideo }: { latestVideo: DBVideo |
               <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
                 {mainPosts.map((post) => (
                   <Link key={post._id} href={`/blog/${post.slug}`}
-                    className="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white p-3 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-800/60 dark:hover:border-emerald-600">
-                    <div className="mb-3 h-28 w-full rounded-xl bg-emerald-50 dark:bg-emerald-900/30" />
-                    <span className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-[#1A5C38] dark:text-emerald-400">{post.tag}</span>
-                    <h3 className="mb-1 line-clamp-2 text-[13px] font-semibold text-gray-900 group-hover:text-[#1A5C38] dark:text-slate-100 dark:group-hover:text-emerald-400">{post.title}</h3>
-                    <p className="mb-2 line-clamp-3 text-[11px] text-gray-500 dark:text-slate-400">{post.excerpt}</p>
-                    <p className="mt-auto text-[11px] text-gray-400 dark:text-slate-500">
-                      {post.readTimeMinutes ?? 5} min read · {timeAgo(post.createdAt)}
-                    </p>
+                    className="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-800/60 dark:hover:border-emerald-600">
+                    <div className="mb-3 h-28 w-full rounded-t-2xl bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900/30 dark:to-slate-700" />
+                    <div className="px-3 pb-3">
+                      <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wide text-[#1A5C38] dark:text-emerald-400">{post.tag}</span>
+                      <h3 className="mb-1 line-clamp-2 text-[13px] font-semibold text-gray-900 group-hover:text-[#1A5C38] dark:text-slate-100 dark:group-hover:text-emerald-400">{post.title}</h3>
+                      <p className="mb-2 line-clamp-2 text-[11px] text-gray-500 dark:text-slate-400">{post.excerpt}</p>
+                      <p className="text-[11px] text-gray-400 dark:text-slate-500">
+                        {post.readTimeMinutes ?? 5} min read · {timeAgo(post.createdAt)}
+                      </p>
+                    </div>
                   </Link>
                 ))}
               </div>
@@ -147,13 +149,13 @@ export default function HomeMainLayout({ latestVideo }: { latestVideo: DBVideo |
 
           {/* Promo banner */}
           <section>
-            <div className="flex flex-col items-start justify-between gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm md:flex-row md:items-center dark:border-emerald-800/50 dark:bg-emerald-900/20">
+            <div className="flex flex-col items-start justify-between gap-4 overflow-hidden rounded-2xl bg-gradient-to-r from-[#1A5C38] to-emerald-600 px-5 py-4 text-white shadow-md md:flex-row md:items-center">
               <div>
-                <p className="text-sm font-semibold text-emerald-900 dark:text-emerald-100">Free 7-day meal plan — Download now</p>
-                <p className="text-[11px] text-emerald-700 dark:text-emerald-300">Telugu cuisine · Diabetic friendly · Printable PDF</p>
+                <p className="font-nunito text-base font-bold">Free 7-day meal plan</p>
+                <p className="text-[12px] text-emerald-100">Telugu cuisine · Diabetic friendly · Printable PDF</p>
               </div>
-              <Link href="/diet-plans" className="inline-flex items-center rounded-full bg-[#1A5C38] px-4 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-700">
-                Get free →
+              <Link href="/diet-plans" className="inline-flex items-center rounded-full bg-white px-5 py-2 text-sm font-bold text-[#1A5C38] shadow hover:bg-emerald-50 transition whitespace-nowrap">
+                Download Free →
               </Link>
             </div>
           </section>
@@ -180,11 +182,13 @@ export default function HomeMainLayout({ latestVideo }: { latestVideo: DBVideo |
 
         {/* Sidebar */}
         <aside className="w-full space-y-4 md:w-[30%] md:sticky md:top-20 md:self-start">
-          {/* Ad */}
-          <div className="rounded-2xl border border-gray-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800/60">
-            <div className="flex h-48 items-center justify-center rounded-xl border border-dashed border-gray-300 bg-gray-50 dark:border-slate-600 dark:bg-slate-900/40">
-              <div className="text-center text-[11px] text-gray-400 dark:text-slate-500">Advertisement — Google AdSense 300×250</div>
-            </div>
+          {/* Newsletter replacing ad block */}
+          <div className="rounded-2xl border border-emerald-200 bg-gradient-to-b from-emerald-50 to-white p-4 shadow-sm dark:border-emerald-800/50 dark:from-emerald-900/20 dark:to-slate-800">
+            <p className="text-sm font-bold text-emerald-900 dark:text-emerald-100">Free 7-Day Meal Plan</p>
+            <p className="mt-1 text-xs text-emerald-700 dark:text-emerald-300">Telugu cuisine · Diabetic friendly · Printable PDF</p>
+            <Link href="/diet-plans" className="mt-3 flex items-center justify-center gap-1.5 rounded-lg bg-[#1A5C38] px-3 py-2 text-xs font-semibold text-white hover:opacity-90">
+              Download Free →
+            </Link>
           </div>
 
           {/* Newsletter */}
@@ -243,7 +247,16 @@ export default function HomeMainLayout({ latestVideo }: { latestVideo: DBVideo |
           <div className="space-y-2 rounded-2xl bg-amber-500 p-4 text-xs text-white shadow-md">
             <p className="text-sm font-bold">Premium Meal Plan — ₹299</p>
             <p className="text-[11px] text-amber-100">Structured 4-week Telugu meal plan with grocery lists, recipes, and blood-sugar friendly swaps.</p>
-            <button type="button" className="w-full rounded-md bg-white px-3 py-2 text-[11px] font-semibold text-amber-700 hover:bg-amber-50">Buy Now</button>
+            <Link href="/diet-plans#premium" className="block w-full rounded-md bg-white px-3 py-2 text-center text-[11px] font-semibold text-amber-700 hover:bg-amber-50">Buy Now →</Link>
+          </div>
+
+          {/* Health tools CTA */}
+          <div className="space-y-2 rounded-2xl border border-blue-200 bg-blue-50 p-4 dark:border-blue-800/50 dark:bg-blue-900/20">
+            <p className="text-xs font-bold text-blue-900 dark:text-blue-100">Free Health Tools</p>
+            <p className="text-[11px] text-blue-700 dark:text-blue-300">BMI · Calorie · Ideal Weight · Sugar · Water calculators</p>
+            <Link href="/health-tools" className="block w-full rounded-md bg-blue-600 px-3 py-2 text-center text-[11px] font-semibold text-white hover:bg-blue-700">
+              Try Free Tools →
+            </Link>
           </div>
         </aside>
       </div>
