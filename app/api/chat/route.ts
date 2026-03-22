@@ -24,9 +24,10 @@ const stripHtml = (html: string) =>
 
 export async function POST(req: Request) {
   const body = await req.json()
-  const { message, history = [] } = body as {
+  const { message, history = [], lang = 'en' } = body as {
     message: string
     history: { role: 'user' | 'assistant'; content: string }[]
+    lang?: string
   }
 
   if (!message?.trim()) {
@@ -119,16 +120,24 @@ export async function POST(req: Request) {
     : ''
 
   // ── System instruction (short = fewer tokens) ────────────────────────────
+  const langInstruction = lang === 'te'
+    ? 'IMPORTANT: Always reply in Telugu (తెలుగు) script only, regardless of how the user writes.'
+    : 'IMPORTANT: Always reply in English only.'
+
   const systemText =
     `You are NutriBot for NutriLifeMithra, a Telugu health & nutrition site. ` +
     `Answer only nutrition, diet, recipe, and wellness questions. ` +
-    `Reply in the same language the user writes (Telugu or English). ` +
-    `Be concise and friendly. Never diagnose medical conditions.` +
+    `Be concise and friendly. Never diagnose medical conditions. ` +
+    langInstruction +
     contextBlock
 
-  // ── Build Gemini contents (last 4 turns only) ────────────────────────────
+  // ── Build Gemini contents ─────────────────────────────────────────────────
+  // Inject system prompt as first user/model turn (works on all API versions)
   const recentHistory = history.slice(-4)
-  const contents: { role: string; parts: { text: string }[] }[] = []
+  const contents: { role: string; parts: { text: string }[] }[] = [
+    { role: 'user',  parts: [{ text: `System instructions:\n${systemText}` }] },
+    { role: 'model', parts: [{ text: lang === 'te' ? 'అర్థమైంది. నేను NutriBot, సహాయం చేయడానికి సిద్ధంగా ఉన్నాను.' : 'Understood. I am NutriBot, ready to help.' }] },
+  ]
 
   for (const msg of recentHistory) {
     contents.push({
@@ -139,36 +148,28 @@ export async function POST(req: Request) {
   contents.push({ role: 'user', parts: [{ text: q }] })
 
   // ── Try models in order until one works ──────────────────────────────────
-  const MODELS = [
-    'gemini-2.0-flash-lite',   // newest free lite
-    'gemini-1.5-flash-8b',     // smallest / cheapest
-    'gemini-1.5-flash',        // fallback
-  ]
+  const MODELS = ['gemini-2.0-flash', 'gemini-2.0-flash-lite-001', 'gemini-2.5-flash-lite']
 
   let reply = ''
   let lastErr = ''
 
   for (const model of MODELS) {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${process.env.GEMINI_API_KEY}`
+    const url = `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent?key=${process.env.GEMINI_API_KEY}`
     const geminiRes = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        systemInstruction: { parts: [{ text: systemText }] },
         contents,
         generationConfig: { maxOutputTokens: 400, temperature: 0.4 },
       }),
     })
 
-    if (geminiRes.status === 429) {
-      lastErr = `quota (${model})`
-      continue // try next model
-    }
+    if (geminiRes.status === 429) { lastErr = `quota (${model})`; continue }
 
     if (!geminiRes.ok) {
-      const err = await geminiRes.text()
-      console.error(`Gemini ${model} error:`, err)
-      lastErr = err
+      const errText = await geminiRes.text()
+      console.error(`Gemini ${model} error:`, errText)
+      lastErr = errText
       continue
     }
 

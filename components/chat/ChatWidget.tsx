@@ -41,11 +41,25 @@ export default function ChatWidget() {
   const [limitReached, setLimitReached] = useState(false)
   const [limitMsg, setLimitMsg] = useState('')
   const [showSuggested, setShowSuggested] = useState(true)
+  const [lang, setLang] = useState<'en' | 'te'>('en')
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const isLoggedIn = !!session?.user
   const isPremium = (session?.user as any)?.purchasedPlans?.length > 0
+
+  // Read language from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem('lang')
+    if (stored === 'te' || stored === 'en') setLang(stored)
+    // Watch for changes (e.g. user switches language while chat is open)
+    const handler = () => {
+      const v = localStorage.getItem('lang')
+      if (v === 'te' || v === 'en') setLang(v)
+    }
+    window.addEventListener('storage', handler)
+    return () => window.removeEventListener('storage', handler)
+  }, [])
 
   // Scroll to bottom on new messages
   useEffect(() => {
@@ -72,11 +86,13 @@ export default function ChatWidget() {
       .filter((m) => m.role !== 'system')
       .map((m) => ({ role: m.role as 'user' | 'assistant', content: m.content }))
 
+    const lang = (typeof window !== 'undefined' ? localStorage.getItem('lang') : null) ?? 'en'
+
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: trimmed, history }),
+        body: JSON.stringify({ message: trimmed, history, lang }),
       })
 
       const data = await res.json()
@@ -179,14 +195,27 @@ export default function ChatWidget() {
                   <Bot size={14} className="text-white" />
                 </div>
                 <div className="rounded-2xl rounded-tl-none bg-gray-100 px-3 py-2 text-sm text-gray-800 dark:bg-slate-800 dark:text-slate-200">
-                  <p>నమస్కారం! 👋 I'm NutriBot — your Telugu nutrition assistant.</p>
-                  <p className="mt-1 text-xs text-gray-500 dark:text-slate-400">
-                    Ask me about recipes, diet plans, weight loss, diabetes, or any nutrition question!
-                  </p>
+                  {lang === 'te' ? (
+                    <>
+                      <p>నమస్కారం! 👋 నేను NutriBot — మీ పోషకాహార సహాయకుడు.</p>
+                      <p className="mt-1 text-xs text-gray-500 dark:text-slate-400">
+                        రెసిపీలు, డైట్ ప్లాన్లు, బరువు తగ్గడం, డయాబెటిస్ గురించి అడగండి!
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p>Hello! 👋 I'm NutriBot — your nutrition assistant.</p>
+                      <p className="mt-1 text-xs text-gray-500 dark:text-slate-400">
+                        Ask me about recipes, diet plans, weight loss, diabetes, or any nutrition question!
+                      </p>
+                    </>
+                  )}
                   {!isLoggedIn && (
                     <p className="mt-2 text-[11px] text-amber-600 dark:text-amber-400">
-                      You have 3 free questions as a guest.{' '}
-                      <Link href="/login" className="underline font-semibold" onClick={() => setOpen(false)}>Sign in</Link> for 10/day.
+                      {lang === 'te'
+                        ? <>గెస్ట్‌గా 3 ప్రశ్నలు మాత్రమే. <Link href="/login" className="underline font-semibold" onClick={() => setOpen(false)}>సైన్ ఇన్</Link> చేయండి రోజుకు 10 కోసం.</>
+                        : <>You have 3 free questions as a guest. <Link href="/login" className="underline font-semibold" onClick={() => setOpen(false)}>Sign in</Link> for 10/day.</>
+                      }
                     </p>
                   )}
                 </div>
@@ -196,8 +225,10 @@ export default function ChatWidget() {
             {/* Suggested prompts */}
             {showSuggested && messages.length === 0 && (
               <div className="space-y-1.5">
-                <p className="text-[11px] font-medium text-gray-500 dark:text-slate-400 px-1">Try asking:</p>
-                {SUGGESTED.map((s) => (
+                <p className="text-[11px] font-medium text-gray-500 dark:text-slate-400 px-1">
+                  {lang === 'te' ? 'ఇవి అడగండి:' : 'Try asking:'}
+                </p>
+                {(lang === 'te' ? SUGGESTED_TE : SUGGESTED).map((s) => (
                   <button
                     key={s}
                     type="button"
@@ -281,7 +312,7 @@ export default function ChatWidget() {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask a nutrition question..."
+                placeholder={lang === 'te' ? 'పోషకాహార ప్రశ్న అడగండి...' : 'Ask a nutrition question...'}
                 disabled={loading}
                 maxLength={300}
                 className="flex-1 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#1A5C38] focus:outline-none focus:ring-1 focus:ring-[#1A5C38] disabled:opacity-60 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500"
