@@ -157,35 +157,54 @@ Your role:
   // Keep last 6 messages for context window efficiency
   const recentHistory = history.slice(-6)
 
-  const messages = [
-    { role: 'system', content: systemPrompt },
-    ...recentHistory,
-    { role: 'user', content: q },
-  ]
+  // ── Call Google Gemini ────────────────────────────────────────────────────
+  // Build contents array for Gemini (system prompt goes as first user turn)
+  const geminiContents: { role: string; parts: { text: string }[] }[] = []
 
-  // ── Call OpenAI ───────────────────────────────────────────────────────────
-  const openaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+  // Gemini doesn't have a system role — prepend as first user/model exchange
+  geminiContents.push({ role: 'user', parts: [{ text: systemPrompt }] })
+  geminiContents.push({ role: 'model', parts: [{ text: 'Understood! I am NutriBot, ready to help with Telugu nutrition questions.' }] })
+
+  // Add conversation history
+  for (const msg of recentHistory) {
+    geminiContents.push({
+      role: msg.role === 'user' ? 'user' : 'model',
+      parts: [{ text: msg.content }],
+    })
+  }
+
+  // Add current user message
+  geminiContents.push({ role: 'user', parts: [{ text: q }] })
+
+  const geminiRes = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: geminiContents,
+        generationConfig: {
+          maxOutputTokens: 500,
+          temperature: 0.5,
+        },
+        safetySettings: [
+          { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+          { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+        ],
+      }),
     },
-    body: JSON.stringify({
-      model: 'gpt-4o-mini', // cheap + fast
-      messages,
-      max_tokens: 500,
-      temperature: 0.5,
-    }),
-  })
+  )
 
-  if (!openaiRes.ok) {
-    const err = await openaiRes.text()
-    console.error('OpenAI error:', err)
+  if (!geminiRes.ok) {
+    const err = await geminiRes.text()
+    console.error('Gemini error:', err)
     return NextResponse.json({ error: 'AI service unavailable. Try again.' }, { status: 502 })
   }
 
-  const data = await openaiRes.json()
-  const reply = data.choices?.[0]?.message?.content ?? 'Sorry, I could not generate a response.'
+  const data = await geminiRes.json()
+  const reply =
+    data.candidates?.[0]?.content?.parts?.[0]?.text ??
+    'Sorry, I could not generate a response.'
 
   return NextResponse.json({
     reply,
