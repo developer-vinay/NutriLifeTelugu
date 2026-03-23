@@ -2,16 +2,18 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react'
 
-export type Language = 'te' | 'en'
+export type Language = 'te' | 'en' | 'hi'
 
 export const LANG_LABELS: Record<Language, string> = {
   te: 'తె',
   en: 'EN',
+  hi: 'हि',
 }
 
 export const LANG_LOGOS: Record<Language, string> = {
   te: '/TeluguLogo.png',
   en: '/EnglishLogo.png',
+  hi: '/HindiLogo.png',
 }
 
 export const BRAND_NAME = 'NutriLifeMithra'
@@ -30,7 +32,7 @@ export default function LanguageProvider({ children }: { children: React.ReactNo
 
   useEffect(() => {
     const stored = localStorage.getItem('lang') as Language | null
-    if (stored === 'te' || stored === 'en') setLang(stored)
+    if (stored === 'te' || stored === 'en' || stored === 'hi') setLang(stored)
   }, [])
 
   const setLanguage = (l: Language) => {

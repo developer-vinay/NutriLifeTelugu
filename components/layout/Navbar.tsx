@@ -85,7 +85,7 @@ function Dropdown({ label, items, open, onEnter, onLeave }: {
           </div>
           <div className="p-2">
             {items.map((item) => (
-              <Link key={item.href} href={item.href} className="group flex items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-gray-50 dark:hover:bg-slate-800">
+              <Link key={item.label} href={item.href} className="group flex items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-gray-50 dark:hover:bg-slate-800">
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gray-100 text-lg transition group-hover:bg-emerald-100 dark:bg-slate-800 dark:group-hover:bg-emerald-900/40">
                   {item.icon}
                 </span>
@@ -112,7 +112,7 @@ function MobileDropdown({ label, items }: { label: string; items: Item[] }) {
       {open && (
         <div className="mt-1 space-y-0.5 rounded-xl bg-gray-50 p-2 dark:bg-slate-800">
           {items.map((item) => (
-            <Link key={item.href} href={item.href} className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-white hover:text-[#1A5C38] dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-emerald-400">
+            <Link key={item.label} href={item.href} className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-white hover:text-[#1A5C38] dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-emerald-400">
               <span className="text-base">{item.icon}</span>{item.label}
             </Link>
           ))}

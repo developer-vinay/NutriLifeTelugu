@@ -40,7 +40,7 @@ export default function VideoForm({ mode, initialData }: VideoFormProps) {
   const [description, setDescription] = useState(initialData?.description ?? '')
   const [youtubeUrl, setYoutubeUrl] = useState(initialData?.youtubeUrl ?? '')
   const [category, setCategory] = useState(initialData?.category ?? 'cooking')
-  const [language, setLanguage] = useState<'en' | 'te'>(initialData?.language ?? 'en')
+  const [language, setLanguage] = useState<'en' | 'te' | 'hi'>(initialData?.language ?? 'en')
   const [tag, setTag] = useState(initialData?.tag ?? '')
   const [durationSeconds, setDurationSeconds] = useState(initialData?.durationSeconds ?? '')
   const [isFeatured, setIsFeatured] = useState(initialData?.isFeatured ?? false)
@@ -93,14 +93,14 @@ export default function VideoForm({ mode, initialData }: VideoFormProps) {
       <div className="rounded-xl border-2 border-[#1A5C38]/20 bg-emerald-50/50 p-4">
         <label className="mb-2 block text-sm font-semibold text-gray-800">Content Language</label>
         <div className="flex gap-3">
-          {(['en', 'te'] as const).map((l) => (
+          {(['en', 'te', 'hi'] as const).map((l) => (
             <button key={l} type="button" onClick={() => setLanguage(l)}
               className={`flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition ${
                 language === l
                   ? 'bg-[#1A5C38] text-white shadow-sm'
                   : 'border border-gray-300 bg-white text-gray-700 hover:border-[#1A5C38]'
               }`}>
-              {l === 'en' ? '🇬🇧 English' : '🇮🇳 తెలుగు'}
+              {l === 'en' ? '🇬🇧 English' : l === 'te' ? '🇮🇳 తెలుగు' : '🇮🇳 हिंदी'}
             </button>
           ))}
         </div>
@@ -109,7 +109,7 @@ export default function VideoForm({ mode, initialData }: VideoFormProps) {
       <div className="space-y-1">
         <label className="text-sm font-medium text-gray-800">Title</label>
         <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}
-          placeholder={language === 'te' ? 'వీడియో శీర్షిక...' : 'Video title...'}
+          placeholder={language === 'te' ? 'వీడియో శీర్షిక...' : language === 'hi' ? 'वीडियो शीर्षक...' : 'Video title...'}
           className={inputCls} />
       </div>
 

@@ -31,6 +31,13 @@ const SUGGESTED_TE = [
   'రోజుకు ఎన్ని కేలరీలు తినాలి?',
 ]
 
+const SUGGESTED_HI = [
+  'ब्लड शुगर कंट्रोल करने वाले खाने?',
+  'वजन घटाने के लिए मिलेट्स?',
+  'डायबिटिक नाश्ते के आइडिया',
+  'रोज कितनी कैलोरी खानी चाहिए?',
+]
+
 export default function ChatWidget() {
   const { data: session } = useSession()
   const [open, setOpen] = useState(false)
@@ -41,7 +48,7 @@ export default function ChatWidget() {
   const [limitReached, setLimitReached] = useState(false)
   const [limitMsg, setLimitMsg] = useState('')
   const [showSuggested, setShowSuggested] = useState(true)
-  const [lang, setLang] = useState<'en' | 'te'>('en')
+  const [lang, setLang] = useState<'en' | 'te' | 'hi'>('en')
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -51,11 +58,10 @@ export default function ChatWidget() {
   // Read language from localStorage
   useEffect(() => {
     const stored = localStorage.getItem('lang')
-    if (stored === 'te' || stored === 'en') setLang(stored)
-    // Watch for changes (e.g. user switches language while chat is open)
+    if (stored === 'te' || stored === 'en' || stored === 'hi') setLang(stored)
     const handler = () => {
       const v = localStorage.getItem('lang')
-      if (v === 'te' || v === 'en') setLang(v)
+      if (v === 'te' || v === 'en' || v === 'hi') setLang(v as any)
     }
     window.addEventListener('storage', handler)
     return () => window.removeEventListener('storage', handler)
@@ -198,22 +204,25 @@ export default function ChatWidget() {
                   {lang === 'te' ? (
                     <>
                       <p>నమస్కారం! 👋 నేను NutriBot — మీ పోషకాహార సహాయకుడు.</p>
-                      <p className="mt-1 text-xs text-gray-500 dark:text-slate-400">
-                        రెసిపీలు, డైట్ ప్లాన్లు, బరువు తగ్గడం, డయాబెటిస్ గురించి అడగండి!
-                      </p>
+                      <p className="mt-1 text-xs text-gray-500 dark:text-slate-400">రెసిపీలు, డైట్ ప్లాన్లు, బరువు తగ్గడం గురించి అడగండి!</p>
+                    </>
+                  ) : lang === 'hi' ? (
+                    <>
+                      <p>नमस्ते! 👋 मैं NutriBot हूँ — आपका पोषण सहायक।</p>
+                      <p className="mt-1 text-xs text-gray-500 dark:text-slate-400">रेसिपी, डाइट प्लान, वजन घटाने के बारे में पूछें!</p>
                     </>
                   ) : (
                     <>
                       <p>Hello! 👋 I'm NutriBot — your nutrition assistant.</p>
-                      <p className="mt-1 text-xs text-gray-500 dark:text-slate-400">
-                        Ask me about recipes, diet plans, weight loss, diabetes, or any nutrition question!
-                      </p>
+                      <p className="mt-1 text-xs text-gray-500 dark:text-slate-400">Ask me about recipes, diet plans, weight loss, diabetes, or any nutrition question!</p>
                     </>
                   )}
                   {!isLoggedIn && (
                     <p className="mt-2 text-[11px] text-amber-600 dark:text-amber-400">
                       {lang === 'te'
                         ? <>గెస్ట్‌గా 3 ప్రశ్నలు మాత్రమే. <Link href="/login" className="underline font-semibold" onClick={() => setOpen(false)}>సైన్ ఇన్</Link> చేయండి రోజుకు 10 కోసం.</>
+                        : lang === 'hi'
+                        ? <>गेस्ट के रूप में 3 सवाल। <Link href="/login" className="underline font-semibold" onClick={() => setOpen(false)}>साइन इन</Link> करें 10/दिन के लिए।</>
                         : <>You have 3 free questions as a guest. <Link href="/login" className="underline font-semibold" onClick={() => setOpen(false)}>Sign in</Link> for 10/day.</>
                       }
                     </p>
@@ -226,9 +235,9 @@ export default function ChatWidget() {
             {showSuggested && messages.length === 0 && (
               <div className="space-y-1.5">
                 <p className="text-[11px] font-medium text-gray-500 dark:text-slate-400 px-1">
-                  {lang === 'te' ? 'ఇవి అడగండి:' : 'Try asking:'}
+                  {lang === 'te' ? 'ఇవి అడగండి:' : lang === 'hi' ? 'ये पूछें:' : 'Try asking:'}
                 </p>
-                {(lang === 'te' ? SUGGESTED_TE : SUGGESTED).map((s) => (
+                {(lang === 'te' ? SUGGESTED_TE : lang === 'hi' ? SUGGESTED_HI : SUGGESTED).map((s) => (
                   <button
                     key={s}
                     type="button"
@@ -312,7 +321,7 @@ export default function ChatWidget() {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder={lang === 'te' ? 'పోషకాహార ప్రశ్న అడగండి...' : 'Ask a nutrition question...'}
+                placeholder={lang === 'te' ? 'పోషకాహార ప్రశ్న అడగండి...' : lang === 'hi' ? 'पोषण संबंधी सवाल पूछें...' : 'Ask a nutrition question...'}
                 disabled={loading}
                 maxLength={300}
                 className="flex-1 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#1A5C38] focus:outline-none focus:ring-1 focus:ring-[#1A5C38] disabled:opacity-60 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500"

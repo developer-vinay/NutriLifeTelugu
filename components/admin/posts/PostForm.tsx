@@ -29,7 +29,7 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
   const [slug, setSlug] = useState(initialData?.slug ?? '')
   const [excerpt, setExcerpt] = useState(initialData?.excerpt ?? '')
   const [category, setCategory] = useState(initialData?.category ?? 'general')
-  const [language, setLanguage] = useState<'en' | 'te'>(initialData?.language ?? 'en')
+  const [language, setLanguage] = useState<'en' | 'te' | 'hi'>(initialData?.language ?? 'en')
   const [tag, setTag] = useState(initialData?.tag ?? '')
   const [heroImage, setHeroImage] = useState(initialData?.heroImage ?? '')
   const [heroImagePublicId, setHeroImagePublicId] = useState(initialData?.heroImagePublicId ?? '')
@@ -105,7 +105,7 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
       <div className="rounded-xl border-2 border-[#1A5C38]/20 bg-emerald-50/50 p-4">
         <label className="mb-2 block text-sm font-semibold text-gray-800">Content Language</label>
         <div className="flex gap-3">
-          {(['en', 'te'] as const).map((l) => (
+          {(['en', 'te', 'hi'] as const).map((l) => (
             <button
               key={l}
               type="button"
@@ -116,7 +116,7 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
                   : 'border border-gray-300 bg-white text-gray-700 hover:border-[#1A5C38]'
               }`}
             >
-              {l === 'en' ? '🇬🇧 English' : '🇮🇳 తెలుగు'}
+              {l === 'en' ? '🇬🇧 English' : l === 'te' ? '🇮🇳 తెలుగు' : '🇮🇳 हिंदी'}
             </button>
           ))}
         </div>
@@ -125,7 +125,7 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
       <div className="space-y-1">
         <label className="text-sm font-medium text-gray-800">Title</label>
         <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}
-          placeholder={language === 'te' ? 'పోస్ట్ శీర్షిక ఇక్కడ రాయండి...' : 'Post title here...'}
+          placeholder={language === 'te' ? 'పోస్ట్ శీర్షిక ఇక్కడ రాయండి...' : language === 'hi' ? 'पोस्ट शीर्षक यहाँ लिखें...' : 'Post title here...'}
           className={inputCls} />
       </div>
 
@@ -146,7 +146,7 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
         <div className="space-y-1">
           <label className="text-sm font-medium text-gray-800">Tag</label>
           <input type="text" value={tag} onChange={(e) => setTag(e.target.value)}
-            placeholder={language === 'te' ? 'బరువు తగ్గడం' : 'Weight Loss'}
+            placeholder={language === 'te' ? 'బరువు తగ్గడం' : language === 'hi' ? 'वजन घटाना' : 'Weight Loss'}
             className={inputCls} />
         </div>
         <div className="space-y-1">
@@ -166,7 +166,7 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
       <div className="space-y-1">
         <label className="text-sm font-medium text-gray-800">Excerpt (max 200 chars)</label>
         <textarea value={excerpt} onChange={(e) => setExcerpt(e.target.value.slice(0, 200))} rows={3}
-          placeholder={language === 'te' ? 'సంక్షిప్త వివరణ...' : 'Brief description...'}
+          placeholder={language === 'te' ? 'సంక్షిప్త వివరణ...' : language === 'hi' ? 'संक्षिप्त विवरण...' : 'Brief description...'}
           className={inputCls} />
         <div className="text-right text-xs text-gray-500">{excerpt.length}/200</div>
       </div>
@@ -216,7 +216,7 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
       <div className="space-y-1">
         <label className="text-sm font-medium text-gray-800">Content</label>
         <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={12}
-          placeholder={language === 'te' ? 'వ్యాసం కంటెంట్...' : 'Article content...'}
+          placeholder={language === 'te' ? 'వ్యాసం కంటెంట్...' : language === 'hi' ? 'लेख सामग्री...' : 'Article content...'}
           className={inputCls} />
       </div>
 

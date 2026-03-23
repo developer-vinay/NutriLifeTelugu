@@ -122,21 +122,21 @@ export async function POST(req: Request) {
   // ── System instruction (short = fewer tokens) ────────────────────────────
   const langInstruction = lang === 'te'
     ? 'IMPORTANT: Always reply in Telugu (తెలుగు) script only, regardless of how the user writes.'
+    : lang === 'hi'
+    ? 'IMPORTANT: Always reply in Hindi (हिंदी) script only, regardless of how the user writes.'
     : 'IMPORTANT: Always reply in English only.'
 
   const systemText =
-    `You are NutriBot for NutriLifeMithra, a Telugu health & nutrition site. ` +
+    `You are NutriBot for NutriLifeMithra, a health & nutrition site for Indian families. ` +
     `Answer only nutrition, diet, recipe, and wellness questions. ` +
     `Be concise and friendly. Never diagnose medical conditions. ` +
     langInstruction +
     contextBlock
 
-  // ── Build Gemini contents ─────────────────────────────────────────────────
-  // Inject system prompt as first user/model turn (works on all API versions)
   const recentHistory = history.slice(-4)
   const contents: { role: string; parts: { text: string }[] }[] = [
     { role: 'user',  parts: [{ text: `System instructions:\n${systemText}` }] },
-    { role: 'model', parts: [{ text: lang === 'te' ? 'అర్థమైంది. నేను NutriBot, సహాయం చేయడానికి సిద్ధంగా ఉన్నాను.' : 'Understood. I am NutriBot, ready to help.' }] },
+    { role: 'model', parts: [{ text: lang === 'te' ? 'అర్థమైంది. నేను NutriBot, సహాయం చేయడానికి సిద్ధంగా ఉన్నాను.' : lang === 'hi' ? 'समझ गया। मैं NutriBot हूँ, मदद के लिए तैयार हूँ।' : 'Understood. I am NutriBot, ready to help.' }] },
   ]
 
   for (const msg of recentHistory) {

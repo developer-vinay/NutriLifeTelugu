@@ -49,7 +49,7 @@ const RecipeSchema = new Schema<IRecipe>(
       enum: ['breakfast','lunch','dinner','snacks','millets','diabetic-friendly'],
     },
     tag: { type: String },
-    language: { type: String, enum: ['te', 'en'], default: 'te' },
+    language: { type: String, enum: ['te', 'en', 'hi'], default: 'te' },
     heroImage: { type: String },
     heroImagePublicId: { type: String },
     prepTimeMinutes: { type: Number },

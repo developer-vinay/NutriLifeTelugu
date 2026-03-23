@@ -19,6 +19,8 @@ export interface IUser extends Document {
   savedVideos: mongoose.Types.ObjectId[]
   likedVideos: mongoose.Types.ObjectId[]
   purchasedPlans: mongoose.Types.ObjectId[]
+  resetToken?: string
+  resetTokenExpiry?: Date
   createdAt: Date
 }
 
@@ -30,7 +32,7 @@ const UserSchema = new Schema<IUser>(
     image: { type: String },
     role: { type: String, enum: ['admin', 'user'], default: 'user' },
     provider: { type: String, enum: ['credentials', 'google'], required: true },
-    language: { type: String, enum: ['te', 'en'], default: 'en' },
+    language: { type: String, enum: ['te', 'en', 'hi'], default: 'en' },
     savedPosts: [{ type: Schema.Types.ObjectId, ref: 'Post' }],
     likedPosts: [{ type: Schema.Types.ObjectId, ref: 'Post' }],
     savedRecipes: [{ type: Schema.Types.ObjectId, ref: 'Recipe' }],
@@ -38,6 +40,8 @@ const UserSchema = new Schema<IUser>(
     savedVideos: [{ type: Schema.Types.ObjectId, ref: 'Video' }],
     likedVideos: [{ type: Schema.Types.ObjectId, ref: 'Video' }],
     purchasedPlans: [{ type: Schema.Types.ObjectId, ref: 'PremiumPlan' }],
+    resetToken: { type: String },
+    resetTokenExpiry: { type: Date },
   },
   { timestamps: { createdAt: true, updatedAt: false } },
 )

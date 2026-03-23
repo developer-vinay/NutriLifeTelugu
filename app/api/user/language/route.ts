@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
   if (!session?.user) return NextResponse.json({ ok: false }, { status: 401 })
 
   const { language } = await req.json()
-  if (language !== 'te' && language !== 'en') {
+  if (language !== 'te' && language !== 'en' && language !== 'hi') {
     return NextResponse.json({ error: 'Invalid language' }, { status: 400 })
   }
 

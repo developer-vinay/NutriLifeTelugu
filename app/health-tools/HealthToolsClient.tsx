@@ -2,18 +2,37 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
+import { useLanguage } from '@/components/LanguageProvider'
 import { Scale, Flame, Ruler, Candy, Droplets, Activity, Star, Sun, Snowflake, Lightbulb } from 'lucide-react'
 
 type Tool = 'bmi' | 'calorie' | 'ideal-weight' | 'sugar' | 'water' | 'waist-hip'
 
-const tools: { id: Tool; icon: React.ReactNode; label: string; desc: string }[] = [
-  { id: 'bmi',         icon: <Scale size={18} />,    label: 'BMI Calculator',       desc: 'Check your Body Mass Index' },
-  { id: 'calorie',     icon: <Flame size={18} />,    label: 'Calorie Calculator',    desc: 'Daily calorie needs (TDEE)' },
-  { id: 'ideal-weight',icon: <Ruler size={18} />,    label: 'Ideal Weight',          desc: 'Find your healthy weight range' },
-  { id: 'sugar',       icon: <Candy size={18} />,    label: 'Sugar Intake Checker',  desc: 'Daily sugar limit & food check' },
-  { id: 'water',       icon: <Droplets size={18} />, label: 'Water Intake',          desc: 'How much water you need daily' },
-  { id: 'waist-hip',   icon: <Activity size={18} />, label: 'Waist-Hip Ratio',       desc: 'Abdominal obesity risk check' },
-]
+const toolsMeta = {
+  te: [
+    { id: 'bmi' as Tool,          icon: <Scale size={18} />,    label: 'BMI కాలిక్యులేటర్',       desc: 'మీ బాడీ మాస్ ఇండెక్స్ తనిఖీ చేయండి' },
+    { id: 'calorie' as Tool,      icon: <Flame size={18} />,    label: 'కేలరీ కాలిక్యులేటర్',     desc: 'రోజువారీ కేలరీ అవసరాలు (TDEE)' },
+    { id: 'ideal-weight' as Tool, icon: <Ruler size={18} />,    label: 'ఆదర్శ బరువు',              desc: 'మీ ఆరోగ్యకరమైన బరువు పరిధి' },
+    { id: 'sugar' as Tool,        icon: <Candy size={18} />,    label: 'షుగర్ ఇన్‌టేక్ చెకర్',    desc: 'రోజువారీ చక్కెర పరిమితి తనిఖీ' },
+    { id: 'water' as Tool,        icon: <Droplets size={18} />, label: 'నీటి అవసరం',               desc: 'రోజుకు ఎంత నీరు తాగాలి' },
+    { id: 'waist-hip' as Tool,    icon: <Activity size={18} />, label: 'వెయిస్ట్-హిప్ రేషియో',    desc: 'పొట్ట ఊబకాయం రిస్క్ తనిఖీ' },
+  ],
+  hi: [
+    { id: 'bmi' as Tool,          icon: <Scale size={18} />,    label: 'BMI कैलकुलेटर',        desc: 'अपना बॉडी मास इंडेक्स जांचें' },
+    { id: 'calorie' as Tool,      icon: <Flame size={18} />,    label: 'कैलोरी कैलकुलेटर',     desc: 'दैनिक कैलोरी जरूरत (TDEE)' },
+    { id: 'ideal-weight' as Tool, icon: <Ruler size={18} />,    label: 'आदर्श वजन',             desc: 'अपना स्वस्थ वजन सीमा जानें' },
+    { id: 'sugar' as Tool,        icon: <Candy size={18} />,    label: 'शुगर इनटेक चेकर',      desc: 'दैनिक चीनी सीमा जांचें' },
+    { id: 'water' as Tool,        icon: <Droplets size={18} />, label: 'पानी की जरूरत',         desc: 'रोज कितना पानी पीना चाहिए' },
+    { id: 'waist-hip' as Tool,    icon: <Activity size={18} />, label: 'कमर-कूल्हा अनुपात',    desc: 'पेट की मोटापा जोखिम जांचें' },
+  ],
+  en: [
+    { id: 'bmi' as Tool,          icon: <Scale size={18} />,    label: 'BMI Calculator',       desc: 'Check your Body Mass Index' },
+    { id: 'calorie' as Tool,      icon: <Flame size={18} />,    label: 'Calorie Calculator',    desc: 'Daily calorie needs (TDEE)' },
+    { id: 'ideal-weight' as Tool, icon: <Ruler size={18} />,    label: 'Ideal Weight',          desc: 'Find your healthy weight range' },
+    { id: 'sugar' as Tool,        icon: <Candy size={18} />,    label: 'Sugar Intake Checker',  desc: 'Daily sugar limit & food check' },
+    { id: 'water' as Tool,        icon: <Droplets size={18} />, label: 'Water Intake',          desc: 'How much water you need daily' },
+    { id: 'waist-hip' as Tool,    icon: <Activity size={18} />, label: 'Waist-Hip Ratio',       desc: 'Abdominal obesity risk check' },
+  ],
+}
 
 function UpgradeCTA({ result }: { result: string }) {
   return (
@@ -457,14 +476,55 @@ function WaistHipCalculator() {
 
 export default function HealthToolsClient() {
   const [activeTool, setActiveTool] = useState<Tool>('bmi')
+  const { language } = useLanguage()
+  const tools = toolsMeta[language]
+
+  const panelTitles = {
+    te: {
+      bmi: { title: 'BMI కాలిక్యులేటర్', sub: 'బాడీ మాస్ ఇండెక్స్ — మీ ఎత్తుకు ఆరోగ్యకరమైన బరువు సూచిక.' },
+      calorie: { title: 'కేలరీ కాలిక్యులేటర్', sub: 'Mifflin-St Jeor సమీకరణం ఉపయోగించి మీ రోజువారీ కేలరీ అవసరాలు లెక్కించండి.' },
+      'ideal-weight': { title: 'ఆదర్శ బరువు కాలిక్యులేటర్', sub: 'BMI మరియు Robinson ఫార్ములా ఆధారంగా మీ ఆరోగ్యకరమైన బరువు పరిధి.' },
+      sugar: { title: 'షుగర్ ఇన్‌టేక్ చెకర్', sub: 'WHO సిఫార్సు చేసిన రోజువారీ పరిమితితో పోల్చి మీరు ఈరోజు ఎంత చక్కెర తిన్నారో తనిఖీ చేయండి.' },
+      water: { title: 'నీటి అవసరం కాలిక్యులేటర్', sub: 'బరువు, చురుకుదనం మరియు వాతావరణం ఆధారంగా మీ శరీరానికి రోజుకు ఎంత నీరు అవసరమో తెలుసుకోండి.' },
+      'waist-hip': { title: 'వెయిస్ట్-హిప్ రేషియో', sub: 'పొట్ట ఊబకాయం రిస్క్ కొలవండి — గుండె జబ్బు మరియు మధుమేహానికి BMI కంటే మెరుగైన సూచిక.' },
+    },
+    hi: {
+      bmi: { title: 'BMI कैलकुलेटर', sub: 'बॉडी मास इंडेक्स — आपकी ऊंचाई के लिए स्वस्थ वजन का संकेतक।' },
+      calorie: { title: 'कैलोरी कैलकुलेटर', sub: 'Mifflin-St Jeor समीकरण से अपनी दैनिक कैलोरी जरूरत (TDEE) जानें।' },
+      'ideal-weight': { title: 'आदर्श वजन कैलकुलेटर', sub: 'BMI और Robinson फॉर्मूला के आधार पर अपना स्वस्थ वजन सीमा जानें।' },
+      sugar: { title: 'शुगर इनटेक चेकर', sub: 'WHO की अनुशंसित दैनिक सीमा से तुलना करें कि आज आपने कितनी चीनी खाई।' },
+      water: { title: 'पानी की जरूरत कैलकुलेटर', sub: 'वजन, गतिविधि और जलवायु के आधार पर जानें कि आपके शरीर को रोज कितना पानी चाहिए।' },
+      'waist-hip': { title: 'कमर-कूल्हा अनुपात', sub: 'पेट की मोटापा जोखिम मापें — हृदय रोग और मधुमेह के लिए BMI से बेहतर संकेतक।' },
+    },
+    en: {
+      bmi: { title: 'BMI Calculator', sub: 'Body Mass Index — a quick indicator of healthy weight for your height.' },
+      calorie: { title: 'Calorie Calculator', sub: 'Calculate your Total Daily Energy Expenditure (TDEE) using the Mifflin-St Jeor equation.' },
+      'ideal-weight': { title: 'Ideal Weight Calculator', sub: 'Find your healthy weight range based on height using BMI and Robinson formula.' },
+      sugar: { title: 'Sugar Intake Checker', sub: 'Check how much sugar you consumed today vs the WHO recommended daily limit.' },
+      water: { title: 'Water Intake Calculator', sub: 'Find out how much water your body needs daily based on weight, activity, and climate.' },
+      'waist-hip': { title: 'Waist-Hip Ratio', sub: 'Measure abdominal obesity risk — a better indicator than BMI for heart disease and diabetes.' },
+    },
+  } and climate.' },
+      'waist-hip': { title: 'Waist-Hip Ratio', sub: 'Measure abdominal obesity risk — a better indicator than BMI for heart disease and diabetes.' },
+    },
+  }
+
+  const panel = panelTitles[language][activeTool]
+  const heroTitle = language === 'te' ? 'హెల్త్ టూల్స్' : language === 'hi' ? 'हेल्थ टूल्स' : 'Health Tools'
+  const heroSub = language === 'te' ? 'మీ శరీరాన్ని అర్థం చేసుకోవడానికి ఉచిత కాలిక్యులేటర్లు.' : language === 'hi' ? 'अपने शरीर को समझने के लिए मुफ्त कैलकुलेटर।' : 'Free calculators to understand your body and guide your nutrition journey.'
+  const disclaimer = language === 'te'
+    ? '⚠ ఈ టూల్స్ సమాచార ప్రయోజనాల కోసం మాత్రమే మరియు వృత్తిపరమైన వైద్య సలహాను భర్తీ చేయవు.'
+    : language === 'hi'
+    ? '⚠ ये टूल्स केवल सूचनात्मक उद्देश्यों के लिए हैं और पेशेवर चिकित्सा सलाह का विकल्प नहीं हैं।'
+    : '⚠ These tools are for informational purposes only and do not replace professional medical advice. Consult a qualified nutritionist or doctor before making dietary changes.'
 
   return (
     <div className="bg-white dark:bg-slate-950">
       {/* Hero */}
       <section className="mt-16 bg-[#F0FAF4] dark:bg-slate-900">
         <div className="mx-auto max-w-6xl px-4 py-10">
-          <h1 className="font-nunito text-3xl font-bold text-[#1A5C38] dark:text-emerald-400">Health Tools</h1>
-          <p className="mt-1 text-sm text-gray-600 dark:text-slate-400">Free calculators to understand your body and guide your nutrition journey.</p>
+          <h1 className="font-nunito text-3xl font-bold text-[#1A5C38] dark:text-emerald-400">{heroTitle}</h1>
+          <p className="mt-1 text-sm text-gray-600 dark:text-slate-400">{heroSub}</p>
         </div>
       </section>
 
@@ -495,54 +555,20 @@ export default function HealthToolsClient() {
 
           {/* Calculator panel */}
           <div className="flex-1 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800/60">
-            {activeTool === 'bmi' && (
-              <>
-                <h2 className="mb-1 font-nunito text-xl font-bold text-gray-900 dark:text-slate-50">BMI Calculator</h2>
-                <p className="mb-5 text-xs text-gray-500 dark:text-slate-400">Body Mass Index — a quick indicator of healthy weight for your height.</p>
-                <BMICalculator />
-              </>
-            )}
-            {activeTool === 'calorie' && (
-              <>
-                <h2 className="mb-1 font-nunito text-xl font-bold text-gray-900 dark:text-slate-50">Calorie Calculator</h2>
-                <p className="mb-5 text-xs text-gray-500 dark:text-slate-400">Calculate your Total Daily Energy Expenditure (TDEE) using the Mifflin-St Jeor equation.</p>
-                <CalorieCalculator />
-              </>
-            )}
-            {activeTool === 'ideal-weight' && (
-              <>
-                <h2 className="mb-1 font-nunito text-xl font-bold text-gray-900 dark:text-slate-50">Ideal Weight Calculator</h2>
-                <p className="mb-5 text-xs text-gray-500 dark:text-slate-400">Find your healthy weight range based on height using BMI and Robinson formula.</p>
-                <IdealWeightCalculator />
-              </>
-            )}
-            {activeTool === 'sugar' && (
-              <>
-                <h2 className="mb-1 font-nunito text-xl font-bold text-gray-900 dark:text-slate-50">Sugar Intake Checker</h2>
-                <p className="mb-5 text-xs text-gray-500 dark:text-slate-400">Check how much sugar you consumed today vs the WHO recommended daily limit.</p>
-                <SugarIntakeChecker />
-              </>
-            )}
-            {activeTool === 'water' && (
-              <>
-                <h2 className="mb-1 font-nunito text-xl font-bold text-gray-900 dark:text-slate-50">Water Intake Calculator</h2>
-                <p className="mb-5 text-xs text-gray-500 dark:text-slate-400">Find out how much water your body needs daily based on weight, activity, and climate.</p>
-                <WaterIntakeCalculator />
-              </>
-            )}
-            {activeTool === 'waist-hip' && (
-              <>
-                <h2 className="mb-1 font-nunito text-xl font-bold text-gray-900 dark:text-slate-50">Waist-Hip Ratio</h2>
-                <p className="mb-5 text-xs text-gray-500 dark:text-slate-400">Measure abdominal obesity risk — a better indicator than BMI for heart disease and diabetes.</p>
-                <WaistHipCalculator />
-              </>
-            )}
+            <h2 className="mb-1 font-nunito text-xl font-bold text-gray-900 dark:text-slate-50">{panel.title}</h2>
+            <p className="mb-5 text-xs text-gray-500 dark:text-slate-400">{panel.sub}</p>
+            {activeTool === 'bmi' && <BMICalculator />}
+            {activeTool === 'calorie' && <CalorieCalculator />}
+            {activeTool === 'ideal-weight' && <IdealWeightCalculator />}
+            {activeTool === 'sugar' && <SugarIntakeChecker />}
+            {activeTool === 'water' && <WaterIntakeCalculator />}
+            {activeTool === 'waist-hip' && <WaistHipCalculator />}
           </div>
         </div>
 
         {/* Info strip */}
         <div className="mt-8 rounded-2xl border border-gray-100 bg-gray-50 p-4 text-xs text-gray-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
-        ⚠ These tools are for informational purposes only and do not replace professional medical advice. Consult a qualified nutritionist or doctor before making dietary changes.
+          {disclaimer}
         </div>
       </div>
     </div>

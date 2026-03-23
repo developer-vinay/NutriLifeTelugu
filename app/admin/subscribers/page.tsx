@@ -1,6 +1,7 @@
 import { connectDB } from '@/lib/mongodb'
 import { Subscriber } from '@/models/Subscriber'
 import { format } from 'date-fns'
+import SendDigestButton from './SendDigestButton'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -8,12 +9,16 @@ export const runtime = 'nodejs'
 export default async function AdminSubscribersPage() {
   await connectDB()
   const subscribers = await Subscriber.find().sort({ subscribedAt: -1 }).lean()
+  const activeCount = subscribers.filter((s) => s.isActive).length
 
   return (
     <div className="space-y-4">
-      <div>
-        <h2 className="text-lg font-semibold text-gray-900">Subscribers</h2>
-        <p className="text-sm text-gray-500">{subscribers.length} total subscribers.</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-semibold text-gray-900">Subscribers</h2>
+          <p className="text-sm text-gray-500">{subscribers.length} total · {activeCount} active</p>
+        </div>
+        <SendDigestButton activeCount={activeCount} />
       </div>
 
       <div className="overflow-hidden rounded-xl border bg-white">
@@ -43,9 +48,7 @@ export default async function AdminSubscribersPage() {
             ))}
             {subscribers.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-4 py-6 text-center text-sm text-gray-500">
-                  No subscribers yet.
-                </td>
+                <td colSpan={4} className="px-4 py-6 text-center text-sm text-gray-500">No subscribers yet.</td>
               </tr>
             )}
           </tbody>

@@ -17,6 +17,13 @@ type Video = {
 const LANG_BADGE: Record<string, string> = {
   en: 'bg-blue-50 text-blue-700',
   te: 'bg-amber-50 text-amber-700',
+  hi: 'bg-purple-50 text-purple-700',
+}
+
+const LANG_LABEL: Record<string, string> = {
+  en: 'EN',
+  te: 'తె',
+  hi: 'हि',
 }
 
 export default function AdminVideosPage() {
@@ -108,7 +115,7 @@ export default function AdminVideosPage() {
                 </td>
                 <td className="px-4 py-2">
                   <span className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold ${LANG_BADGE[video.language ?? 'en'] ?? 'bg-gray-100 text-gray-600'}`}>
-                    {video.language === 'te' ? 'తె' : 'EN'}
+                    {LANG_LABEL[video.language ?? 'en'] ?? video.language}
                   </span>
                 </td>
                 <td className="px-4 py-2 capitalize text-gray-700">{video.category ?? '-'}</td>

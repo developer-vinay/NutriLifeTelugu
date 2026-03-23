@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react'
 import Link from 'next/link'
-import { Search, UtensilsCrossed, FileText } from 'lucide-react'
+import { Search, UtensilsCrossed, FileText, Play } from 'lucide-react'
 
 type Item = {
   _id: string
@@ -13,7 +13,7 @@ type Item = {
   category: string
   readTimeMinutes: number
   heroImage: string
-  type: 'post' | 'recipe'
+  type: 'post' | 'recipe' | 'video'
 }
 
 const CATEGORIES = [
@@ -35,18 +35,23 @@ const CATEGORIES = [
 export default function SearchClient({
   initialPosts,
   initialRecipes,
+  initialVideos,
   initialQuery,
   initialCategory,
 }: {
   initialPosts: Item[]
   initialRecipes: Item[]
+  initialVideos: Item[]
   initialQuery: string
   initialCategory: string
 }) {
   const [query, setQuery] = useState(initialQuery)
   const [activeCategory, setActiveCategory] = useState(initialCategory)
 
-  const allItems = useMemo(() => [...initialPosts, ...initialRecipes], [initialPosts, initialRecipes])
+  const allItems = useMemo(
+    () => [...initialPosts, ...initialRecipes, ...initialVideos],
+    [initialPosts, initialRecipes, initialVideos],
+  )
 
   const filtered = useMemo(() => {
     let items = allItems
@@ -71,6 +76,7 @@ export default function SearchClient({
 
   const posts = filtered.filter((i) => i.type === 'post')
   const recipes = filtered.filter((i) => i.type === 'recipe')
+  const videos = filtered.filter((i) => i.type === 'video')
 
   return (
     <div className="min-h-screen bg-white pt-[72px] dark:bg-slate-950">
@@ -87,7 +93,7 @@ export default function SearchClient({
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search articles, recipes..."
+              placeholder="Search articles, recipes, videos..."
               className="w-full bg-transparent text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none dark:text-slate-100 dark:placeholder:text-slate-500"
             />
             {query && (
@@ -137,22 +143,29 @@ export default function SearchClient({
               Articles <span className="ml-1 text-sm font-normal text-gray-400">({posts.length})</span>
             </h2>
             <div className="grid gap-3 sm:grid-cols-2">
-              {posts.map((p) => (
-                <ResultCard key={p._id} item={p} />
-              ))}
+              {posts.map((p) => <ResultCard key={p._id} item={p} />)}
             </div>
           </section>
         )}
 
         {recipes.length > 0 && (
-          <section>
+          <section className="mb-8">
             <h2 className="mb-3 font-nunito text-lg font-semibold text-gray-900 dark:text-slate-50">
               Recipes <span className="ml-1 text-sm font-normal text-gray-400">({recipes.length})</span>
             </h2>
             <div className="grid gap-3 sm:grid-cols-2">
-              {recipes.map((r) => (
-                <ResultCard key={r._id} item={r} />
-              ))}
+              {recipes.map((r) => <ResultCard key={r._id} item={r} />)}
+            </div>
+          </section>
+        )}
+
+        {videos.length > 0 && (
+          <section>
+            <h2 className="mb-3 font-nunito text-lg font-semibold text-gray-900 dark:text-slate-50">
+              Videos <span className="ml-1 text-sm font-normal text-gray-400">({videos.length})</span>
+            </h2>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {videos.map((v) => <ResultCard key={v._id} item={v} />)}
             </div>
           </section>
         )}
@@ -170,19 +183,27 @@ export default function SearchClient({
 }
 
 function ResultCard({ item }: { item: Item }) {
-  const href = item.type === 'post' ? `/blog/${item.slug}` : `/recipes/${item.slug}`
+  const href = item.type === 'recipe' ? `/recipes/${item.slug}` : item.type === 'video' ? `/videos/${item.slug}` : `/blog/${item.slug}`
+  const typeLabel = item.type === 'recipe' ? 'Recipe' : item.type === 'video' ? 'Video' : 'Article'
+  const TypeIcon = item.type === 'recipe' ? UtensilsCrossed : item.type === 'video' ? Play : FileText
+
   return (
     <Link
       href={href}
       className="group flex gap-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition hover:border-emerald-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-800 dark:hover:border-emerald-600"
     >
       {/* Thumbnail */}
-      <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-emerald-50 dark:bg-slate-700">
+      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-emerald-50 dark:bg-slate-700">
         {item.heroImage ? (
           <img src={item.heroImage} alt={item.title} className="h-full w-full object-cover" />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            {item.type === 'recipe' ? <UtensilsCrossed size={22} className="text-emerald-300" /> : <FileText size={22} className="text-gray-400" />}
+            <TypeIcon size={22} className="text-gray-400" />
+          </div>
+        )}
+        {item.type === 'video' && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+            <Play size={14} className="text-white" fill="white" />
           </div>
         )}
       </div>
@@ -194,8 +215,8 @@ function ResultCard({ item }: { item: Item }) {
               {item.tag}
             </span>
           )}
-          <span className="text-[10px] text-gray-400 dark:text-slate-500 flex items-center gap-1">
-            {item.type === 'recipe' ? <><UtensilsCrossed size={10} /> Recipe</> : <><FileText size={10} /> Article</>}
+          <span className="flex items-center gap-1 text-[10px] text-gray-400 dark:text-slate-500">
+            <TypeIcon size={10} /> {typeLabel}
           </span>
         </div>
         <p className="mt-0.5 line-clamp-2 text-sm font-semibold text-gray-900 group-hover:text-[#1A5C38] dark:text-slate-100 dark:group-hover:text-emerald-400">

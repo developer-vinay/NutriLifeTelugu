@@ -10,7 +10,8 @@
     "seed:admin": "ts-node --project tsconfig.scripts.json scripts/seed-admin.ts",
     "seed:content": "ts-node --project tsconfig.scripts.json scripts/seed-content.ts",
     "seed:recipes": "ts-node --project tsconfig.scripts.json scripts/seed-recipes.ts",
-    "seed:videos": "ts-node --project tsconfig.scripts.json scripts/seed-videos.ts"
+    "seed:videos": "ts-node --project tsconfig.scripts.json scripts/seed-videos.ts",
+    "seed:hindi": "ts-node --project tsconfig.scripts.json scripts/seed-hindi.ts"
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.11.1",
@@ -36,6 +37,7 @@
     "razorpay": "^2.9.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "sib-api-v3-sdk": "^8.5.0",
     "slugify": "^1.6.8"
   },
   "devDependencies": {

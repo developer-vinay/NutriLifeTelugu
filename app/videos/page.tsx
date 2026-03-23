@@ -37,6 +37,18 @@ const UI = {
     views: 'వ్యూస్',
     catLabels: { All: 'అన్నీ', cooking: 'వంటకాలు', 'health-education': 'హెల్త్', 'weight-loss': 'వెయిట్ లాస్', diabetes: 'డయాబెటిస్', shorts: 'షార్ట్స్' },
   },
+  hi: {
+    heading: 'वीडियो',
+    sub: 'हिंदी स्वास्थ्य टिप्स और रेसिपी — वीडियो फॉर्मेट में।',
+    empty: 'वीडियो जल्द आ रहे हैं।',
+    watch: 'YouTube पर देखें',
+    featured: 'विशेष वीडियो',
+    ytBanner: 'हर हफ्ते नए वीडियो',
+    ytSub: 'NutriLifeMithra को YouTube पर सब्सक्राइब करें।',
+    subscribe: 'Subscribe करें →',
+    views: 'व्यूज',
+    catLabels: { All: 'सभी', cooking: 'रेसिपी', 'health-education': 'स्वास्थ्य', 'weight-loss': 'वजन घटाना', diabetes: 'मधुमेह', shorts: 'शॉर्ट्स' },
+  },
   en: {
     heading: 'Videos',
     sub: 'Telugu health tips & recipes — in video format.',

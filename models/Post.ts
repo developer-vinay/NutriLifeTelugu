@@ -11,7 +11,7 @@ export type PostCategory =
   | 'millets'
   | 'general'
 
-export type Language = 'te' | 'en'
+export type Language = 'te' | 'en' | 'hi'
 
 export interface IPost extends Document {
   title: string
@@ -46,7 +46,7 @@ const PostSchema = new Schema<IPost>(
       enum: ['weight-loss','diabetes','gut-health','immunity','thyroid','kids-nutrition','recipes','millets','general'],
     },
     tag: { type: String },
-    language: { type: String, enum: ['te', 'en'], default: 'te' },
+    language: { type: String, enum: ['te', 'en', 'hi'], default: 'te' },
     heroImage: { type: String },
     heroImagePublicId: { type: String },
     youtubeUrl: { type: String },

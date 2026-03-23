@@ -31,13 +31,13 @@ export const metadata: Metadata = {
     siteName: 'NutriLifeMithra',
     title: 'NutriLifeMithra — స్మార్ట్ న్యూట్రిషన్. బెటర్ లైఫ్.',
     description: 'ఆరోగ్యకరమైన తెలుగు రెసిపీలు, డైట్ ప్లాన్స్, హెల్త్ టిప్స్.',
-    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'NutriLifeMithra' }],
+    images: [{ url: '/api/og', width: 1200, height: 630, alt: 'NutriLifeMithra' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'NutriLifeMithra',
     description: 'ఆరోగ్యకరమైన తెలుగు రెసిపీలు, డైట్ ప్లాన్స్, హెల్త్ టిప్స్.',
-    images: ['/og-image.png'],
+    images: ['/api/og'],
   },
   robots: {
     index: true,
@@ -61,6 +61,39 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="te" className={`${inter.variable} ${nunito.variable}`} suppressHydrationWarning>
       <head>
+        {/* PWA manifest */}
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#1A5C38" />
+        <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="NutriLifeMithra" />
+
+        {/* Google Analytics */}
+        {process.env.NEXT_PUBLIC_GA_ID && (
+          <>
+            <script async src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`} />
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${process.env.NEXT_PUBLIC_GA_ID}');`,
+              }}
+            />
+          </>
+        )}
+
+        {/* OneSignal Push Notifications */}
+        {process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID && (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `window.OneSignalDeferred=window.OneSignalDeferred||[];OneSignalDeferred.push(async function(OneSignal){await OneSignal.init({appId:"${process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID}",notifyButton:{enable:true},allowLocalhostAsSecureOrigin:true});});`,
+            }}
+          />
+        )}
+        {process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID && (
+          <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer />
+        )}
+
+        {/* Theme init (prevent flash) */}
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var s=localStorage.getItem('theme');var d=window.matchMedia('(prefers-color-scheme: dark)').matches;var t=s==='dark'||s==='light'?s:(d?'dark':'light');if(t==='dark')document.documentElement.classList.add('dark');else document.documentElement.classList.remove('dark');}catch(e){}})();`,

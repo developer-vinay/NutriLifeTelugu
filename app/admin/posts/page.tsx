@@ -18,6 +18,13 @@ type Post = {
 const LANG_BADGE: Record<string, string> = {
   en: 'bg-blue-50 text-blue-700',
   te: 'bg-amber-50 text-amber-700',
+  hi: 'bg-purple-50 text-purple-700',
+}
+
+const LANG_LABEL: Record<string, string> = {
+  en: 'EN',
+  te: 'తె',
+  hi: 'हि',
 }
 
 export default function AdminPostsPage() {
@@ -110,7 +117,7 @@ export default function AdminPostsPage() {
                 </td>
                 <td className="px-4 py-2">
                   <span className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold ${LANG_BADGE[post.language ?? 'en'] ?? 'bg-gray-100 text-gray-600'}`}>
-                    {post.language === 'te' ? 'తె' : 'EN'}
+                    {LANG_LABEL[post.language ?? 'en'] ?? post.language}
                   </span>
                 </td>
                 <td className="px-4 py-2 text-gray-700">{post.category ?? '-'}</td>

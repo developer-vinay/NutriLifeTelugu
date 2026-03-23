@@ -42,6 +42,7 @@ export default async function AdminDashboardPage() {
         <Link href="/admin/recipes/new" className="inline-flex items-center rounded-md bg-[#1A5C38] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800">New Recipe →</Link>
         <Link href="/admin/videos/new" className="inline-flex items-center rounded-md bg-[#1A5C38] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800">New Video →</Link>
         <Link href="/admin/plans/new" className="inline-flex items-center rounded-md bg-amber-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-amber-700">New Plan →</Link>
+        <Link href="/admin/subscribers" className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700">📧 Send Weekly Digest →</Link>
       </section>
 
       {/* Recent Posts + Recipes */}
@@ -143,6 +144,7 @@ function StatCard({ label, value }: { label: string; value: number }) {
 
 function LangBadge({ lang }: { lang?: string }) {
   if (lang === 'te') return <span className="inline-flex rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-700">తె</span>
+  if (lang === 'hi') return <span className="inline-flex rounded-full bg-purple-50 px-2 py-0.5 text-[11px] font-semibold text-purple-700">हि</span>
   return <span className="inline-flex rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-semibold text-blue-700">EN</span>
 }
 

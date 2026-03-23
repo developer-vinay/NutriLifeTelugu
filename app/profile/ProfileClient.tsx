@@ -76,8 +76,8 @@ export default function ProfileClient() {
 
       {/* ── MOBILE layout (hidden on md+) ── */}
       <div className="md:hidden">
-        {/* Hero */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-[#1A5C38] via-emerald-700 to-emerald-500 pb-14 pt-8">
+        {/* Hero — with top padding for navbar */}
+        <div className="relative overflow-hidden bg-gradient-to-br from-[#1A5C38] via-emerald-700 to-emerald-500 pb-14 pt-20">
           <div className="absolute -right-12 -top-12 h-48 w-48 rounded-full bg-white/5" />
           <div className="relative mx-auto max-w-sm px-4 text-center">
             <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-4 border-white/30 bg-white/20 text-2xl font-bold text-white shadow-xl">
@@ -96,39 +96,49 @@ export default function ProfileClient() {
                 className={`flex flex-col items-center rounded-xl p-2 transition ${tab === t.key ? 'bg-emerald-50 dark:bg-emerald-900/20' : ''}`}>
                 <span className="text-base">{t.icon}</span>
                 <span className="text-sm font-bold text-gray-900 dark:text-slate-50">{t.count}</span>
-                <span className="text-[9px] text-gray-500 dark:text-slate-400 leading-tight text-center">{t.label.split(' ')[0]}</span>
+                <span className="text-[9px] leading-tight text-center text-gray-500 dark:text-slate-400">{t.label.split(' ')[0]}</span>
               </button>
             ))}
           </div>
         </div>
 
-        {/* Edit + Language side by side */}
-        <div className="mx-3 mt-3 grid grid-cols-2 gap-3">
-          <div className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-            <h3 className="mb-2 text-[11px] font-semibold text-gray-900 dark:text-slate-50">Edit Profile</h3>
-            <form onSubmit={handleSaveProfile} className="space-y-2">
+        {/* Edit Profile — full width */}
+        <div className="mx-3 mt-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+          <h3 className="mb-3 text-xs font-semibold text-gray-900 dark:text-slate-50">Edit Profile</h3>
+          <form onSubmit={handleSaveProfile} className="space-y-2">
+            <div>
+              <label className="mb-1 block text-[10px] font-medium text-gray-600 dark:text-slate-400">Display Name</label>
               <input type="text" value={name} onChange={(e) => setName(e.target.value)}
-                placeholder="Display name"
-                className="w-full rounded-lg border border-gray-300 bg-white px-2 py-1.5 text-xs text-gray-900 placeholder:text-gray-400 focus:border-[#1A5C38] focus:outline-none dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100" />
-              <button type="submit" disabled={saving}
-                className="w-full rounded-lg bg-[#1A5C38] py-1.5 text-xs font-semibold text-white disabled:opacity-60">
-                {saved ? '✓ Saved' : saving ? 'Saving…' : 'Save'}
-              </button>
-            </form>
-          </div>
-          <div className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-            <h3 className="mb-1 text-[11px] font-semibold text-gray-900 dark:text-slate-50">Language</h3>
-            <p className="mb-2 text-[10px] text-gray-500 dark:text-slate-400">Content language</p>
-            <div className="flex gap-1.5">
-              {(['te', 'en'] as Language[]).map((l) => (
-                <button key={l} type="button" onClick={() => setLanguage(l)}
-                  className={`flex-1 rounded-lg border py-1.5 text-xs font-semibold transition ${
-                    language === l ? 'border-[#1A5C38] bg-[#1A5C38] text-white' : 'border-gray-300 bg-white text-gray-700 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300'
-                  }`}>
-                  {LANG_LABELS[l]}
-                </button>
-              ))}
+                placeholder="Your name"
+                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs text-gray-900 placeholder:text-gray-400 focus:border-[#1A5C38] focus:outline-none dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100" />
             </div>
+            <div>
+              <label className="mb-1 block text-[10px] font-medium text-gray-600 dark:text-slate-400">Email</label>
+              <input type="email" value={data.user.email} disabled
+                className="w-full cursor-not-allowed rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs text-gray-900 opacity-60 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100" />
+            </div>
+            <button type="submit" disabled={saving}
+              className="w-full rounded-lg bg-[#1A5C38] py-2 text-xs font-semibold text-white disabled:opacity-60">
+              {saved ? '✓ Saved' : saving ? 'Saving…' : 'Save Changes'}
+            </button>
+          </form>
+        </div>
+
+        {/* Language — full width, 3 equal buttons */}
+        <div className="mx-3 mt-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+          <h3 className="mb-1 text-xs font-semibold text-gray-900 dark:text-slate-50">Content Language</h3>
+          <p className="mb-3 text-[10px] text-gray-500 dark:text-slate-400">Choose your preferred language for articles and recipes.</p>
+          <div className="grid grid-cols-3 gap-2">
+            {(['te', 'en', 'hi'] as Language[]).map((l) => (
+              <button key={l} type="button" onClick={() => setLanguage(l)}
+                className={`rounded-xl border py-2.5 text-sm font-semibold transition ${
+                  language === l
+                    ? 'border-[#1A5C38] bg-[#1A5C38] text-white'
+                    : 'border-gray-300 bg-white text-gray-700 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                }`}>
+                {LANG_LABELS[l]}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -139,7 +149,8 @@ export default function ProfileClient() {
               className={`flex shrink-0 items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition ${
                 tab === t.key ? 'bg-[#1A5C38] text-white' : 'bg-white text-gray-700 shadow-sm dark:bg-slate-800 dark:text-slate-300'
               }`}>
-              {t.icon} {t.label} <span className={`rounded-full px-1 text-[10px] font-bold ${tab === t.key ? 'bg-white/20' : 'bg-gray-100 text-gray-600 dark:bg-slate-700 dark:text-slate-400'}`}>{t.count}</span>
+              {t.icon} {t.label}
+              <span className={`rounded-full px-1 text-[10px] font-bold ${tab === t.key ? 'bg-white/20' : 'bg-gray-100 text-gray-600 dark:bg-slate-700 dark:text-slate-400'}`}>{t.count}</span>
             </button>
           ))}
         </div>
@@ -206,7 +217,7 @@ export default function ProfileClient() {
                 <h3 className="mb-1 text-sm font-semibold text-gray-900 dark:text-slate-50">Content Language</h3>
                 <p className="mb-3 text-xs text-gray-500 dark:text-slate-400">Choose your preferred language for articles and recipes.</p>
                 <div className="flex gap-2">
-                  {(['te', 'en'] as Language[]).map((l) => (
+                  {(['te', 'en', 'hi'] as Language[]).map((l) => (
                     <button key={l} type="button" onClick={() => setLanguage(l)}
                       className={`flex-1 rounded-xl border py-2.5 text-sm font-semibold transition ${
                         language === l ? 'border-[#1A5C38] bg-[#1A5C38] text-white' : 'border-gray-300 bg-white text-gray-700 hover:border-[#1A5C38] hover:text-[#1A5C38] dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300'

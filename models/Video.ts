@@ -38,7 +38,7 @@ const VideoSchema = new Schema<IVideo>(
       enum: ['cooking','health-education','weight-loss','diabetes','shorts'],
     },
     tag: { type: String },
-    language: { type: String, enum: ['te', 'en'], default: 'te' },
+    language: { type: String, enum: ['te', 'en', 'hi'], default: 'te' },
     durationSeconds: { type: Number },
     views: { type: Number, default: 0 },
     isPublished: { type: Boolean, default: false },

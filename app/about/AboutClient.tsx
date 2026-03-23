@@ -1,20 +1,18 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import { useLanguage } from '@/components/LanguageProvider'
-import { Leaf, Home, Heart, Users, Salad, BookOpen, Stethoscope } from 'lucide-react'
+import { Leaf, Home, Heart, Users, Salad, BookOpen, Stethoscope, Send, CheckCircle } from 'lucide-react'
 
 const content = {
   en: {
     hero_title: 'About NutriLife',
     hero_sub: 'Smart Nutrition. Better Life.',
     mission_title: 'Our Mission',
-    mission_body:
-      'NutriLife is a health and nutrition platform built to make healthy eating simple, affordable, and culturally relevant. We believe good nutrition starts in your own kitchen — with the ingredients you already know and love. Our goal is to bring evidence-based nutrition guidance to every family, in a language and style that feels familiar.',
+    mission_body: 'NutriLife is a health and nutrition platform built to make healthy eating simple, affordable, and culturally relevant. We believe good nutrition starts in your own kitchen — with the ingredients you already know and love.',
     story_title: 'Our Story',
-    story_body:
-      'NutriLife was born from a simple observation: most nutrition content online is either too generic or too expensive to be useful for everyday families. We set out to change that by creating content rooted in local food culture — traditional recipes made healthier, diet plans that fit real budgets, and health tips that actually work in daily life.',
+    story_body: 'NutriLife was born from a simple observation: most nutrition content online is either too generic or too expensive to be useful for everyday families. We set out to change that by creating content rooted in local food culture.',
     what_title: 'What We Offer',
     what_items: [
       '500+ healthy recipes with step-by-step instructions',
@@ -31,21 +29,70 @@ const content = {
       { icon: 'users', title: 'Community First', desc: 'Built with and for our readers, not just for them.' },
     ],
     team_title: 'Behind NutriLife',
-    team_body:
-      'NutriLife is run by a small team of nutritionists, food writers, and developers who are passionate about making healthy living accessible. We work with certified dietitians to ensure every piece of content meets the highest standards of accuracy.',
+    team_body: 'NutriLife is run by a small team of nutritionists, food writers, and developers passionate about making healthy living accessible. We work with certified dietitians to ensure accuracy.',
     cta_recipes: 'Browse Recipes',
     cta_plans: 'Free Diet Plans',
     cta_contact: 'Contact Us',
+    mission_badge: 'Mission',
+    story_badge: 'Story',
+    contact_title: 'Contact Us',
+    contact_sub: 'Send us your feedback, suggestions, or questions.',
+    name_label: 'Name',
+    name_placeholder: 'Your name',
+    msg_label: 'Message',
+    msg_placeholder: 'Write your message here...',
+    send_btn: 'Send Message',
+    sending: 'Sending…',
+    sent_msg: "Message sent! We'll get back to you soon.",
+    error_msg: 'Failed to send. Please try again.',
+  },
+  hi: {
+    hero_title: 'न्यूट्रीलाइफ के बारे में',
+    hero_sub: 'स्मार्ट पोषण। बेहतर जीवन।',
+    mission_title: 'हमारा मिशन',
+    mission_body: 'न्यूट्रीलाइफ एक स्वास्थ्य और पोषण मंच है जो स्वस्थ खाने को सरल, किफायती और सांस्कृतिक रूप से प्रासंगिक बनाने के लिए बनाया गया है। हम मानते हैं कि अच्छा पोषण आपकी अपनी रसोई से शुरू होता है।',
+    story_title: 'हमारी कहानी',
+    story_body: 'न्यूट्रीलाइफ एक सरल अवलोकन से जन्मा: ऑनलाइन अधिकांश पोषण सामग्री या तो बहुत सामान्य है या रोजमर्रा के परिवारों के लिए बहुत महंगी। हमने स्थानीय खाद्य संस्कृति में निहित सामग्री बनाकर इसे बदलने का निर्णय लिया।',
+    what_title: 'हम क्या प्रदान करते हैं',
+    what_items: [
+      'चरण-दर-चरण निर्देशों के साथ 500+ स्वस्थ रेसिपी',
+      'वजन घटाने, मधुमेह, थायरॉइड और अधिक के लिए मुफ्त डाइट प्लान',
+      'सरल भाषा में लिखे गए साक्ष्य-आधारित स्वास्थ्य लेख',
+      'खाना पकाने की गाइड और स्वास्थ्य शिक्षा के साथ YouTube वीडियो',
+      'पोषण टिप्स और मौसमी रेसिपी के साथ साप्ताहिक न्यूज़लेटर',
+    ],
+    values_title: 'हमारे मूल्य',
+    values: [
+      { icon: 'leaf', title: 'साक्ष्य-आधारित', desc: 'हर टिप और रेसिपी पोषण विज्ञान पर आधारित है।' },
+      { icon: 'home', title: 'सांस्कृतिक जड़ें', desc: 'हम स्थानीय सामग्री और पारंपरिक खाना पकाने के तरीकों का जश्न मनाते हैं।' },
+      { icon: 'heart', title: 'सभी के लिए सुलभ', desc: 'सभी के लिए मुफ्त सामग्री — बुनियादी बातों पर कोई पेवॉल नहीं।' },
+      { icon: 'users', title: 'समुदाय पहले', desc: 'हमारे पाठकों के साथ और उनके लिए बनाया गया।' },
+    ],
+    team_title: 'न्यूट्रीलाइफ के पीछे',
+    team_body: 'न्यूट्रीलाइफ पोषण विशेषज्ञों, खाद्य लेखकों और डेवलपर्स की एक छोटी टीम द्वारा चलाया जाता है जो स्वस्थ जीवन को सुलभ बनाने के बारे में भावुक हैं।',
+    cta_recipes: 'रेसिपी देखें',
+    cta_plans: 'मुफ्त डाइट प्लान',
+    cta_contact: 'संपर्क करें',
+    mission_badge: 'मिशन',
+    story_badge: 'कहानी',
+    contact_title: 'संपर्क करें',
+    contact_sub: 'अपनी प्रतिक्रिया, सुझाव या प्रश्न भेजें।',
+    name_label: 'नाम',
+    name_placeholder: 'आपका नाम',
+    msg_label: 'संदेश',
+    msg_placeholder: 'यहाँ अपना संदेश लिखें...',
+    send_btn: 'संदेश भेजें',
+    sending: 'भेज रहे हैं…',
+    sent_msg: 'संदेश भेजा गया! हम जल्द ही आपसे संपर्क करेंगे।',
+    error_msg: 'भेजने में विफल। कृपया पुनः प्रयास करें।',
   },
   te: {
     hero_title: 'న్యూట్రిలైఫ్ గురించి',
     hero_sub: 'స్మార్ట్ న్యూట్రిషన్. బెటర్ లైఫ్.',
     mission_title: 'మా లక్ష్యం',
-    mission_body:
-      'న్యూట్రిలైఫ్ అనేది ఆరోగ్యకరమైన తినడాన్ని సులభంగా, అందుబాటులో మరియు సాంస్కృతికంగా సంబంధితంగా చేయడానికి నిర్మించిన ఒక ఆరోగ్య మరియు పోషకాహార వేదిక. మంచి పోషకాహారం మీ స్వంత వంటగదిలో మొదలవుతుందని మేము నమ్ముతున్నాం — మీకు ఇప్పటికే తెలిసిన మరియు ఇష్టమైన పదార్థాలతో. ప్రతి కుటుంబానికి సాక్ష్యం-ఆధారిత పోషకాహార మార్గదర్శకత్వాన్ని అందించడం మా లక్ష్యం.',
+    mission_body: 'న్యూట్రిలైఫ్ అనేది ఆరోగ్యకరమైన తినడాన్ని సులభంగా, అందుబాటులో మరియు సాంస్కృతికంగా సంబంధితంగా చేయడానికి నిర్మించిన ఒక ఆరోగ్య మరియు పోషకాహార వేదిక.',
     story_title: 'మా కథ',
-    story_body:
-      'న్యూట్రిలైఫ్ ఒక సాధారణ పరిశీలన నుండి పుట్టింది: ఆన్‌లైన్‌లో చాలా పోషకాహార కంటెంట్ రోజువారీ కుటుంబాలకు ఉపయోగపడేంత సాధారణంగా లేదా చాలా ఖరీదుగా ఉంటుంది. స్థానిక ఆహార సంస్కృతిలో పాతుకుపోయిన కంటెంట్ సృష్టించడం ద్వారా దాన్ని మార్చాలని మేము నిర్ణయించుకున్నాం — ఆరోగ్యకరంగా చేయబడిన సాంప్రదాయ వంటకాలు, నిజమైన బడ్జెట్‌లకు సరిపోయే డైట్ ప్లాన్‌లు మరియు రోజువారీ జీవితంలో నిజంగా పని చేసే ఆరోగ్య చిట్కాలు.',
+    story_body: 'న్యూట్రిలైఫ్ ఒక సాధారణ పరిశీలన నుండి పుట్టింది: ఆన్‌లైన్‌లో చాలా పోషకాహార కంటెంట్ రోజువారీ కుటుంబాలకు ఉపయోగపడేంత సాధారణంగా లేదా చాలా ఖరీదుగా ఉంటుంది.',
     what_title: 'మేము అందించేది',
     what_items: [
       'దశల వారీ సూచనలతో 500+ ఆరోగ్యకరమైన వంటకాలు',
@@ -62,17 +109,52 @@ const content = {
       { icon: 'users', title: 'కమ్యూనిటీ ఫస్ట్', desc: 'మా పాఠకులతో మరియు వారి కోసం నిర్మించబడింది.' },
     ],
     team_title: 'న్యూట్రిలైఫ్ వెనుక',
-    team_body:
-      'న్యూట్రిలైఫ్ ఆరోగ్యకరమైన జీవనాన్ని అందుబాటులో ఉంచడంపై మక్కువ ఉన్న పోషకాహార నిపుణులు, ఆహార రచయితలు మరియు డెవలపర్‌ల చిన్న బృందం నడుపుతోంది. ప్రతి కంటెంట్ ఖచ్చితత్వం యొక్క అత్యున్నత ప్రమాణాలను అందుకుంటుందని నిర్ధారించడానికి మేము సర్టిఫైడ్ డైటీషియన్‌లతో కలిసి పని చేస్తాం.',
+    team_body: 'న్యూట్రిలైఫ్ ఆరోగ్యకరమైన జీవనాన్ని అందుబాటులో ఉంచడంపై మక్కువ ఉన్న పోషకాహార నిపుణులు, ఆహార రచయితలు మరియు డెవలపర్‌ల చిన్న బృందం నడుపుతోంది.',
     cta_recipes: 'వంటకాలు చూడండి',
     cta_plans: 'ఉచిత డైట్ ప్లాన్‌లు',
     cta_contact: 'సంప్రదించండి',
+    mission_badge: 'మా లక్ష్యం',
+    story_badge: 'మా కథ',
+    contact_title: 'సంప్రదించండి',
+    contact_sub: 'మీ అభిప్రాయాలు, సూచనలు లేదా ప్రశ్నలు పంపండి.',
+    name_label: 'పేరు',
+    name_placeholder: 'మీ పేరు',
+    msg_label: 'సందేశం',
+    msg_placeholder: 'మీ సందేశం ఇక్కడ రాయండి...',
+    send_btn: 'పంపండి',
+    sending: 'పంపుతున్నాం...',
+    sent_msg: 'మీ సందేశం పంపబడింది! త్వరలో మీకు సమాధానం ఇస్తాం.',
+    error_msg: 'పంపడం విఫలమైంది. మళ్ళీ ప్రయత్నించండి.',
   },
 }
 
 export default function AboutClient() {
   const { language } = useLanguage()
-  const t = content[language]
+  const t = content[language] ?? content.en
+
+  const [contactName, setContactName] = useState('')
+  const [contactEmail, setContactEmail] = useState('')
+  const [contactMsg, setContactMsg] = useState('')
+  const [contactLoading, setContactLoading] = useState(false)
+  const [contactDone, setContactDone] = useState(false)
+  const [contactError, setContactError] = useState('')
+
+  async function handleContact(e: React.FormEvent) {
+    e.preventDefault()
+    setContactLoading(true)
+    setContactError('')
+    const res = await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: contactName, email: contactEmail, message: contactMsg }),
+    })
+    setContactLoading(false)
+    if (res.ok) {
+      setContactDone(true)
+    } else {
+      setContactError(t.error_msg)
+    }
+  }
 
   return (
     <div className="bg-white dark:bg-slate-950">
@@ -91,7 +173,7 @@ export default function AboutClient() {
         <section className="grid gap-8 md:grid-cols-2 md:items-center">
           <div>
             <span className="mb-3 inline-block rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-[#1A5C38] dark:bg-emerald-900/40 dark:text-emerald-400">
-              {language === 'te' ? 'మా లక్ష్యం' : 'Mission'}
+              {t.mission_badge}
             </span>
             <h2 className="mb-4 font-nunito text-2xl font-bold text-gray-900 dark:text-slate-50">{t.mission_title}</h2>
             <p className="leading-relaxed text-gray-600 dark:text-slate-400">{t.mission_body}</p>
@@ -108,7 +190,7 @@ export default function AboutClient() {
           </div>
           <div className="order-1 md:order-2">
             <span className="mb-3 inline-block rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">
-              {language === 'te' ? 'మా కథ' : 'Story'}
+              {t.story_badge}
             </span>
             <h2 className="mb-4 font-nunito text-2xl font-bold text-gray-900 dark:text-slate-50">{t.story_title}</h2>
             <p className="leading-relaxed text-gray-600 dark:text-slate-400">{t.story_body}</p>
@@ -174,6 +256,47 @@ export default function AboutClient() {
           <Link href="/advertise" className="rounded-full border border-gray-300 px-6 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800">
             {t.cta_contact}
           </Link>
+        </section>
+
+        {/* Contact / Feedback Form */}
+        <section id="contact" className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+          <h2 className="mb-1 font-nunito text-2xl font-bold text-gray-900 dark:text-slate-50">{t.contact_title}</h2>
+          <p className="mb-6 text-sm text-gray-500 dark:text-slate-400">{t.contact_sub}</p>
+          {contactDone ? (
+            <div className="flex items-center gap-3 rounded-xl bg-emerald-50 p-4 dark:bg-emerald-900/20">
+              <CheckCircle size={20} className="text-[#1A5C38]" />
+              <p className="text-sm font-medium text-[#1A5C38]">{t.sent_msg}</p>
+            </div>
+          ) : (
+            <form onSubmit={handleContact} className="space-y-4">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-slate-300">{t.name_label}</label>
+                  <input type="text" value={contactName} onChange={(e) => setContactName(e.target.value)} required
+                    className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#1A5C38] focus:outline-none focus:ring-1 focus:ring-[#1A5C38] dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+                    placeholder={t.name_placeholder} />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-slate-300">Email</label>
+                  <input type="email" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} required
+                    className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#1A5C38] focus:outline-none focus:ring-1 focus:ring-[#1A5C38] dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+                    placeholder="you@example.com" />
+                </div>
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-slate-300">{t.msg_label}</label>
+                <textarea value={contactMsg} onChange={(e) => setContactMsg(e.target.value)} required rows={4}
+                  className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#1A5C38] focus:outline-none focus:ring-1 focus:ring-[#1A5C38] dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+                  placeholder={t.msg_placeholder} />
+              </div>
+              {contactError && <p className="text-xs text-red-600">{contactError}</p>}
+              <button type="submit" disabled={contactLoading}
+                className="flex items-center gap-2 rounded-full bg-[#1A5C38] px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:opacity-60">
+                <Send size={14} />
+                {contactLoading ? t.sending : t.send_btn}
+              </button>
+            </form>
+          )}
         </section>
 
       </div>

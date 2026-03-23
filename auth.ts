@@ -29,7 +29,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           email: user.email,
           image: user.image,
           role: user.role,
-          language: user.language ?? 'te',
+          language: user.language ?? 'en',
         }
       },
     }),
@@ -52,7 +52,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             image: user.image ?? undefined,
             role: user.email === adminEmail ? 'admin' : 'user',
             provider: account.provider as 'google',
-            language: 'te',
+            language: 'en',
           })
         } else if (user.email === adminEmail && existing.role !== 'admin') {
           existing.role = 'admin'
@@ -64,14 +64,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.role = (user as any).role ?? 'user'
-        token.language = (user as any).language ?? 'te'
+        token.language = (user as any).language ?? 'en'
         token.userId = (user as any).id
       } else if (token.email) {
         await connectDB()
         const dbUser = await User.findOne({ email: token.email }).exec()
         if (dbUser) {
           token.role = dbUser.role
-          token.language = dbUser.language ?? 'te'
+          token.language = dbUser.language ?? 'en'
           token.userId = dbUser._id.toString()
         }
       }
@@ -80,7 +80,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async session({ session, token }) {
       if (session.user) {
         (session.user as any).role = token.role ?? 'user'
-        ;(session.user as any).language = token.language ?? 'te'
+        ;(session.user as any).language = token.language ?? 'en'
         ;(session.user as any).id = token.userId
       }
       return session

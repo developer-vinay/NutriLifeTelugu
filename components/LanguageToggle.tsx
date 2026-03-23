@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useLanguage, LANG_LABELS, type Language } from './LanguageProvider'
 
-const LANGUAGES: Language[] = ['te', 'en']
+const LANGUAGES: Language[] = ['te', 'en', 'hi']
 
 export default function LanguageToggle({ disabled = false }: { disabled?: boolean }) {
   const { language, setLanguage } = useLanguage()
@@ -55,7 +55,7 @@ export default function LanguageToggle({ disabled = false }: { disabled?: boolea
                 <span className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-200 text-xs font-bold dark:border-slate-600">
                   {LANG_LABELS[l]}
                 </span>
-                <span className="font-medium">{l === 'te' ? 'తెలుగు' : 'English'}</span>
+                <span className="font-medium">{l === 'te' ? 'తెలుగు' : l === 'hi' ? 'हिंदी' : 'English'}</span>
                 {language === l && (
                   <svg className="ml-auto h-3.5 w-3.5 shrink-0 text-[#1A5C38] dark:text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M20 6 9 17l-5-5" />

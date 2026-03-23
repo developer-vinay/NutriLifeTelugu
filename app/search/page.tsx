@@ -1,6 +1,7 @@
 import { connectDB } from '@/lib/mongodb'
 import { Post } from '@/models/Post'
 import { Recipe } from '@/models/Recipe'
+import { Video } from '@/models/Video'
 import SearchClient from '@/components/search/SearchClient'
 
 export const runtime = 'nodejs'
@@ -15,7 +16,7 @@ export default async function SearchPage({
 
   await connectDB()
 
-  const [allPosts, allRecipes] = await Promise.all([
+  const [allPosts, allRecipes, allVideos] = await Promise.all([
     Post.find({ isPublished: true })
       .select('title slug excerpt tag category readTimeMinutes heroImage createdAt')
       .sort({ createdAt: -1 })
@@ -23,6 +24,11 @@ export default async function SearchPage({
       .lean(),
     Recipe.find({ isPublished: true })
       .select('title slug description tag category heroImage prepTimeMinutes cookTimeMinutes')
+      .sort({ createdAt: -1 })
+      .limit(100)
+      .lean(),
+    Video.find({ isPublished: true })
+      .select('title slug description tag category thumbnailUrl')
       .sort({ createdAt: -1 })
       .limit(100)
       .lean(),
@@ -52,10 +58,23 @@ export default async function SearchPage({
     type: 'recipe' as const,
   }))
 
+  const videos = allVideos.map((v: any) => ({
+    _id: v._id.toString(),
+    title: v.title,
+    slug: v.slug,
+    excerpt: v.description ?? '',
+    tag: v.tag ?? '',
+    category: v.category ?? '',
+    readTimeMinutes: 0,
+    heroImage: v.thumbnailUrl ?? '',
+    type: 'video' as const,
+  }))
+
   return (
     <SearchClient
       initialPosts={posts}
       initialRecipes={recipes}
+      initialVideos={videos}
       initialQuery={q ?? ''}
       initialCategory={category ?? ''}
     />

@@ -40,11 +40,13 @@ export default function BlogListClient() {
         <div className="mb-6 flex items-center justify-between">
           <div>
             <h1 className="font-nunito text-3xl font-bold text-gray-900 dark:text-slate-50">
-              {language === 'te' ? 'తాజా వ్యాసాలు' : 'Latest Articles'}
+              {language === 'te' ? 'తాజా వ్యాసాలు' : language === 'hi' ? 'नवीनतम लेख' : 'Latest Articles'}
             </h1>
             <p className="mt-1 text-sm text-gray-600 dark:text-slate-400">
               {language === 'te'
                 ? 'ఆరోగ్య చిట్కాలు, డైట్ గైడ్స్, తెలుగు న్యూట్రిషన్ కంటెంట్.'
+                : language === 'hi'
+                ? 'स्वास्थ्य टिप्स, डाइट गाइड और पोषण सामग्री।'
                 : 'Health tips, diet guides, and nutrition content.'}
             </p>
           </div>
@@ -64,7 +66,7 @@ export default function BlogListClient() {
         ) : posts.length === 0 ? (
           <div className="py-16 text-center">
             <p className="text-gray-500 dark:text-slate-400">
-              {language === 'te' ? 'ఈ భాషలో వ్యాసాలు త్వరలో వస్తాయి.' : 'No articles in this language yet.'}
+              {language === 'te' ? 'ఈ భాషలో వ్యాసాలు త్వరలో వస్తాయి.' : language === 'hi' ? 'इस भाषा में लेख जल्द आ रहे हैं।' : 'No articles in this language yet.'}
             </p>
           </div>
         ) : (
