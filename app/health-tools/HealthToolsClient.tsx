@@ -504,9 +504,6 @@ export default function HealthToolsClient() {
       water: { title: 'Water Intake Calculator', sub: 'Find out how much water your body needs daily based on weight, activity, and climate.' },
       'waist-hip': { title: 'Waist-Hip Ratio', sub: 'Measure abdominal obesity risk — a better indicator than BMI for heart disease and diabetes.' },
     },
-  } and climate.' },
-      'waist-hip': { title: 'Waist-Hip Ratio', sub: 'Measure abdominal obesity risk — a better indicator than BMI for heart disease and diabetes.' },
-    },
   }
 
   const panel = panelTitles[language][activeTool]
