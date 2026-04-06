@@ -16,7 +16,7 @@ export const LANG_LOGOS: Record<Language, string> = {
   hi: '/HindiLogo.png',
 }
 
-export const BRAND_NAME = 'NutriLifeMithra'
+export const BRAND_NAME = 'NutriLifeMitra'
 
 const LanguageContext = createContext<{
   language: Language

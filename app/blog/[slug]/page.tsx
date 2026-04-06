@@ -8,7 +8,7 @@ import BlogPostClient from '@/components/blog/BlogPostClient'
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-const SITE_URL = 'https://nutrilifemithra.vercel.app'
+const SITE_URL = 'https://nutrilifemitra.vercel.app'
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       description,
       images: [{ url: image, width: 1200, height: 630, alt: title }],
       publishedTime: post.createdAt?.toISOString(),
-      authors: [post.author ?? 'NutriLifeMithra'],
+      authors: [post.author ?? 'NutriLifeMitra'],
       tags: post.tag ? [post.tag] : [],
     },
     twitter: { card: 'summary_large_image', title, description, images: [image] },
@@ -102,10 +102,10 @@ export default async function BlogPostPage({
             image: plain.heroImage ? [plain.heroImage] : [],
             datePublished: plain.createdAt,
             dateModified: plain.updatedAt,
-            author: { '@type': 'Person', name: plain.author ?? 'NutriLifeMithra' },
+            author: { '@type': 'Person', name: plain.author ?? 'NutriLifeMitra' },
             publisher: {
               '@type': 'Organization',
-              name: 'NutriLifeMithra',
+              name: 'NutriLifeMitra',
               url: SITE_URL,
             },
             url: `${SITE_URL}/blog/${plain.slug}`,

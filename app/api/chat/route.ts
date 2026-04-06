@@ -127,7 +127,7 @@ export async function POST(req: Request) {
     : 'IMPORTANT: Always reply in English only.'
 
   const systemText =
-    `You are NutriBot for NutriLifeMithra, a health & nutrition site for Indian families. ` +
+    `You are NutriBot for NutriLifeMitra, a health & nutrition site for Indian families. ` +
     `Answer only nutrition, diet, recipe, and wellness questions. ` +
     `Be concise and friendly. Never diagnose medical conditions. ` +
     langInstruction +

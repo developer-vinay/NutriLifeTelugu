@@ -281,7 +281,7 @@ export default function Navbar() {
         <Link href="/" className="flex shrink-0 items-center gap-3">
           <img
             src={LANG_LOGOS[language]}
-            alt="NutriLifeMithra"
+            alt="NutriLifeMitra"
             className="h-11 w-11 rounded-full object-cover ring-2 ring-[#1A5C38]/20"
           />
           <span className="hidden font-nunito text-[15px] font-bold tracking-wide text-[#1A5C38] sm:block dark:text-emerald-400">
@@ -342,7 +342,7 @@ export default function Navbar() {
         {/* Drawer header */}
         <div className="flex items-center justify-between border-b border-gray-100 px-4 py-4 dark:border-slate-700">
           <Link href="/" onClick={() => setMobileOpen(false)} className="flex items-center gap-2">
-            <img src={LANG_LOGOS[language]} alt="NutriLifeMithra" className="h-8 w-8 rounded-full object-cover ring-2 ring-[#1A5C38]/20" />
+            <img src={LANG_LOGOS[language]} alt="NutriLifeMitra" className="h-8 w-8 rounded-full object-cover ring-2 ring-[#1A5C38]/20" />
             <span className="font-nunito text-[14px] font-bold text-[#1A5C38] dark:text-emerald-400">{BRAND_NAME}</span>
           </Link>
           <button

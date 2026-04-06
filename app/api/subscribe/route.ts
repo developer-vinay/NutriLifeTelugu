@@ -37,7 +37,7 @@ export async function POST(request: Request) {
     try {
       await sendEmail({
         to: normalized,
-        subject: 'Welcome to NutriLifeMithra! 🌿',
+        subject: 'Welcome to NutriLifeMitra! 🌿',
         htmlContent: welcomeEmailHtml(normalized),
       })
     } catch {

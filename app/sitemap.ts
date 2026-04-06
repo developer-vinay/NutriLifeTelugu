@@ -4,7 +4,7 @@ import { Post } from '@/models/Post'
 import { Recipe } from '@/models/Recipe'
 import { Video } from '@/models/Video'
 
-const SITE_URL = 'https://nutrilifemithra.vercel.app'
+const SITE_URL = 'https://nutrilifemitra.vercel.app'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'

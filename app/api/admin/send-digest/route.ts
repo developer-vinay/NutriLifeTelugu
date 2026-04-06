@@ -39,7 +39,7 @@ export async function POST() {
 
       await sendEmail({
         to: sub.email,
-        subject: '🌿 This Week on NutriLifeMithra',
+        subject: '🌿 This Week on NutriLifeMitra',
         htmlContent: html,
       })
       sent++

@@ -277,12 +277,12 @@ export default function BlogPostClient({ post, related }: Props) {
                   NL
                 </div>
                 <div>
-                  <p className="font-semibold text-gray-900 dark:text-slate-50">NutriLifeMithra</p>
+                  <p className="font-semibold text-gray-900 dark:text-slate-50">NutriLifeMitra</p>
                   <p className="text-[13px] text-gray-600 dark:text-slate-300">
                     Evidence-based nutrition content for Telugu families. Follow us on YouTube and Instagram.
                   </p>
                   <div className="mt-2 flex gap-2 text-[11px]">
-                    <a href="https://youtube.com" target="_blank" rel="noreferrer" className="rounded-full bg-red-600 px-3 py-1 font-semibold text-white hover:opacity-90">YouTube</a>
+                    <a href="https://youtube.com/@nutrilifemitra" target="_blank" rel="noreferrer" className="rounded-full bg-red-600 px-3 py-1 font-semibold text-white hover:opacity-90">YouTube</a>
                     <a href="https://instagram.com" target="_blank" rel="noreferrer" className="rounded-full bg-pink-500 px-3 py-1 font-semibold text-white hover:opacity-90">Instagram</a>
                   </div>
                 </div>

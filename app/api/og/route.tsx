@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server'
 // Returns a 1200x630 SVG as PNG-compatible image
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
-  const title = searchParams.get('title') ?? 'NutriLifeMithra'
+  const title = searchParams.get('title') ?? 'NutriLifeMitra'
   const sub = searchParams.get('sub') ?? 'స్మార్ట్ న్యూట్రిషన్. బెటర్ లైఫ్.'
 
   const svg = `<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
@@ -27,7 +27,7 @@ export async function GET(req: Request) {
   <text x="100" y="390" font-family="Arial, sans-serif" font-size="36" fill="rgba(255,255,255,0.85)">${sub.slice(0, 60)}</text>
   <!-- Bottom bar -->
   <rect x="0" y="570" width="1200" height="60" fill="rgba(0,0,0,0.2)"/>
-  <text x="100" y="608" font-family="Arial, sans-serif" font-size="24" fill="rgba(255,255,255,0.7)">nutrilifemithra.vercel.app</text>
+  <text x="100" y="608" font-family="Arial, sans-serif" font-size="24" fill="rgba(255,255,255,0.7)">nutrilifemitra.vercel.app</text>
 </svg>`
 
   return new NextResponse(svg, {

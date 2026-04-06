@@ -6,7 +6,7 @@ import { sendEmail, passwordResetEmailHtml } from '@/lib/brevo'
 
 export const runtime = 'nodejs'
 
-const SITE_URL = 'https://nutrilifemithra.vercel.app'
+const SITE_URL = 'https://nutrilifemitra.vercel.app'
 
 export async function POST(req: Request) {
   const { email } = await req.json()
@@ -31,7 +31,7 @@ export async function POST(req: Request) {
     await sendEmail({
       to: user.email,
       toName: user.name,
-      subject: 'Reset your NutriLifeMithra password',
+      subject: 'Reset your NutriLifeMitra password',
       htmlContent: passwordResetEmailHtml(resetUrl),
     })
   } catch (err) {

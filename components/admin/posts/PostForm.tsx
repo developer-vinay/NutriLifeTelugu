@@ -38,7 +38,7 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
   const [content, setContent] = useState(initialData?.content ?? '')
   const [isFeatured, setIsFeatured] = useState(initialData?.isFeatured ?? false)
   const [isPublished, setIsPublished] = useState(initialData?.isPublished ?? false)
-  const [author, setAuthor] = useState(initialData?.author ?? 'NutriLifeMithra')
+  const [author, setAuthor] = useState(initialData?.author ?? 'NutriLifeMitra')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
@@ -159,7 +159,7 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
       <div className="space-y-1">
         <label className="text-sm font-medium text-gray-800">Author Name</label>
         <input type="text" value={author} onChange={(e) => setAuthor(e.target.value)}
-          placeholder="NutriLifeMithra"
+          placeholder="NutriLifeMitra"
           className={inputCls} />
       </div>
 

@@ -37,7 +37,7 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-lg">
         <div className="mb-6 flex flex-col items-center gap-2">
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#1A5C38] text-xl font-bold text-white">NL</div>
-          <h1 className="text-xl font-semibold text-gray-900">NutriLifeMithra</h1>
+          <h1 className="text-xl font-semibold text-gray-900">NutriLifeMitra</h1>
           <p className="text-sm text-gray-500">Admin Panel Login</p>
         </div>
 

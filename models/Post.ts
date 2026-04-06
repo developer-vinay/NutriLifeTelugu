@@ -56,7 +56,7 @@ const PostSchema = new Schema<IPost>(
     likes: { type: Number, default: 0 },
     isPublished: { type: Boolean, default: false },
     isFeatured: { type: Boolean, default: false },
-    author: { type: String, default: 'NutriLifeMithra' },
+    author: { type: String, default: 'NutriLifeMitra' },
   },
   { timestamps: true },
 )

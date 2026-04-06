@@ -82,9 +82,9 @@ export default function AdvertisePage() {
         <section className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 dark:border-emerald-800 dark:bg-emerald-900/20">
           <h2 className="mb-2 font-nunito text-xl font-bold text-[#1A5C38] dark:text-emerald-400">{tx.contact_title}</h2>
           <p className="mb-4 text-sm text-gray-700 dark:text-slate-300">{tx.contact_sub}</p>
-          <a href="mailto:advertise@nutrilifemithra.com"
+          <a href="mailto:advertise@nutrilifemitra.com"
             className="inline-flex rounded-full bg-[#1A5C38] px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-800">
-            advertise@nutrilifemithra.com
+            advertise@nutrilifemitra.com
           </a>
         </section>
       </div>

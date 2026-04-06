@@ -15,7 +15,7 @@ export async function POST(req: Request) {
   try {
     await sendEmail({
       to: ADMIN_EMAIL,
-      subject: `NutriLifeMithra Contact: ${name}`,
+      subject: `NutriLifeMitra Contact: ${name}`,
       htmlContent: `
         <div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:32px">
           <h2 style="color:#1A5C38">New Contact Message</h2>

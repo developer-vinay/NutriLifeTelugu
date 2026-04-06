@@ -59,7 +59,7 @@ export default function BuyPlanButton({ planId, planTitle, price, currency = 'â‚
         key: order.keyId,
         amount: order.amount,
         currency: order.currency,
-        name: 'NutriLifeMithra',
+        name: 'NutriLifeMitra',
         description: order.planTitle,
         order_id: order.orderId,
         prefill: {

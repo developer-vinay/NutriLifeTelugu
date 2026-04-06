@@ -1,8 +1,10 @@
 'use client'
 
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
 import { Search, UtensilsCrossed, FileText, Play } from 'lucide-react'
+
+type Language = 'en' | 'te' | 'hi'
 
 type Item = {
   _id: string
@@ -13,6 +15,7 @@ type Item = {
   category: string
   readTimeMinutes: number
   heroImage: string
+  language: string
   type: 'post' | 'recipe' | 'video'
 }
 
@@ -32,6 +35,12 @@ const CATEGORIES = [
   { label: 'Diabetic Friendly', value: 'diabetic-friendly' },
 ]
 
+const UI: Record<Language, { heading: string; placeholder: string; results: string; noResults: string; noResultsSub: string; articles: string; recipes: string; videos: string }> = {
+  en: { heading: 'Search', placeholder: 'Search articles, recipes, videos...', results: 'result', noResults: 'No results found', noResultsSub: 'Try a different search term or category', articles: 'Articles', recipes: 'Recipes', videos: 'Videos' },
+  te: { heading: 'వెతకండి', placeholder: 'వ్యాసాలు, రెసిపీలు, వీడియోలు వెతకండి...', results: 'ఫలితాలు', noResults: 'ఫలితాలు కనుగొనబడలేదు', noResultsSub: 'వేరే పదం లేదా వర్గాన్ని ప్రయత్నించండి', articles: 'వ్యాసాలు', recipes: 'రెసిపీలు', videos: 'వీడియోలు' },
+  hi: { heading: 'खोजें', placeholder: 'लेख, रेसिपी, वीडियो खोजें...', results: 'परिणाम', noResults: 'कोई परिणाम नहीं मिला', noResultsSub: 'कोई अलग शब्द या श्रेणी आज़माएं', articles: 'लेख', recipes: 'रेसिपी', videos: 'वीडियो' },
+}
+
 export default function SearchClient({
   initialPosts,
   initialRecipes,
@@ -47,6 +56,23 @@ export default function SearchClient({
 }) {
   const [query, setQuery] = useState(initialQuery)
   const [activeCategory, setActiveCategory] = useState(initialCategory)
+  const [language, setLanguage] = useState<Language>('en')
+
+  // Read language from localStorage (same source as LanguageProvider)
+  useEffect(() => {
+    const stored = localStorage.getItem('lang') as Language | null
+    if (stored === 'te' || stored === 'en' || stored === 'hi') setLanguage(stored)
+
+    // Also listen for changes from the language toggle on the same page
+    const handler = () => {
+      const updated = localStorage.getItem('lang') as Language | null
+      if (updated === 'te' || updated === 'en' || updated === 'hi') setLanguage(updated)
+    }
+    window.addEventListener('storage', handler)
+    return () => window.removeEventListener('storage', handler)
+  }, [])
+
+  const t = UI[language]
 
   const allItems = useMemo(
     () => [...initialPosts, ...initialRecipes, ...initialVideos],
@@ -54,7 +80,8 @@ export default function SearchClient({
   )
 
   const filtered = useMemo(() => {
-    let items = allItems
+    // Always filter by current language first
+    let items = allItems.filter((i) => i.language === language)
 
     if (activeCategory) {
       items = items.filter((i) => i.category === activeCategory)
@@ -72,7 +99,7 @@ export default function SearchClient({
     }
 
     return items
-  }, [allItems, query, activeCategory])
+  }, [allItems, query, activeCategory, language])
 
   const posts = filtered.filter((i) => i.type === 'post')
   const recipes = filtered.filter((i) => i.type === 'recipe')
@@ -83,7 +110,7 @@ export default function SearchClient({
       {/* Search header */}
       <div className="bg-[#F0FAF4] dark:bg-slate-900">
         <div className="mx-auto max-w-4xl px-4 py-10">
-          <h1 className="font-nunito text-2xl font-bold text-[#1A5C38] dark:text-emerald-400">Search</h1>
+          <h1 className="font-nunito text-2xl font-bold text-[#1A5C38] dark:text-emerald-400">{t.heading}</h1>
 
           {/* Search bar */}
           <div className="mt-4 flex items-center gap-2 rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm dark:border-slate-700 dark:bg-slate-800">
@@ -93,15 +120,11 @@ export default function SearchClient({
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search articles, recipes, videos..."
+              placeholder={t.placeholder}
               className="w-full bg-transparent text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none dark:text-slate-100 dark:placeholder:text-slate-500"
             />
             {query && (
-              <button
-                type="button"
-                onClick={() => setQuery('')}
-                className="shrink-0 text-gray-400 hover:text-gray-600 dark:hover:text-slate-300"
-              >
+              <button type="button" onClick={() => setQuery('')} className="shrink-0 text-gray-400 hover:text-gray-600 dark:hover:text-slate-300">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M18 6 6 18M6 6l12 12" />
                 </svg>
@@ -132,7 +155,7 @@ export default function SearchClient({
       {/* Results */}
       <div className="mx-auto max-w-4xl px-4 py-8">
         <p className="mb-6 text-sm text-gray-500 dark:text-slate-400">
-          {filtered.length} result{filtered.length !== 1 ? 's' : ''}
+          {filtered.length} {t.results}
           {query ? ` for "${query}"` : ''}
           {activeCategory ? ` in ${CATEGORIES.find((c) => c.value === activeCategory)?.label}` : ''}
         </p>
@@ -140,7 +163,7 @@ export default function SearchClient({
         {posts.length > 0 && (
           <section className="mb-8">
             <h2 className="mb-3 font-nunito text-lg font-semibold text-gray-900 dark:text-slate-50">
-              Articles <span className="ml-1 text-sm font-normal text-gray-400">({posts.length})</span>
+              {t.articles} <span className="ml-1 text-sm font-normal text-gray-400">({posts.length})</span>
             </h2>
             <div className="grid gap-3 sm:grid-cols-2">
               {posts.map((p) => <ResultCard key={p._id} item={p} />)}
@@ -151,7 +174,7 @@ export default function SearchClient({
         {recipes.length > 0 && (
           <section className="mb-8">
             <h2 className="mb-3 font-nunito text-lg font-semibold text-gray-900 dark:text-slate-50">
-              Recipes <span className="ml-1 text-sm font-normal text-gray-400">({recipes.length})</span>
+              {t.recipes} <span className="ml-1 text-sm font-normal text-gray-400">({recipes.length})</span>
             </h2>
             <div className="grid gap-3 sm:grid-cols-2">
               {recipes.map((r) => <ResultCard key={r._id} item={r} />)}
@@ -162,7 +185,7 @@ export default function SearchClient({
         {videos.length > 0 && (
           <section>
             <h2 className="mb-3 font-nunito text-lg font-semibold text-gray-900 dark:text-slate-50">
-              Videos <span className="ml-1 text-sm font-normal text-gray-400">({videos.length})</span>
+              {t.videos} <span className="ml-1 text-sm font-normal text-gray-400">({videos.length})</span>
             </h2>
             <div className="grid gap-3 sm:grid-cols-2">
               {videos.map((v) => <ResultCard key={v._id} item={v} />)}
@@ -173,8 +196,8 @@ export default function SearchClient({
         {filtered.length === 0 && (
           <div className="py-16 text-center">
             <Search size={40} className="mx-auto text-gray-300 dark:text-slate-600" />
-            <p className="mt-3 text-base font-medium text-gray-700 dark:text-slate-300">No results found</p>
-            <p className="mt-1 text-sm text-gray-500 dark:text-slate-500">Try a different search term or category</p>
+            <p className="mt-3 text-base font-medium text-gray-700 dark:text-slate-300">{t.noResults}</p>
+            <p className="mt-1 text-sm text-gray-500 dark:text-slate-500">{t.noResultsSub}</p>
           </div>
         )}
       </div>
@@ -192,7 +215,6 @@ function ResultCard({ item }: { item: Item }) {
       href={href}
       className="group flex gap-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition hover:border-emerald-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-800 dark:hover:border-emerald-600"
     >
-      {/* Thumbnail */}
       <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-emerald-50 dark:bg-slate-700">
         {item.heroImage ? (
           <img src={item.heroImage} alt={item.title} className="h-full w-full object-cover" />

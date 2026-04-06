@@ -3,9 +3,9 @@
 // Free tier: 300 emails/day forever
 
 const BREVO_API_KEY = process.env.BREVO_API_KEY ?? ''
-const FROM_EMAIL = process.env.BREVO_FROM_EMAIL ?? 'noreply@nutrilifemithra.com'
-const FROM_NAME = 'NutriLifeMithra'
-const SITE_URL = 'https://nutrilifemithra.vercel.app'
+const FROM_EMAIL = process.env.BREVO_FROM_EMAIL ?? 'noreply@nutrilifemitra.com'
+const FROM_NAME = 'NutriLifeMitra'
+const SITE_URL = 'https://nutrilifemitra.vercel.app'
 
 interface SendEmailOptions {
   to: string
@@ -53,12 +53,12 @@ export function welcomeEmailHtml(email: string) {
       <table width="560" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:16px;overflow:hidden;max-width:560px;width:100%">
         <!-- Header -->
         <tr><td style="background:#1A5C38;padding:32px 40px;text-align:center">
-          <h1 style="color:#fff;margin:0;font-size:24px;font-weight:700">🌿 NutriLifeMithra</h1>
+          <h1 style="color:#fff;margin:0;font-size:24px;font-weight:700">🌿 NutriLifeMitra</h1>
           <p style="color:#a7f3d0;margin:8px 0 0;font-size:14px">స్మార్ట్ న్యూట్రిషన్. బెటర్ లైఫ్.</p>
         </td></tr>
         <!-- Body -->
         <tr><td style="padding:36px 40px">
-          <h2 style="color:#1A5C38;margin:0 0 16px;font-size:20px">నమస్కారం! Welcome to NutriLifeMithra 🎉</h2>
+          <h2 style="color:#1A5C38;margin:0 0 16px;font-size:20px">నమస్కారం! Welcome to NutriLifeMitra 🎉</h2>
           <p style="color:#374151;line-height:1.7;margin:0 0 16px">
             Thank you for subscribing! You're now part of our growing community of health-conscious Telugu families.
           </p>
@@ -100,7 +100,7 @@ export function passwordResetEmailHtml(resetUrl: string) {
     <tr><td align="center">
       <table width="560" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:16px;overflow:hidden;max-width:560px;width:100%">
         <tr><td style="background:#1A5C38;padding:32px 40px;text-align:center">
-          <h1 style="color:#fff;margin:0;font-size:24px;font-weight:700">🌿 NutriLifeMithra</h1>
+          <h1 style="color:#fff;margin:0;font-size:24px;font-weight:700">🌿 NutriLifeMitra</h1>
         </td></tr>
         <tr><td style="padding:36px 40px">
           <h2 style="color:#111827;margin:0 0 16px;font-size:20px">Reset your password</h2>
@@ -113,7 +113,7 @@ export function passwordResetEmailHtml(resetUrl: string) {
           </p>
         </td></tr>
         <tr><td style="background:#f9fafb;padding:20px 40px;text-align:center;border-top:1px solid #e5e7eb">
-          <p style="color:#9ca3af;font-size:12px;margin:0">NutriLifeMithra — ${SITE_URL}</p>
+          <p style="color:#9ca3af;font-size:12px;margin:0">NutriLifeMitra — ${SITE_URL}</p>
         </td></tr>
       </table>
     </td></tr>
@@ -142,7 +142,7 @@ export function weeklyDigestHtml(posts: {title:string;slug:string;excerpt:string
     <tr><td align="center">
       <table width="560" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:16px;overflow:hidden;max-width:560px;width:100%">
         <tr><td style="background:#1A5C38;padding:28px 40px">
-          <h1 style="color:#fff;margin:0;font-size:22px">🌿 This Week on NutriLifeMithra</h1>
+          <h1 style="color:#fff;margin:0;font-size:22px">🌿 This Week on NutriLifeMitra</h1>
           <p style="color:#a7f3d0;margin:6px 0 0;font-size:13px">Your weekly health & nutrition digest</p>
         </td></tr>
         <tr><td style="padding:32px 40px">
@@ -151,12 +151,12 @@ export function weeklyDigestHtml(posts: {title:string;slug:string;excerpt:string
           ${recipes.length ? `<h3 style="color:#111827;margin:24px 0 8px;font-size:16px">New Recipes</h3>
           <table width="100%" cellpadding="0" cellspacing="0">${recipeItems}</table>` : ''}
           <div style="margin-top:28px">
-            <a href="${SITE_URL}" style="display:inline-block;background:#1A5C38;color:#fff;text-decoration:none;padding:12px 28px;border-radius:50px;font-size:14px;font-weight:600">Visit NutriLifeMithra →</a>
+            <a href="${SITE_URL}" style="display:inline-block;background:#1A5C38;color:#fff;text-decoration:none;padding:12px 28px;border-radius:50px;font-size:14px;font-weight:600">Visit NutriLifeMitra →</a>
           </div>
         </td></tr>
         <tr><td style="background:#f9fafb;padding:16px 40px;text-align:center;border-top:1px solid #e5e7eb">
           <p style="color:#9ca3af;font-size:12px;margin:0">
-            <a href="${SITE_URL}/api/unsubscribe?email={{email}}" style="color:#9ca3af">Unsubscribe</a> · NutriLifeMithra
+            <a href="${SITE_URL}/api/unsubscribe?email={{email}}" style="color:#9ca3af">Unsubscribe</a> · NutriLifeMitra
           </p>
         </td></tr>
       </table>

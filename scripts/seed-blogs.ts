@@ -14,7 +14,7 @@ const teluguPosts = [
     tag: 'Health Tips',
     isFeatured: true,
     isPublished: true,
-    author: 'NutriLifeMithra',
+    author: 'NutriLifeMitra',
     excerpt: 'ఉదయం లేచిన వెంటనే నీళ్ళు తాగడం వల్ల జీర్ణశక్తి మెరుగవుతుంది, చర్మం మెరుస్తుంది.',
     content: `<p>ఉదయం లేచిన వెంటనే ఒక లేదా రెండు గ్లాసుల నీళ్ళు తాగడం చాలా మంచి అలవాటు. ఇది జపాన్ లో చాలా కాలంగా పాటిస్తున్న ఆరోగ్య రహస్యం.</p>
 <h2>ప్రయోజనాలు</h2>
@@ -41,7 +41,7 @@ const teluguPosts = [
     tag: 'Diabetes',
     isFeatured: true,
     isPublished: true,
-    author: 'NutriLifeMithra',
+    author: 'NutriLifeMitra',
     excerpt: 'డయాబెటిస్ ఉన్నవాళ్ళు ఈ 10 ఆహారాలు తింటే బ్లడ్ షుగర్ కంట్రోల్ లో ఉంటుంది.',
     content: `<p>డయాబెటిస్ ఉన్నవాళ్ళకు ఏం తినాలో, ఏం తినకూడదో తెలుసుకోవడం చాలా ముఖ్యం. సరైన ఆహారం తింటే మందులు తక్కువగా అవసరమవుతాయి.</p>
 <h2>తినాల్సిన ఆహారాలు</h2>
@@ -71,7 +71,7 @@ const teluguPosts = [
     tag: 'Weight Loss',
     isFeatured: false,
     isPublished: true,
-    author: 'NutriLifeMithra',
+    author: 'NutriLifeMitra',
     excerpt: 'రాత్రి భోజనం తక్కువగా, తేలికగా తింటే బరువు తగ్గడం సులభమవుతుంది.',
     content: `<p>బరువు తగ్గాలంటే రాత్రి భోజనం చాలా ముఖ్యమైన పాత్ర పోషిస్తుంది. చాలా మంది రాత్రి ఎక్కువగా తింటారు — ఇది బరువు పెరగడానికి ప్రధాన కారణం.</p>
 <h2>రాత్రి భోజనం నియమాలు</h2>
@@ -101,7 +101,7 @@ const teluguPosts = [
     tag: 'Nutrition',
     isFeatured: false,
     isPublished: true,
-    author: 'NutriLifeMithra',
+    author: 'NutriLifeMitra',
     excerpt: 'పిల్లలకు సరైన పోషణ ఇవ్వడం ఎలా? ఏ వయసులో ఏం తినాలి?',
     content: `<p>పిల్లల శారీరక, మానసిక వికాసానికి సరైన పోషణ చాలా అవసరం. చిన్నప్పటి నుండి మంచి అలవాట్లు నేర్పించడం తల్లిదండ్రుల బాధ్యత.</p>
 <h2>వయసు వారీగా పోషణ</h2>
@@ -125,7 +125,7 @@ const teluguPosts = [
     tag: 'Millets',
     isFeatured: false,
     isPublished: true,
-    author: 'NutriLifeMithra',
+    author: 'NutriLifeMitra',
     excerpt: 'మిల్లెట్స్ తినడం వల్ల డయాబెటిస్, బరువు, హృదయ సమస్యలు తగ్గుతాయి.',
     content: `<p>మన పూర్వీకులు తినే ధాన్యాలు మళ్ళీ ప్రాచుర్యం పొందుతున్నాయి. మిల్లెట్స్ అంటే జొన్న, రాగి, కొర్రలు, సజ్జలు వంటివి.</p>
 <h2>7 ప్రయోజనాలు</h2>
@@ -155,7 +155,7 @@ const englishPosts = [
     tag: 'Diabetes',
     isFeatured: true,
     isPublished: true,
-    author: 'NutriLifeMithra',
+    author: 'NutriLifeMitra',
     excerpt: 'These 10 foods can help keep your blood sugar in check without medication.',
     content: `<p>Managing blood sugar through diet is one of the most powerful things you can do for your health. Here are 10 foods that science backs for lowering blood sugar naturally.</p>
 <h2>The Top 10</h2>
@@ -185,7 +185,7 @@ const englishPosts = [
     tag: 'Health Tips',
     isFeatured: true,
     isPublished: true,
-    author: 'NutriLifeMithra',
+    author: 'NutriLifeMitra',
     excerpt: 'Skipping breakfast slows your metabolism and leads to overeating later. Here is why breakfast matters.',
     content: `<p>Many people skip breakfast thinking it will help them lose weight. The opposite is usually true. Skipping breakfast slows your metabolism and makes you overeat at lunch and dinner.</p>
 <h2>What Happens When You Skip Breakfast</h2>
@@ -217,7 +217,7 @@ const englishPosts = [
     tag: 'Nutrition',
     isFeatured: false,
     isPublished: true,
-    author: 'NutriLifeMithra',
+    author: 'NutriLifeMitra',
     excerpt: 'Most Indians are protein deficient. Find out how much protein you actually need and the best sources.',
     content: `<p>Protein is the most important macronutrient for building muscle, losing fat, and staying healthy. Yet most Indians eat far less protein than they need.</p>
 <h2>How Much Protein Do You Need?</h2>
@@ -247,7 +247,7 @@ const englishPosts = [
     tag: 'Health Tips',
     isFeatured: false,
     isPublished: true,
-    author: 'NutriLifeMithra',
+    author: 'NutriLifeMitra',
     excerpt: 'Your gut health affects everything — mood, immunity, weight. These 5 habits will transform your gut.',
     content: `<p>Your gut is often called the second brain. It affects your mood, immune system, weight, and even skin. Here are 5 simple habits to improve your gut health starting today.</p>
 <h2>5 Gut Health Habits</h2>
@@ -280,7 +280,7 @@ const englishPosts = [
     tag: 'Weight Loss',
     isFeatured: false,
     isPublished: true,
-    author: 'NutriLifeMithra',
+    author: 'NutriLifeMitra',
     excerpt: 'Crash diets do not work long-term. Here is a sustainable approach to weight loss that actually works.',
     content: `<p>Most people try to lose weight by eating as little as possible. This almost always fails. Your body adapts, metabolism slows, and you end up gaining the weight back plus more.</p>
 <h2>The Right Approach</h2>

@@ -10,32 +10,32 @@ import { auth } from '@/auth'
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const nunito = Nunito({ subsets: ['latin'], variable: '--font-nunito' })
 
-const SITE_URL = 'https://nutrilifemithra.vercel.app'
+const SITE_URL = 'https://nutrilifemitra.vercel.app'
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'NutriLifeMithra — స్మార్ట్ న్యూట్రిషన్. బెటర్ లైఫ్.',
-    template: '%s | NutriLifeMithra',
+    default: 'NutriLifeMitra — స్మార్ట్ న్యూట్రిషన్. బెటర్ లైఫ్.',
+    template: '%s | NutriLifeMitra',
   },
   description:
-    'NutriLifeMithra — ఆరోగ్యకరమైన తెలుగు రెసిపీలు, డైట్ ప్లాన్స్, హెల్త్ టిప్స్. Smart nutrition, better life for Telugu families.',
-  keywords: ['Telugu recipes', 'తెలుగు రెసిపీలు', 'diet plans', 'health tips', 'NutriLifeMithra', 'Telugu nutrition', 'millet recipes', 'diabetic diet Telugu'],
-  authors: [{ name: 'NutriLifeMithra' }],
-  creator: 'NutriLifeMithra',
+    'NutriLifeMitra — ఆరోగ్యకరమైన తెలుగు రెసిపీలు, డైట్ ప్లాన్స్, హెల్త్ టిప్స్. Smart nutrition, better life for Telugu families.',
+  keywords: ['Telugu recipes', 'తెలుగు రెసిపీలు', 'diet plans', 'health tips', 'NutriLifeMitra', 'Telugu nutrition', 'millet recipes', 'diabetic diet Telugu'],
+  authors: [{ name: 'NutriLifeMitra' }],
+  creator: 'NutriLifeMitra',
   openGraph: {
     type: 'website',
     locale: 'te_IN',
     alternateLocale: 'en_IN',
     url: SITE_URL,
-    siteName: 'NutriLifeMithra',
-    title: 'NutriLifeMithra — స్మార్ట్ న్యూట్రిషన్. బెటర్ లైఫ్.',
+    siteName: 'NutriLifeMitra',
+    title: 'NutriLifeMitra — స్మార్ట్ న్యూట్రిషన్. బెటర్ లైఫ్.',
     description: 'ఆరోగ్యకరమైన తెలుగు రెసిపీలు, డైట్ ప్లాన్స్, హెల్త్ టిప్స్.',
-    images: [{ url: '/api/og', width: 1200, height: 630, alt: 'NutriLifeMithra' }],
+    images: [{ url: '/api/og', width: 1200, height: 630, alt: 'NutriLifeMitra' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'NutriLifeMithra',
+    title: 'NutriLifeMitra',
     description: 'ఆరోగ్యకరమైన తెలుగు రెసిపీలు, డైట్ ప్లాన్స్, హెల్త్ టిప్స్.',
     images: ['/api/og'],
   },
@@ -67,7 +67,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="NutriLifeMithra" />
+        <meta name="apple-mobile-web-app-title" content="NutriLifeMitra" />
 
         {/* Google Analytics */}
         {process.env.NEXT_PUBLIC_GA_ID && (

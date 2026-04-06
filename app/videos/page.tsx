@@ -32,7 +32,7 @@ const UI = {
     watch: 'YouTube లో చూడండి',
     featured: 'ప్రత్యేక వీడియో',
     ytBanner: 'రోజూ కొత్త వీడియోలు',
-    ytSub: 'YouTube లో NutriLifeMithra ను ఫాలో అవ్వండి.',
+    ytSub: 'YouTube లో NutriLifeMitra ను ఫాలో అవ్వండి.',
     subscribe: 'Subscribe చేయండి →',
     views: 'వ్యూస్',
     catLabels: { All: 'అన్నీ', cooking: 'వంటకాలు', 'health-education': 'హెల్త్', 'weight-loss': 'వెయిట్ లాస్', diabetes: 'డయాబెటిస్', shorts: 'షార్ట్స్' },
@@ -44,7 +44,7 @@ const UI = {
     watch: 'YouTube पर देखें',
     featured: 'विशेष वीडियो',
     ytBanner: 'हर हफ्ते नए वीडियो',
-    ytSub: 'NutriLifeMithra को YouTube पर सब्सक्राइब करें।',
+    ytSub: 'NutriLifeMitra को YouTube पर सब्सक्राइब करें।',
     subscribe: 'Subscribe करें →',
     views: 'व्यूज',
     catLabels: { All: 'सभी', cooking: 'रेसिपी', 'health-education': 'स्वास्थ्य', 'weight-loss': 'वजन घटाना', diabetes: 'मधुमेह', shorts: 'शॉर्ट्स' },
@@ -56,7 +56,7 @@ const UI = {
     watch: 'Watch on YouTube',
     featured: 'Featured Video',
     ytBanner: 'New videos every week',
-    ytSub: 'Subscribe to NutriLifeMithra on YouTube for daily health tips.',
+    ytSub: 'Subscribe to NutriLifeMitra on YouTube for daily health tips.',
     subscribe: 'Subscribe on YouTube →',
     views: 'views',
     catLabels: { All: 'All', cooking: 'Cooking', 'health-education': 'Health', 'weight-loss': 'Weight Loss', diabetes: 'Diabetes', shorts: 'Shorts' },
@@ -101,13 +101,13 @@ export default function VideosPage() {
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div>
               <span className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white">
-                <Youtube size={13} /> NutriLifeMithra
+                <Youtube size={13} /> NutriLifeMitra
               </span>
               <h1 className="font-nunito text-4xl font-bold text-white">{t.heading}</h1>
               <p className="mt-2 text-sm text-emerald-100">{t.sub}</p>
             </div>
             <a
-              href="https://youtube.com"
+              href="https://youtube.com/@nutrilifemitra"
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-2 rounded-full bg-red-600 px-6 py-3 text-sm font-bold text-white shadow-lg hover:bg-red-700 transition"
@@ -284,7 +284,7 @@ export default function VideosPage() {
                   </div>
                 </div>
                 <a
-                  href="https://youtube.com"
+                  href="https://youtube.com/@nutrilifemitra"
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold text-red-600 shadow hover:bg-red-50 transition"

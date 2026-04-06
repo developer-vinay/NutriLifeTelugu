@@ -7,7 +7,7 @@ import RecipeDetailClient from '@/components/recipes/RecipeDetailClient'
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-const SITE_URL = 'https://nutrilifemithra.vercel.app'
+const SITE_URL = 'https://nutrilifemitra.vercel.app'
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!recipe) return {}
 
   const title = recipe.title
-  const description = recipe.description ?? `${recipe.title} — NutriLifeMithra recipe`
+  const description = recipe.description ?? `${recipe.title} — NutriLifeMitra recipe`
   const url = `${SITE_URL}/recipes/${slug}`
   const image = recipe.heroImage ?? `${SITE_URL}/og-image.png`
 
@@ -83,7 +83,7 @@ export default async function RecipeDetailPage({
             name: plain.title,
             description: plain.description ?? '',
             image: plain.heroImage ? [plain.heroImage] : [],
-            author: { '@type': 'Person', name: plain.author ?? 'NutriLifeMithra' },
+            author: { '@type': 'Person', name: plain.author ?? 'NutriLifeMitra' },
             datePublished: plain.createdAt,
             prepTime: plain.prepTimeMinutes ? `PT${plain.prepTimeMinutes}M` : undefined,
             cookTime: plain.cookTimeMinutes ? `PT${plain.cookTimeMinutes}M` : undefined,
