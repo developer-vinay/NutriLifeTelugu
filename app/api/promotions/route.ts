@@ -13,12 +13,19 @@ export async function GET(req: Request) {
     const lang = searchParams.get('lang') ?? 'en'
 
     const now = new Date()
+
     const query: any = {
       isActive: true,
-      $or: [{ startsAt: null }, { startsAt: { $lte: now } }],
-      $and: [{ $or: [{ endsAt: null }, { endsAt: { $gte: now } }] }],
-      $or: [{ language: lang }, { language: 'all' }],
+      $and: [
+        // schedule: started or no start date
+        { $or: [{ startsAt: null }, { startsAt: { $lte: now } }] },
+        // schedule: not expired or no end date
+        { $or: [{ endsAt: null }, { endsAt: { $gte: now } }] },
+        // language: matches current lang or 'all'
+        { $or: [{ language: lang }, { language: 'all' }] },
+      ],
     }
+
     if (placement) query.placement = placement
 
     const promos = await Promotion.find(query).sort({ createdAt: -1 }).lean()
