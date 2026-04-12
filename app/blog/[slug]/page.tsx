@@ -16,26 +16,49 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const post = await Post.findOne({ slug, isPublished: true }).lean()
   if (!post) return {}
 
-  const title = post.title
-  const description = post.excerpt ?? post.content.replace(/<[^>]+>/g, '').slice(0, 160)
+  const title = `${post.title} | NutriLifeMitra`
+  const rawText = post.content.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim()
+  const description = post.excerpt
+    ? post.excerpt.slice(0, 160)
+    : rawText.slice(0, 160)
   const url = `${SITE_URL}/blog/${slug}`
-  const image = post.heroImage ?? `${SITE_URL}/og-image.png`
+  const image = post.heroImage ?? `${SITE_URL}/api/og`
+
+  // Build keyword list from tag + category
+  const keywords = [
+    post.tag,
+    post.category,
+    'NutriLifeMitra',
+    'Telugu health',
+    'Indian nutrition',
+    post.language === 'te' ? 'తెలుగు ఆరోగ్యం' : post.language === 'hi' ? 'हिंदी स्वास्थ्य' : undefined,
+  ].filter(Boolean) as string[]
 
   return {
     title,
     description,
+    keywords,
     alternates: { canonical: url },
     openGraph: {
       type: 'article',
       url,
       title,
       description,
-      images: [{ url: image, width: 1200, height: 630, alt: title }],
+      siteName: 'NutriLifeMitra',
+      locale: post.language === 'te' ? 'te_IN' : post.language === 'hi' ? 'hi_IN' : 'en_IN',
+      images: [{ url: image, width: 1200, height: 630, alt: post.title }],
       publishedTime: post.createdAt?.toISOString(),
+      modifiedTime: post.updatedAt?.toISOString(),
       authors: [post.author ?? 'NutriLifeMitra'],
-      tags: post.tag ? [post.tag] : [],
+      tags: post.tag ? [post.tag, post.category ?? ''].filter(Boolean) : [],
     },
-    twitter: { card: 'summary_large_image', title, description, images: [image] },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [image],
+      site: '@nutrilifemitra',
+    },
   }
 }
 
@@ -99,17 +122,40 @@ export default async function BlogPostPage({
             '@type': 'Article',
             headline: plain.title,
             description: plain.excerpt ?? '',
-            image: plain.heroImage ? [plain.heroImage] : [],
+            image: plain.heroImage ? [plain.heroImage] : [`${SITE_URL}/api/og`],
             datePublished: plain.createdAt,
-            dateModified: plain.updatedAt,
-            author: { '@type': 'Person', name: plain.author ?? 'NutriLifeMitra' },
+            dateModified: plain.updatedAt ?? plain.createdAt,
+            inLanguage: plain.language === 'te' ? 'te' : plain.language === 'hi' ? 'hi' : 'en',
+            author: {
+              '@type': 'Person',
+              name: plain.author ?? 'NutriLifeMitra',
+              url: SITE_URL,
+            },
             publisher: {
               '@type': 'Organization',
               name: 'NutriLifeMitra',
               url: SITE_URL,
+              logo: { '@type': 'ImageObject', url: `${SITE_URL}/EnglishLogo.png` },
             },
             url: `${SITE_URL}/blog/${plain.slug}`,
             mainEntityOfPage: { '@type': 'WebPage', '@id': `${SITE_URL}/blog/${plain.slug}` },
+            keywords: [plain.tag, plain.category].filter(Boolean).join(', '),
+            articleSection: plain.category ?? 'Health',
+            wordCount: (plain.content ?? '').replace(/<[^>]+>/g, '').trim().split(/\s+/).length,
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+              { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/blog` },
+              { '@type': 'ListItem', position: 3, name: plain.title, item: `${SITE_URL}/blog/${plain.slug}` },
+            ],
           }),
         }}
       />

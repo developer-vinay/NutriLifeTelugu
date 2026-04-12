@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useLanguage } from '@/components/LanguageProvider'
 import BuyPlanButton from '@/components/payment/BuyPlanButton'
 import { Download, CheckCircle2, Leaf, Heart, Baby, Wheat, Activity, Flame } from 'lucide-react'
+import PromotionBlock from '@/components/promotions/PromotionBlock'
 
 const freePlans = [
   {
@@ -201,6 +202,11 @@ export default function DietPlansClient({ plans }: { plans: any[] }) {
             <span className="h-1 w-8 rounded-full bg-amber-500" />
             <h2 className="font-nunito text-2xl font-bold text-gray-900 dark:text-slate-50">{tx.premium_title}</h2>
             <span className="rounded-full bg-amber-100 px-3 py-0.5 text-xs font-semibold text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">{tx.premium_badge}</span>
+          </div>
+
+          {/* Promo banner above premium plans */}
+          <div className="mb-6">
+            <PromotionBlock placement="diet-plans" language={language} />
           </div>
           {plans.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-amber-300 bg-amber-50 p-10 text-center dark:border-amber-700 dark:bg-amber-900/10">

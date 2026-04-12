@@ -5,16 +5,22 @@ import { User } from '@/models/User'
 
 export const runtime = 'nodejs'
 
-// POST /api/user/save  body: { type: 'post'|'recipe'|'video', id, action: 'save'|'unsave' }
 export async function POST(req: NextRequest) {
-  const session = await auth()
-  if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  try {
+    const session = await auth()
+    if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { type, id, action } = await req.json()
-  const field = type === 'recipe' ? 'savedRecipes' : type === 'video' ? 'savedVideos' : 'savedPosts'
-  const op = action === 'unsave' ? { $pull: { [field]: id } } : { $addToSet: { [field]: id } }
+    const { type, id, action } = await req.json()
+    if (!type || !id || !action) return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
 
-  await connectDB()
-  await User.findOneAndUpdate({ email: session.user.email }, op)
-  return NextResponse.json({ ok: true })
+    const field = type === 'recipe' ? 'savedRecipes' : type === 'video' ? 'savedVideos' : 'savedPosts'
+    const op = action === 'unsave' ? { $pull: { [field]: id } } : { $addToSet: { [field]: id } }
+
+    await connectDB()
+    await User.findOneAndUpdate({ email: session.user.email }, op)
+    return NextResponse.json({ ok: true })
+  } catch (err) {
+    console.error('save error:', err)
+    return NextResponse.json({ error: 'Failed to update save' }, { status: 500 })
+  }
 }

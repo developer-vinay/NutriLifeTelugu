@@ -7,6 +7,7 @@ import StarRating from '@/components/ui/StarRating'
 import CommentsSection from '@/components/ui/CommentsSection'
 import { useLanguage } from '@/components/LanguageProvider'
 import { UtensilsCrossed, Eye, Printer } from 'lucide-react'
+import PromotionBlock from '@/components/promotions/PromotionBlock'
 
 type DBRecipe = {
   _id: string
@@ -190,6 +191,11 @@ export default function RecipeDetailClient({ recipe, related }: Props) {
             />
           </section>
         )}
+
+        {/* Inline recipe promotion */}
+        <div className="mt-6">
+          <PromotionBlock placement="recipe-inline" language={recipe.language ?? 'en'} />
+        </div>
 
         {related.length > 0 && (
           <section className="mt-8">

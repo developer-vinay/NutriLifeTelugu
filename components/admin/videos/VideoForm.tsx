@@ -37,6 +37,7 @@ export default function VideoForm({ mode, initialData }: VideoFormProps) {
   const router = useRouter()
   const [title, setTitle] = useState(initialData?.title ?? '')
   const [slug, setSlug] = useState(initialData?.slug ?? '')
+  const [slugManuallyEdited, setSlugManuallyEdited] = useState(mode === 'edit')
   const [description, setDescription] = useState(initialData?.description ?? '')
   const [youtubeUrl, setYoutubeUrl] = useState(initialData?.youtubeUrl ?? '')
   const [category, setCategory] = useState(initialData?.category ?? 'cooking')
@@ -48,9 +49,19 @@ export default function VideoForm({ mode, initialData }: VideoFormProps) {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
+  function generateSlug(text: string): string {
+    let s = slugify(text, { lower: true, strict: true })
+    if (!s || s.length < 2) {
+      const englishOnly = text.replace(/[^\x00-\x7F\s-]/g, '').trim()
+      s = slugify(englishOnly, { lower: true, strict: true })
+    }
+    return s || ''
+  }
+
   useEffect(() => {
-    if (!initialData && title) {
-      setSlug(slugify(title, { lower: true, strict: true }))
+    if (mode === 'create' && !slugManuallyEdited && title) {
+      const s = generateSlug(title)
+      if (s) setSlug(s)
     }
   }, [title])
 
@@ -58,6 +69,7 @@ export default function VideoForm({ mode, initialData }: VideoFormProps) {
   const thumbnailUrl = youtubeId ? `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg` : ''
 
   const onSubmit = async (publish: boolean) => {
+    if (!slug.trim()) { setError('Slug is required. Type a custom English slug like "ragi-dosa-video".'); return }
     setSaving(true)
     setError('')
     try {
@@ -75,7 +87,10 @@ export default function VideoForm({ mode, initialData }: VideoFormProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       })
-      if (!res.ok) throw new Error('Failed to save video')
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error ?? 'Failed to save video')
+      }
       router.push('/admin/videos')
       router.refresh()
     } catch (err) {
@@ -115,8 +130,25 @@ export default function VideoForm({ mode, initialData }: VideoFormProps) {
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-1">
-          <label className="text-sm font-medium text-gray-800">Slug</label>
-          <input type="text" value={slug} onChange={(e) => setSlug(e.target.value)} className={inputCls} />
+          <label className="text-sm font-medium text-gray-800">
+            Slug <span className="text-xs font-normal text-gray-400">(English letters, numbers, hyphens only)</span>
+          </label>
+          <div className="flex gap-2">
+            <input type="text" value={slug}
+              onChange={(e) => {
+                const clean = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '').replace(/--+/g, '-')
+                setSlug(clean)
+                setSlugManuallyEdited(true)
+              }}
+              placeholder="e.g. ragi-dosa-video-telugu"
+              className={inputCls} />
+            <button type="button"
+              onClick={() => { const s = generateSlug(title); if (s) { setSlug(s); setSlugManuallyEdited(false) } }}
+              className="shrink-0 rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-100">
+              ↺ Generate
+            </button>
+          </div>
+          {!slug && title && <p className="text-xs text-amber-600">⚠ Type a custom English slug like <code>ragi-dosa-video</code></p>}
         </div>
         <div className="space-y-1">
           <label className="text-sm font-medium text-gray-800">Category</label>

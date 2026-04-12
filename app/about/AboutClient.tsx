@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import { useLanguage } from '@/components/LanguageProvider'
 import { Leaf, Home, Heart, Users, Salad, BookOpen, Stethoscope, Send, CheckCircle } from 'lucide-react'
+import PromotionBlock from '@/components/promotions/PromotionBlock'
 
 const content = {
   en: {
@@ -257,6 +258,9 @@ export default function AboutClient() {
             {t.cta_contact}
           </Link>
         </section>
+
+        {/* About page promotion */}
+        <PromotionBlock placement="about" language={language} />
 
         {/* Contact / Feedback Form */}
         <section id="contact" className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm dark:border-slate-700 dark:bg-slate-900">

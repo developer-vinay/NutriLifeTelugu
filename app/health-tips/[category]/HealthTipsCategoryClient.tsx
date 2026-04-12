@@ -4,6 +4,7 @@ import React from 'react'
 import Link from 'next/link'
 import { useLanguage } from '@/components/LanguageProvider'
 import { Salad } from 'lucide-react'
+import PromotionBlock from '@/components/promotions/PromotionBlock'
 
 const categoryMeta: Record<string, { te: { title: string; description: string }; en: { title: string; description: string }; hi: { title: string; description: string } }> = {
   'weight-loss': {
@@ -62,6 +63,10 @@ export default function HealthTipsCategoryClient({ category, posts }: { category
       </section>
 
       <div className="mx-auto max-w-6xl px-4 py-10">
+        {/* Inline promo for health tips */}
+        <div className="mb-6">
+          <PromotionBlock placement="blog-inline" language={language} />
+        </div>
         {posts.length === 0 ? (
           <p className="py-10 text-center text-sm text-gray-500">
             {language === 'te' ? 'వ్యాసాలు త్వరలో వస్తాయి.' : language === 'hi' ? 'लेख जल्द आ रहे हैं।' : 'Articles coming soon.'}

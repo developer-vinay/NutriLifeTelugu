@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import { useLanguage } from '@/components/LanguageProvider'
 import { Scale, Flame, Ruler, Candy, Droplets, Activity, Star, Sun, Snowflake, Lightbulb } from 'lucide-react'
+import PromotionBlock from '@/components/promotions/PromotionBlock'
 
 type Tool = 'bmi' | 'calorie' | 'ideal-weight' | 'sugar' | 'water' | 'waist-hip'
 
@@ -566,6 +567,11 @@ export default function HealthToolsClient() {
         {/* Info strip */}
         <div className="mt-8 rounded-2xl border border-gray-100 bg-gray-50 p-4 text-xs text-gray-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
           {disclaimer}
+        </div>
+
+        {/* Inline promotion below tools */}
+        <div className="mt-6">
+          <PromotionBlock placement="blog-inline" language={language} />
         </div>
       </div>
     </div>

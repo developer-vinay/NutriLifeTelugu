@@ -3,7 +3,8 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useLanguage } from '@/components/LanguageProvider'
-import { Play } from 'lucide-react'
+import { Play, Leaf } from 'lucide-react'
+import PromotionBlock from '@/components/promotions/PromotionBlock'
 
 type DBPost = {
   _id: string
@@ -12,6 +13,7 @@ type DBPost = {
   excerpt?: string
   tag?: string
   language?: string
+  heroImage?: string
   readTimeMinutes?: number
   createdAt: string
 }
@@ -89,10 +91,16 @@ export default function HomeMainLayout({ latestVideo }: { latestVideo: DBVideo |
 
   return (
     <section className="bg-gray-50 pb-12 pt-6 dark:bg-slate-950">
+      {/* Popup promo — renders after 5s */}
+      <PromotionBlock placement="popup" language={language} />
+
       <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 md:flex-row">
 
         {/* Main content */}
         <div className="w-full space-y-6 md:w-[70%]">
+
+          {/* Home banner promo — auto-rotating */}
+          <PromotionBlock placement="home-banner" language={language} />
 
           {/* Latest Articles */}
           <section id="latest">
@@ -106,9 +114,22 @@ export default function HomeMainLayout({ latestVideo }: { latestVideo: DBVideo |
                 {mainPosts.map((post) => (
                   <Link key={post._id} href={`/blog/${post.slug}`}
                     className="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-800/60 dark:hover:border-emerald-600">
-                    <div className="mb-3 h-28 w-full rounded-t-2xl bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900/30 dark:to-slate-700" />
-                    <div className="px-3 pb-3">
-                      <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wide text-[#1A5C38] dark:text-emerald-400">{post.tag}</span>
+                    <div className="relative h-28 w-full shrink-0 overflow-hidden rounded-t-2xl">
+                      {post.heroImage
+                        ? <img src={post.heroImage} alt={post.title} className="absolute inset-0 h-full w-full object-cover transition group-hover:scale-105" />
+                        : <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-100 to-emerald-200 dark:from-emerald-900/40 dark:to-slate-700"><Leaf size={28} className="text-emerald-400 dark:text-emerald-600" /></div>
+                      }
+                    </div>
+                    <div className="px-3 pb-3 pt-2">
+                      {post.tag && (
+                        <div className="mb-1 flex flex-wrap gap-1">
+                          {post.tag.split(',').slice(0, 2).map((t) => (
+                            <span key={t} className="rounded-full bg-emerald-50 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#1A5C38] dark:bg-emerald-900/30 dark:text-emerald-400">
+                              {t.trim()}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                       <h3 className="mb-1 line-clamp-2 text-[13px] font-semibold text-gray-900 group-hover:text-[#1A5C38] dark:text-slate-100 dark:group-hover:text-emerald-400">{post.title}</h3>
                       <p className="mb-2 line-clamp-2 text-[11px] text-gray-500 dark:text-slate-400">{post.excerpt}</p>
                       <p className="text-[11px] text-gray-400 dark:text-slate-500">
@@ -137,7 +158,9 @@ export default function HomeMainLayout({ latestVideo }: { latestVideo: DBVideo |
                       {recipe.heroImage && <img src={recipe.heroImage} alt={recipe.title} className="h-full w-full object-cover" />}
                     </div>
                     <div className="flex-1 space-y-1">
-                      <span className="text-[10px] font-semibold uppercase tracking-wide text-[#1A5C38] dark:text-emerald-400">{recipe.tag}</span>
+                      <span className="text-[10px] font-semibold uppercase tracking-wide text-[#1A5C38] dark:text-emerald-400">
+                        {recipe.tag?.split(',')[0]?.trim()}
+                      </span>
                       <h3 className="line-clamp-2 text-[13px] font-semibold text-gray-900 group-hover:text-[#1A5C38] dark:text-slate-100 dark:group-hover:text-emerald-400">{recipe.title}</h3>
                       {recipe.prepTimeMinutes && <p className="text-[11px] text-gray-400 dark:text-slate-500">{recipe.prepTimeMinutes} min</p>}
                     </div>
@@ -168,8 +191,21 @@ export default function HomeMainLayout({ latestVideo }: { latestVideo: DBVideo |
                 {tipPosts.map((post) => (
                   <Link key={post._id} href={`/blog/${post.slug}`}
                     className="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white p-3 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-300 dark:border-slate-700 dark:bg-slate-800/60 dark:hover:border-emerald-600">
-                    <div className="mb-3 h-24 w-full rounded-xl bg-gray-100 dark:bg-slate-700/60" />
-                    <span className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-[#1A5C38] dark:text-emerald-400">{post.tag}</span>
+                    <div className="relative mb-3 h-24 w-full shrink-0 overflow-hidden rounded-xl">
+                      {post.heroImage
+                        ? <img src={post.heroImage} alt={post.title} className="absolute inset-0 h-full w-full object-cover transition group-hover:scale-105" />
+                        : <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-100 to-emerald-200 dark:from-emerald-900/40 dark:to-slate-700"><Leaf size={22} className="text-emerald-400 dark:text-emerald-600" /></div>
+                      }
+                    </div>
+                    {post.tag && (
+                      <div className="mb-1 flex flex-wrap gap-1">
+                        {post.tag.split(',').slice(0, 1).map((t) => (
+                          <span key={t} className="rounded-full bg-emerald-50 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#1A5C38] dark:bg-emerald-900/30 dark:text-emerald-400">
+                            {t.trim()}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                     <h3 className="mb-1 line-clamp-2 text-[13px] font-semibold text-gray-900 group-hover:text-[#1A5C38] dark:text-slate-100 dark:group-hover:text-emerald-400">{post.title}</h3>
                     <p className="mb-2 line-clamp-3 text-[11px] text-gray-500 dark:text-slate-400">{post.excerpt}</p>
                     <p className="mt-auto text-[11px] text-gray-400 dark:text-slate-500">{post.readTimeMinutes ?? 5} min read</p>
@@ -182,7 +218,8 @@ export default function HomeMainLayout({ latestVideo }: { latestVideo: DBVideo |
 
         {/* Sidebar */}
         <aside className="w-full space-y-4 md:w-[30%] md:sticky md:top-20 md:self-start">
-          {/* Newsletter replacing ad block */}
+          {/* Sidebar promotions — replaces static ad placeholder */}
+          <PromotionBlock placement="sidebar" language={language} />
           <div className="rounded-2xl border border-emerald-200 bg-gradient-to-b from-emerald-50 to-white p-4 shadow-sm dark:border-emerald-800/50 dark:from-emerald-900/20 dark:to-slate-800">
             <p className="text-sm font-bold text-emerald-900 dark:text-emerald-100">Free 7-Day Meal Plan</p>
             <p className="mt-1 text-xs text-emerald-700 dark:text-emerald-300">Telugu cuisine · Diabetic friendly · Printable PDF</p>

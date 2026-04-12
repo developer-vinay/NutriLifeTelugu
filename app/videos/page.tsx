@@ -5,6 +5,7 @@ import React, { useEffect, useState, useMemo } from 'react'
 import { useLanguage } from '@/components/LanguageProvider'
 import LikeSaveButtons from '@/components/ui/LikeSaveButtons'
 import { Play, Clock, Youtube } from 'lucide-react'
+import PromotionBlock from '@/components/promotions/PromotionBlock'
 
 type DBVideo = {
   _id: string
@@ -141,6 +142,10 @@ export default function VideosPage() {
       </div>
 
       <div className="mx-auto max-w-6xl px-4 py-8 space-y-10">
+        {/* Videos page specific promo */}
+        <PromotionBlock placement="videos-page" language={language} />
+        {/* Home banner promo on videos page */}
+        <PromotionBlock placement="home-banner" language={language} />
         {loading ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => (

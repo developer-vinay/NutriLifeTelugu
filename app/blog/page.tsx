@@ -1,5 +1,9 @@
 import BlogListClient from './BlogListClient'
 
 export default function BlogListPage() {
-  return <BlogListClient />
+  return (
+    <div className="pt-[72px]">
+      <BlogListClient />
+    </div>
+  )
 }

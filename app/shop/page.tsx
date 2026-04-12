@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { useLanguage } from '@/components/LanguageProvider'
+import PromotionBlock from '@/components/promotions/PromotionBlock'
 
 const products = {
   te: [
@@ -45,6 +46,10 @@ export default function ShopPage() {
       </section>
 
       <div className="mx-auto max-w-6xl px-4 py-10">
+        {/* Banner promo */}
+        <div className="mb-6">
+          <PromotionBlock placement="shop" language={language} />
+        </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {prods.map((p) => (
             <div key={p.title} className="rounded-2xl border border-amber-200 bg-amber-50 p-6 dark:border-amber-700 dark:bg-amber-900/20">

@@ -15,23 +15,36 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const recipe = await Recipe.findOne({ slug, isPublished: true }).lean()
   if (!recipe) return {}
 
-  const title = recipe.title
-  const description = recipe.description ?? `${recipe.title} — NutriLifeMitra recipe`
+  const title = `${recipe.title} | NutriLifeMitra`
+  const description = recipe.description
+    ? recipe.description.slice(0, 160)
+    : `${recipe.title} — healthy Indian recipe on NutriLifeMitra`
   const url = `${SITE_URL}/recipes/${slug}`
-  const image = recipe.heroImage ?? `${SITE_URL}/og-image.png`
+  const image = recipe.heroImage ?? `${SITE_URL}/api/og`
+
+  const keywords = [
+    recipe.tag,
+    recipe.category,
+    'NutriLifeMitra recipe',
+    'Indian healthy recipe',
+    recipe.language === 'te' ? 'తెలుగు రెసిపీ' : recipe.language === 'hi' ? 'हिंदी रेसिपी' : undefined,
+  ].filter(Boolean) as string[]
 
   return {
     title,
     description,
+    keywords,
     alternates: { canonical: url },
     openGraph: {
       type: 'article',
       url,
       title,
       description,
-      images: [{ url: image, width: 1200, height: 630, alt: title }],
+      siteName: 'NutriLifeMitra',
+      locale: recipe.language === 'te' ? 'te_IN' : recipe.language === 'hi' ? 'hi_IN' : 'en_IN',
+      images: [{ url: image, width: 1200, height: 630, alt: recipe.title }],
     },
-    twitter: { card: 'summary_large_image', title, description, images: [image] },
+    twitter: { card: 'summary_large_image', title, description, images: [image], site: '@nutrilifemitra' },
   }
 }
 
@@ -82,18 +95,54 @@ export default async function RecipeDetailPage({
             '@type': 'Recipe',
             name: plain.title,
             description: plain.description ?? '',
-            image: plain.heroImage ? [plain.heroImage] : [],
-            author: { '@type': 'Person', name: plain.author ?? 'NutriLifeMitra' },
+            image: plain.heroImage ? [plain.heroImage] : [`${SITE_URL}/api/og`],
+            author: {
+              '@type': 'Person',
+              name: plain.author ?? 'NutriLifeMitra',
+              url: SITE_URL,
+            },
+            publisher: {
+              '@type': 'Organization',
+              name: 'NutriLifeMitra',
+              url: SITE_URL,
+              logo: { '@type': 'ImageObject', url: `${SITE_URL}/EnglishLogo.png` },
+            },
             datePublished: plain.createdAt,
+            inLanguage: plain.language === 'te' ? 'te' : plain.language === 'hi' ? 'hi' : 'en',
             prepTime: plain.prepTimeMinutes ? `PT${plain.prepTimeMinutes}M` : undefined,
             cookTime: plain.cookTimeMinutes ? `PT${plain.cookTimeMinutes}M` : undefined,
+            totalTime: (plain.prepTimeMinutes || plain.cookTimeMinutes)
+              ? `PT${(plain.prepTimeMinutes ?? 0) + (plain.cookTimeMinutes ?? 0)}M`
+              : undefined,
             recipeYield: plain.servings ? `${plain.servings} servings` : undefined,
+            recipeCategory: plain.category ?? 'Indian Recipe',
+            recipeCuisine: 'Indian',
+            keywords: [plain.tag, plain.category].filter(Boolean).join(', '),
             recipeIngredient: plain.ingredients ?? [],
-            nutrition: plain.nutritionFacts ? {
+            nutrition: plain.nutritionFacts?.calories ? {
               '@type': 'NutritionInformation',
               calories: `${plain.nutritionFacts.calories} calories`,
+              proteinContent: plain.nutritionFacts.protein ? `${plain.nutritionFacts.protein}g` : undefined,
+              carbohydrateContent: plain.nutritionFacts.carbs ? `${plain.nutritionFacts.carbs}g` : undefined,
+              fatContent: plain.nutritionFacts.fat ? `${plain.nutritionFacts.fat}g` : undefined,
+              fiberContent: plain.nutritionFacts.fiber ? `${plain.nutritionFacts.fiber}g` : undefined,
             } : undefined,
             url: `${SITE_URL}/recipes/${plain.slug}`,
+            mainEntityOfPage: { '@type': 'WebPage', '@id': `${SITE_URL}/recipes/${plain.slug}` },
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+              { '@type': 'ListItem', position: 2, name: 'Recipes', item: `${SITE_URL}/recipes` },
+              { '@type': 'ListItem', position: 3, name: plain.title, item: `${SITE_URL}/recipes/${plain.slug}` },
+            ],
           }),
         }}
       />

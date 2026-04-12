@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
 import { Search, UtensilsCrossed, FileText, Play } from 'lucide-react'
+import PromotionBlock from '@/components/promotions/PromotionBlock'
 
 type Language = 'en' | 'te' | 'hi'
 
@@ -154,6 +155,10 @@ export default function SearchClient({
 
       {/* Results */}
       <div className="mx-auto max-w-4xl px-4 py-8">
+        {/* Inline promo at top of results */}
+        <div className="mb-6">
+          <PromotionBlock placement="blog-inline" language={language} />
+        </div>
         <p className="mb-6 text-sm text-gray-500 dark:text-slate-400">
           {filtered.length} {t.results}
           {query ? ` for "${query}"` : ''}

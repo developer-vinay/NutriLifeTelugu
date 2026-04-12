@@ -7,6 +7,7 @@ import StarRating from '@/components/ui/StarRating'
 import CommentsSection from '@/components/ui/CommentsSection'
 import { useLanguage } from '@/components/LanguageProvider'
 import { UtensilsCrossed, Printer } from 'lucide-react'
+import PromotionBlock from '@/components/promotions/PromotionBlock'
 
 export type DBPost = {
   _id: string
@@ -119,9 +120,18 @@ export default function BlogPostClient({ post, related }: Props) {
             )}
 
             {post.tag && (
-              <span className="mb-2 inline-flex rounded-full bg-emerald-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#1A5C38] dark:bg-emerald-900/40 dark:text-emerald-300">
-                {post.tag}
-              </span>
+              <div className="mb-3 flex flex-wrap gap-2">
+                {post.tag.split(',').map((t) => (
+                  <span key={t} className="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#1A5C38] dark:bg-emerald-900/40 dark:text-emerald-300">
+                    {t.trim()}
+                  </span>
+                ))}
+                {post.category && (
+                  <span className="inline-flex rounded-full bg-gray-100 px-3 py-1 text-[11px] font-medium capitalize text-gray-600 dark:bg-slate-800 dark:text-slate-400">
+                    {post.category.replace(/-/g, ' ')}
+                  </span>
+                )}
+              </div>
             )}
 
             <h1 className="mb-3 font-nunito text-2xl font-bold leading-tight text-gray-900 dark:text-slate-50 md:text-3xl">
@@ -270,6 +280,11 @@ export default function BlogPostClient({ post, related }: Props) {
               return <>{result}</>
             })()}
 
+            {/* Inline blog promotion */}
+            <div className="my-6">
+              <PromotionBlock placement="blog-inline" language={post.language ?? 'en'} />
+            </div>
+
             {/* Author box */}
             <section className="mt-8 rounded-2xl bg-gray-100 p-5 dark:bg-slate-900/70">
               <div className="flex items-start gap-3">
@@ -326,11 +341,8 @@ export default function BlogPostClient({ post, related }: Props) {
 
           {/* Sidebar */}
           <aside className="w-full space-y-4 md:w-[32%] lg:sticky lg:top-20 lg:self-start lg:max-h-[calc(100vh-5rem)] lg:overflow-y-auto">
-            <div className="rounded-2xl border border-gray-200 bg-white p-3 text-xs text-gray-700 dark:border-slate-700 dark:bg-slate-900">
-              <div className="flex h-64 items-center justify-center rounded-xl border border-dashed border-gray-300 bg-gray-50 text-[11px] text-gray-400 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-500">
-                Advertisement — Google AdSense 300×250
-              </div>
-            </div>
+            {/* Sidebar promotions */}
+            <PromotionBlock placement="sidebar" language={post.language ?? 'en'} />
 
             <div className="rounded-2xl border border-gray-200 bg-white p-4 text-xs text-gray-800 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
               <p className="mb-1 text-[13px] font-semibold text-gray-900 dark:text-slate-50">Free weekly recipes</p>

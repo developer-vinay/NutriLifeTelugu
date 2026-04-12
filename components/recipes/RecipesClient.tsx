@@ -4,6 +4,7 @@ import Link from 'next/link'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useLanguage } from '@/components/LanguageProvider'
 import { Search, UtensilsCrossed } from 'lucide-react'
+import PromotionBlock from '@/components/promotions/PromotionBlock'
 
 type DBRecipe = {
   _id: string
@@ -226,6 +227,9 @@ export default function RecipesClient() {
 
         {/* Sidebar */}
         <aside className="space-y-4 md:sticky md:top-20 md:self-start">
+          {/* Sidebar promotions */}
+          <PromotionBlock placement="sidebar" language={language} />
+
           {/* Newsletter signup replacing ad block */}
           <div className="rounded-2xl border border-emerald-200 bg-gradient-to-b from-emerald-50 to-white p-5 dark:border-emerald-800/50 dark:from-emerald-900/20 dark:to-slate-900">
             <p className="font-nunito text-base font-bold text-emerald-900 dark:text-emerald-100">Free Weekly Recipes</p>

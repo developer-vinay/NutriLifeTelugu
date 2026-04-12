@@ -9,21 +9,27 @@ import { Video } from '@/models/Video'
 
 export const runtime = 'nodejs'
 
-// POST /api/user/like  body: { type: 'post'|'recipe'|'video', id, action: 'like'|'unlike' }
 export async function POST(req: NextRequest) {
-  const session = await auth()
-  if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  try {
+    const session = await auth()
+    if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { type, id, action } = await req.json()
-  const userField = type === 'recipe' ? 'likedRecipes' : type === 'video' ? 'likedVideos' : 'likedPosts'
-  const userOp = action === 'unlike' ? { $pull: { [userField]: id } } : { $addToSet: { [userField]: id } }
-  const countOp = action === 'unlike' ? { $inc: { likes: -1 } } : { $inc: { likes: 1 } }
-  const Model = (type === 'recipe' ? Recipe : type === 'video' ? Video : Post) as MongooseModel<{ likes?: number }>
+    const { type, id, action } = await req.json()
+    if (!type || !id || !action) return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
 
-  await connectDB()
-  await Promise.all([
-    User.findOneAndUpdate({ email: session.user.email }, userOp),
-    Model.findOneAndUpdate({ _id: id }, countOp),
-  ])
-  return NextResponse.json({ ok: true })
+    const userField = type === 'recipe' ? 'likedRecipes' : type === 'video' ? 'likedVideos' : 'likedPosts'
+    const userOp = action === 'unlike' ? { $pull: { [userField]: id } } : { $addToSet: { [userField]: id } }
+    const countOp = action === 'unlike' ? { $inc: { likes: -1 } } : { $inc: { likes: 1 } }
+    const Model = (type === 'recipe' ? Recipe : type === 'video' ? Video : Post) as MongooseModel<{ likes?: number }>
+
+    await connectDB()
+    await Promise.all([
+      User.findOneAndUpdate({ email: session.user.email }, userOp),
+      Model.findOneAndUpdate({ _id: id }, countOp),
+    ])
+    return NextResponse.json({ ok: true })
+  } catch (err) {
+    console.error('like error:', err)
+    return NextResponse.json({ error: 'Failed to update like' }, { status: 500 })
+  }
 }

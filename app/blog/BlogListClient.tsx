@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useLanguage } from '@/components/LanguageProvider'
 import { FileText } from 'lucide-react'
+import PromotionBlock from '@/components/promotions/PromotionBlock'
 
 type Post = {
   _id: string
@@ -37,7 +38,15 @@ export default function BlogListClient() {
   return (
     <div className="bg-white dark:bg-slate-900">
       <div className="mx-auto max-w-6xl px-4 py-10">
-        <div className="mb-6 flex items-center justify-between">
+        {/* Banner promo at top */}
+        <div className="mb-6">
+          <PromotionBlock placement="home-banner" language={language} />
+        </div>
+
+        <div className="flex flex-col gap-8 md:flex-row">
+          {/* Main content */}
+          <div className="flex-1 min-w-0">
+            <div className="mb-6 flex items-center justify-between">
           <div>
             <h1 className="font-nunito text-3xl font-bold text-gray-900 dark:text-slate-50">
               {language === 'te' ? 'తాజా వ్యాసాలు' : language === 'hi' ? 'नवीनतम लेख' : 'Latest Articles'}
@@ -70,7 +79,7 @@ export default function BlogListClient() {
             </p>
           </div>
         ) : (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-2">
             {posts.map((post) => (
               <Link
                 key={post._id}
@@ -87,7 +96,7 @@ export default function BlogListClient() {
                   <div className="mb-2 flex items-center justify-between">
                     {post.tag && (
                       <span className="inline-flex rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-[#1A5C38] dark:bg-emerald-900/40 dark:text-emerald-400">
-                        {post.tag}
+                        {post.tag.split(',')[0].trim()}
                       </span>
                     )}
                     <span className="ml-auto text-[11px] text-gray-500 dark:text-slate-400">
@@ -110,6 +119,13 @@ export default function BlogListClient() {
             ))}
           </div>
         )}
+          </div>
+
+          {/* Sidebar */}
+          <aside className="w-full space-y-4 md:w-72 md:shrink-0 md:sticky md:top-20 md:self-start">
+            <PromotionBlock placement="sidebar" language={language} />
+          </aside>
+        </div>
       </div>
     </div>
   )
