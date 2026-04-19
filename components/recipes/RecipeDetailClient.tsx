@@ -186,7 +186,7 @@ export default function RecipeDetailClient({ recipe, related }: Props) {
           <section id="recipe-method" className="mt-6 rounded-2xl border border-gray-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800">
             <h2 className="mb-3 font-nunito text-xl font-semibold text-gray-900 dark:text-slate-50">{t.method}</h2>
             <div
-              className="prose max-w-none text-sm text-gray-700 dark:prose-invert dark:text-slate-300"
+              className="prose max-w-none"
               dangerouslySetInnerHTML={{ __html: recipe.content }}
             />
           </section>

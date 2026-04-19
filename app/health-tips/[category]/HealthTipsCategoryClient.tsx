@@ -46,12 +46,16 @@ type Post = {
   excerpt?: string
   heroImage?: string
   tag?: string
+  language?: string
   readTimeMinutes?: number
 }
 
 export default function HealthTipsCategoryClient({ category, posts }: { category: string; posts: Post[] }) {
   const { language } = useLanguage()
   const meta = categoryMeta[category]?.[language] ?? { title: category, description: '' }
+
+  // Filter posts by current language
+  const filtered = posts.filter(p => (p.language ?? 'en') === language)
 
   return (
     <div className="bg-white dark:bg-slate-900">
@@ -67,13 +71,13 @@ export default function HealthTipsCategoryClient({ category, posts }: { category
         <div className="mb-6">
           <PromotionBlock placement="blog-inline" language={language} />
         </div>
-        {posts.length === 0 ? (
+        {filtered.length === 0 ? (
           <p className="py-10 text-center text-sm text-gray-500">
             {language === 'te' ? 'వ్యాసాలు త్వరలో వస్తాయి.' : language === 'hi' ? 'लेख जल्द आ रहे हैं।' : 'Articles coming soon.'}
           </p>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {posts.map((p) => (
+            {filtered.map((p) => (
               <Link
                 key={p._id}
                 href={`/blog/${p.slug}`}

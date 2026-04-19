@@ -22,7 +22,11 @@ export default async function HealthTipsCategoryPage({
   if (!categories.includes(category as any)) notFound()
 
   await connectDB()
-  const posts = await Post.find({ isPublished: true, category }).sort({ createdAt: -1 }).limit(12).lean()
+  // Fetch all languages — client will filter by selected language
+  const posts = await Post.find({ isPublished: true, category })
+    .sort({ createdAt: -1 })
+    .limit(60)
+    .lean()
 
   const serialized = posts.map((p: any) => ({
     _id: p._id.toString(),
@@ -31,6 +35,7 @@ export default async function HealthTipsCategoryPage({
     excerpt: p.excerpt ?? '',
     heroImage: p.heroImage ?? '',
     tag: p.tag ?? '',
+    language: p.language ?? 'en',
     readTimeMinutes: p.readTimeMinutes ?? 5,
   }))
 

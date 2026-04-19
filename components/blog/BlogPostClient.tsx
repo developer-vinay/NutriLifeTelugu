@@ -222,7 +222,7 @@ export default function BlogPostClient({ post, related }: Props) {
               if (!post.contentImages || post.contentImages.length === 0) {
                 return (
                   <div
-                    className="prose prose-emerald max-w-none text-gray-700 prose-headings:text-gray-900 prose-a:text-[#1A5C38] prose-strong:text-gray-900 dark:prose-invert dark:text-slate-200 dark:prose-headings:text-slate-50 dark:prose-a:text-emerald-300 dark:prose-strong:text-slate-100"
+                    className="prose max-w-none"
                     dangerouslySetInnerHTML={{ __html: post.content }}
                   />
                 )
@@ -244,7 +244,7 @@ export default function BlogPostClient({ post, related }: Props) {
                 result.push(
                   <div
                     key={`block-${i}`}
-                    className="prose prose-emerald max-w-none text-gray-700 prose-headings:text-gray-900 prose-a:text-[#1A5C38] prose-strong:text-gray-900 dark:prose-invert dark:text-slate-200 dark:prose-headings:text-slate-50 dark:prose-a:text-emerald-300 dark:prose-strong:text-slate-100"
+                    className="prose max-w-none"
                     dangerouslySetInnerHTML={{ __html: block }}
                   />
                 )
