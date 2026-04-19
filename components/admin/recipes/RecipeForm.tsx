@@ -34,17 +34,42 @@ export default function RecipeForm({ mode, initialData }: RecipeFormProps) {
   const [prepTime, setPrepTime] = useState(initialData?.prepTimeMinutes ?? '')
   const [cookTime, setCookTime] = useState(initialData?.cookTimeMinutes ?? '')
   const [servings, setServings] = useState(initialData?.servings ?? '')
-  const [ingredients, setIngredients] = useState<string[]>(initialData?.ingredients ?? [''])
+  // Convert ingredients array → textarea text (one per line)
+  const [ingredientsText, setIngredientsText] = useState(
+    (initialData?.ingredients ?? []).join('\n')
+  )
+
+  // Convert nutrition facts → single text line
+  const nf = initialData?.nutritionFacts ?? {}
+  const [nutritionText, setNutritionText] = useState(
+    Object.entries(nf)
+      .filter(([, v]) => v !== undefined && v !== null && v !== '')
+      .map(([k, v]) => `${k}: ${v}`)
+      .join(', ')
+  )
   const [content, setContent] = useState(initialData?.content ?? '')
-  const [calories, setCalories] = useState(initialData?.nutritionFacts?.calories ?? '')
-  const [protein, setProtein] = useState(initialData?.nutritionFacts?.protein ?? '')
-  const [carbs, setCarbs] = useState(initialData?.nutritionFacts?.carbs ?? '')
-  const [fat, setFat] = useState(initialData?.nutritionFacts?.fat ?? '')
-  const [fiber, setFiber] = useState(initialData?.nutritionFacts?.fiber ?? '')
-  const [isFeatured, setIsFeatured] = useState(initialData?.isFeatured ?? false)
   const [isPublished, setIsPublished] = useState(initialData?.isPublished ?? false)
+  const [isFeatured, setIsFeatured] = useState(initialData?.isFeatured ?? false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+
+  // Parse "one ingredient per line" textarea → array
+  function parseIngredients(text: string): string[] {
+    return text.split('\n').map(s => s.trim()).filter(Boolean)
+  }
+
+  // Parse "Calories: 250, Protein: 8g, Carbs: 45g" → object
+  function parseNutrition(text: string): Record<string, number | undefined> {
+    const result: Record<string, number | undefined> = {}
+    text.split(',').forEach(part => {
+      const [key, val] = part.split(':').map(s => s.trim())
+      if (key && val) {
+        const num = parseFloat(val.replace(/[^\d.]/g, ''))
+        if (!isNaN(num)) result[key.toLowerCase()] = num
+      }
+    })
+    return result
+  }
 
   function generateSlug(text: string): string {
     let s = slugify(text, { lower: true, strict: true })
@@ -84,15 +109,9 @@ export default function RecipeForm({ mode, initialData }: RecipeFormProps) {
         prepTimeMinutes: prepTime ? Number(prepTime) : undefined,
         cookTimeMinutes: cookTime ? Number(cookTime) : undefined,
         servings: servings ? Number(servings) : undefined,
-        ingredients: ingredients.filter(Boolean),
+        ingredients: parseIngredients(ingredientsText),
         content,
-        nutritionFacts: {
-          calories: calories ? Number(calories) : undefined,
-          protein: protein ? Number(protein) : undefined,
-          carbs: carbs ? Number(carbs) : undefined,
-          fat: fat ? Number(fat) : undefined,
-          fiber: fiber ? Number(fiber) : undefined,
-        },
+        nutritionFacts: nutritionText.trim() ? parseNutrition(nutritionText) : {},
         isFeatured,
         isPublished: publish,
       }
@@ -211,20 +230,18 @@ export default function RecipeForm({ mode, initialData }: RecipeFormProps) {
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-800">Ingredients</label>
-        {ingredients.map((ing, idx) => (
-          <div key={idx} className="flex gap-2">
-            <input type="text" value={ing} onChange={(e) => {
-              const updated = [...ingredients]
-              updated[idx] = e.target.value
-              setIngredients(updated)
-            }} placeholder={`Ingredient ${idx + 1}`} className={inputCls} />
-            <button type="button" onClick={() => setIngredients(ingredients.filter((_, i) => i !== idx))}
-              className="rounded-md border border-red-200 px-2 py-1 text-xs text-red-600 hover:bg-red-50">✕</button>
-          </div>
-        ))}
-        <button type="button" onClick={() => setIngredients([...ingredients, ''])}
-          className="text-xs font-medium text-[#1A5C38] hover:underline">+ Add ingredient</button>
+        <label className="text-sm font-medium text-gray-800">
+          Ingredients
+          <span className="ml-2 text-xs font-normal text-gray-400">— one per line</span>
+        </label>
+        <textarea
+          value={ingredientsText}
+          onChange={(e) => setIngredientsText(e.target.value)}
+          rows={8}
+          placeholder={`1 cup ragi flour\n2 tbsp curd\n1/2 tsp salt\nWater as needed\n1 tsp oil`}
+          className={inputCls}
+        />
+        <p className="text-xs text-gray-400">Type each ingredient on a new line. No need to add bullet points or numbers.</p>
       </div>
 
       <div className="space-y-1">
@@ -233,23 +250,19 @@ export default function RecipeForm({ mode, initialData }: RecipeFormProps) {
           placeholder="<ol><li>Step 1...</li></ol>" className={inputCls} />
       </div>
 
-      <div>
-        <label className="mb-2 block text-sm font-medium text-gray-800">Nutrition Facts (optional)</label>
-        <div className="grid gap-3 md:grid-cols-5">
-          {[
-            { label: 'Calories', value: calories, set: setCalories },
-            { label: 'Protein (g)', value: protein, set: setProtein },
-            { label: 'Carbs (g)', value: carbs, set: setCarbs },
-            { label: 'Fat (g)', value: fat, set: setFat },
-            { label: 'Fiber (g)', value: fiber, set: setFiber },
-          ].map(({ label, value, set }) => (
-            <div key={label} className="space-y-1">
-              <label className="text-xs text-gray-600">{label}</label>
-              <input type="number" value={value} onChange={(e) => set(e.target.value)}
-                className="w-full rounded-md border border-gray-300 bg-white px-2 py-1.5 text-sm text-gray-900 focus:border-[#1A5C38] focus:outline-none focus:ring-1 focus:ring-[#1A5C38]" />
-            </div>
-          ))}
-        </div>
+      <div className="space-y-1">
+        <label className="text-sm font-medium text-gray-800">
+          Nutrition Facts
+          <span className="ml-2 text-xs font-normal text-gray-400">— optional, comma separated</span>
+        </label>
+        <input
+          type="text"
+          value={nutritionText}
+          onChange={(e) => setNutritionText(e.target.value)}
+          placeholder="Calories: 250, Protein: 8g, Carbs: 45g, Fat: 6g, Fiber: 3g"
+          className={inputCls}
+        />
+        <p className="text-xs text-gray-400">Format: <code className="bg-gray-100 px-1 rounded">Key: Value, Key: Value</code> — units like g/mg are stripped automatically.</p>
       </div>
 
       <div className="flex flex-wrap items-center gap-4">
