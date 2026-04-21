@@ -1,9 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState, useRef } from 'react'
 import { useLanguage } from '@/components/LanguageProvider'
-import { Search, UtensilsCrossed } from 'lucide-react'
+import { Search, UtensilsCrossed, X } from 'lucide-react'
 import PromotionBlock from '@/components/promotions/PromotionBlock'
 
 type DBRecipe = {
@@ -74,12 +74,21 @@ export default function RecipesClient() {
 
   const [recipes, setRecipes] = useState<DBRecipe[]>([])
   const [loading, setLoading] = useState(true)
-  const [search, setSearch] = useState('')
+  const [searchInput, setSearchInput] = useState('')
   const [activeTab, setActiveTab] = useState('All')
   const [visibleCount, setVisibleCount] = useState(12)
+  const searchRef = useRef<HTMLInputElement>(null)
+
+  // Debounce: filter 300ms after user stops typing
+  const [search, setSearch] = useState('')
+  useEffect(() => {
+    const t = setTimeout(() => setSearch(searchInput), 300)
+    return () => clearTimeout(t)
+  }, [searchInput])
 
   useEffect(() => {
     setLoading(true)
+    setSearchInput('')
     setSearch('')
     setActiveTab('All')
     setVisibleCount(12)
@@ -94,7 +103,11 @@ export default function RecipesClient() {
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
     return recipes.filter((r) => {
-      const matchesSearch = q.length === 0 || r.title.toLowerCase().includes(q) || (r.tag ?? '').toLowerCase().includes(q)
+      const matchesSearch = q.length === 0
+        || r.title.toLowerCase().includes(q)
+        || (r.tag ?? '').toLowerCase().includes(q)
+        || (r.description ?? '').toLowerCase().includes(q)
+        || (r.category ?? '').toLowerCase().includes(q)
       const matchesTab = activeTab === 'All' || r.category === activeTab
       return matchesSearch && matchesTab
     })
@@ -105,21 +118,31 @@ export default function RecipesClient() {
   return (
     <div className="bg-white dark:bg-slate-900">
       {/* Hero */}
-      <section className="mt-16 bg-[#F0FAF4] dark:bg-slate-800">
+      <section className="bg-[#F0FAF4] dark:bg-slate-800">
         <div className="mx-auto flex h-[180px] max-w-6xl flex-col items-start justify-center gap-4 px-4 md:flex-row md:items-center md:justify-between">
           <div>
             <h1 className="font-nunito text-3xl font-bold text-[#1A5C38] dark:text-emerald-400">{t.heading}</h1>
             <p className="mt-1 text-sm text-gray-600 dark:text-slate-400">{t.sub}</p>
           </div>
           <div className="w-full max-w-md">
-            <div className="flex items-center gap-2 rounded-full border bg-white px-4 py-2 shadow-sm dark:border-slate-600 dark:bg-slate-700">
-              <Search size={16} className="text-gray-400 shrink-0" />
+            <div className="relative flex items-center rounded-full border bg-white px-4 py-2 shadow-sm dark:border-slate-600 dark:bg-slate-700">
+              <Search size={16} className="shrink-0 text-gray-400" />
               <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                ref={searchRef}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
                 placeholder={t.search}
-                className="w-full bg-transparent text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none dark:text-slate-100 dark:placeholder:text-slate-400"
+                className="w-full bg-transparent pl-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none dark:text-slate-100 dark:placeholder:text-slate-400"
               />
+              {searchInput && (
+                <button type="button" onClick={() => { setSearchInput(''); setSearch(''); searchRef.current?.focus() }}
+                  className="shrink-0 text-gray-400 hover:text-gray-600 dark:hover:text-slate-300">
+                  <X size={14} />
+                </button>
+              )}
+              {searchInput && searchInput !== search && (
+                <span className="ml-2 shrink-0 text-[10px] text-gray-400">…</span>
+              )}
             </div>
           </div>
         </div>

@@ -77,7 +77,7 @@ export default function ProfileClient() {
       {/* ── MOBILE layout (hidden on md+) ── */}
       <div className="md:hidden">
         {/* Hero — with top padding for navbar */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-[#1A5C38] via-emerald-700 to-emerald-500 pb-14 pt-20">
+        <div className="relative overflow-hidden bg-gradient-to-br from-[#1A5C38] via-emerald-700 to-emerald-500 pb-14 pt-8">
           <div className="absolute -right-12 -top-12 h-48 w-48 rounded-full bg-white/5" />
           <div className="relative mx-auto max-w-sm px-4 text-center">
             <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-4 border-white/30 bg-white/20 text-2xl font-bold text-white shadow-xl">
@@ -166,7 +166,7 @@ export default function ProfileClient() {
 
       {/* ── DESKTOP layout (hidden on mobile) ── */}
       <div className="hidden md:block">
-        <div className="mx-auto max-w-6xl px-6 py-10">
+        <div className="mx-auto max-w-6xl px-6 pb-10">
           <div className="flex gap-8">
 
             {/* Left sidebar */}

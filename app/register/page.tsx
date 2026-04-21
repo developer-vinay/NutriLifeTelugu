@@ -32,7 +32,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 pt-20 dark:bg-slate-950">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 pt-8 dark:bg-slate-950">
       <div className="w-full max-w-sm rounded-2xl border border-gray-200 bg-white p-8 shadow-sm dark:border-slate-700 dark:bg-slate-900">
         <div className="mb-6 text-center">
           <img src="/logo.png" alt="NutriLifeMitra" className="mx-auto mb-3 h-14 w-14 rounded-full object-cover" />

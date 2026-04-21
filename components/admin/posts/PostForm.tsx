@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import slugify from 'slugify'
+import TagsInput from '@/components/admin/TagsInput'
 
 type PostFormProps = {
   mode: 'create' | 'edit'
@@ -32,6 +33,11 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
   const [category, setCategory] = useState(initialData?.category ?? 'general')
   const [language, setLanguage] = useState<'en' | 'te' | 'hi'>(initialData?.language ?? 'en')
   const [tag, setTag] = useState(initialData?.tag ?? '')
+  const [tags, setTags] = useState<string[]>(
+    initialData?.tags?.length
+      ? initialData.tags
+      : initialData?.tag ? [initialData.tag] : []
+  )
   const [heroImage, setHeroImage] = useState(initialData?.heroImage ?? '')
   const [heroImagePublicId, setHeroImagePublicId] = useState(initialData?.heroImagePublicId ?? '')
   const [youtubeUrl, setYoutubeUrl] = useState(initialData?.youtubeUrl ?? '')
@@ -95,7 +101,9 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
       const words = content.trim().split(/\s+/).length
       const readTimeMinutes = Math.max(1, Math.ceil(words / 200))
       const body = {
-        title, slug, excerpt, category, language, tag,
+        title, slug, excerpt, category, language,
+        tag: tags[0] ?? tag,  // keep legacy tag as first tag
+        tags,
         heroImage, heroImagePublicId, youtubeUrl, content,
         isFeatured, isPublished: publish, readTimeMinutes, contentImages, author,
       }
@@ -195,10 +203,19 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-1">
-          <label className="text-sm font-medium text-gray-800">Tag</label>
-          <input type="text" value={tag} onChange={(e) => setTag(e.target.value)}
-            placeholder={language === 'te' ? 'బరువు తగ్గడం' : language === 'hi' ? 'वजन घटाना' : 'Weight Loss'}
-            className={inputCls} />
+          <label className="text-sm font-medium text-gray-800">
+            Search Tags
+            <span className="ml-1 text-xs font-normal text-gray-400">— add both Telugu & English phonetic tags</span>
+          </label>
+          <TagsInput
+            tags={tags}
+            onChange={setTags}
+            placeholder="e.g. రాగి, ragi, finger millet, weight loss…"
+          />
+          <p className="text-xs text-gray-400">
+            💡 Add the same concept in multiple languages so users can find it by typing in any keyboard.
+            Example: <code className="bg-gray-100 px-1 rounded">రాగి అంబలి</code> + <code className="bg-gray-100 px-1 rounded">ragi ambali</code> + <code className="bg-gray-100 px-1 rounded">finger millet porridge</code>
+          </p>
         </div>
         <div className="space-y-1">
           <label className="text-sm font-medium text-gray-800">YouTube URL (optional)</label>

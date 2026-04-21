@@ -29,7 +29,7 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 pt-20 dark:bg-slate-950">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 pt-8 dark:bg-slate-950">
       <div className="w-full max-w-sm rounded-2xl border border-gray-200 bg-white p-8 shadow-sm dark:border-slate-700 dark:bg-slate-900">
         <Link href="/login" className="mb-6 flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-700 dark:text-slate-400">
           <ArrowLeft size={14} /> Back to Sign In

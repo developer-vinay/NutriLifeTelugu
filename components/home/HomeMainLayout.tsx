@@ -239,6 +239,7 @@ export default function HomeMainLayout({ latestVideo }: { latestVideo: DBVideo |
   const { language } = useLanguage()
   const [posts, setPosts] = useState<DBPost[]>([])
   const [recipes, setRecipes] = useState<DBRecipe[]>([])
+  const [healthTipPosts, setHealthTipPosts] = useState<DBPost[]>([])
   const [loading, setLoading] = useState(true)
   const [subscriberCount, setSubscriberCount] = useState<number | null>(null)
 
@@ -258,8 +259,16 @@ export default function HomeMainLayout({ latestVideo }: { latestVideo: DBVideo |
     }).catch(() => setLoading(false))
   }, [language])
 
+  // Fetch health tip posts separately — from health-specific categories
+  useEffect(() => {
+    const cats = ['weight-loss', 'diabetes', 'gut-health', 'thyroid', 'immunity', 'kids-nutrition']
+    fetch(`/api/posts?lang=${language}&limit=3&categories=${cats.join(',')}`)
+      .then(r => r.json())
+      .then(data => setHealthTipPosts(Array.isArray(data) ? data.slice(0, 3) : []))
+      .catch(() => {})
+  }, [language])
+
   const mainPosts = posts.slice(0, 6)
-  const tipPosts = posts.slice(6, 9)
 
   return (
     <section className="bg-gray-50 pb-12 pt-6 dark:bg-slate-950">
@@ -355,15 +364,21 @@ export default function HomeMainLayout({ latestVideo }: { latestVideo: DBVideo |
             </div>
           </section>
 
-          {/* Health Tips — same card style as Latest Articles */}
-          {tipPosts.length > 0 && (
-            <section>
-              <SectionHeader
-                title={language === 'te' ? 'హెల్త్ టిప్స్' : language === 'hi' ? 'हेल्थ टिप्स' : 'Health Tips'}
-                href="/health-tips/weight-loss"
-              />
-              <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
-                {tipPosts.map((post) => (
+          {/* Health Tips — 3 columns, dedicated fetch from health categories */}
+          <section>
+            <SectionHeader
+              title={language === 'te' ? 'హెల్త్ టిప్స్' : language === 'hi' ? 'हेल्थ टिप्स' : 'Health Tips'}
+              href="/health-tips/weight-loss"
+            />
+            {loading ? (
+              <div className="grid grid-cols-3 gap-3">{[...Array(3)].map((_, i) => <PostSkeleton key={i} />)}</div>
+            ) : healthTipPosts.length === 0 ? (
+              <p className="text-sm text-gray-500 dark:text-slate-400">
+                {language === 'te' ? 'హెల్త్ టిప్స్ త్వరలో వస్తాయి.' : language === 'hi' ? 'हेल्थ टिप्स जल्द आ रहे हैं।' : 'Health tips coming soon.'}
+              </p>
+            ) : (
+              <div className="grid grid-cols-3 gap-3">
+                {healthTipPosts.map((post) => (
                   <Link key={post._id} href={`/blog/${post.slug}`}
                     className="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-800/60 dark:hover:border-emerald-600">
                     <div className="relative h-28 w-full shrink-0 overflow-hidden rounded-t-2xl">
@@ -375,7 +390,7 @@ export default function HomeMainLayout({ latestVideo }: { latestVideo: DBVideo |
                     <div className="px-3 pb-3 pt-2">
                       {post.tag && (
                         <div className="mb-1 flex flex-wrap gap-1">
-                          {post.tag.split(',').slice(0, 2).map((t) => (
+                          {post.tag.split(',').slice(0, 1).map((t) => (
                             <span key={t} className="rounded-full bg-emerald-50 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#1A5C38] dark:bg-emerald-900/30 dark:text-emerald-400">
                               {t.trim()}
                             </span>
@@ -391,8 +406,8 @@ export default function HomeMainLayout({ latestVideo }: { latestVideo: DBVideo |
                   </Link>
                 ))}
               </div>
-            </section>
-          )}
+            )}
+          </section>
 
           {/* Health Categories — visual cards */}
           <section>

@@ -18,17 +18,17 @@ export default async function SearchPage({
 
   const [allPosts, allRecipes, allVideos] = await Promise.all([
     Post.find({ isPublished: true })
-      .select('title slug excerpt tag category readTimeMinutes heroImage language createdAt')
+      .select('title slug excerpt tag tags category readTimeMinutes heroImage language createdAt')
       .sort({ createdAt: -1 })
       .limit(200)
       .lean(),
     Recipe.find({ isPublished: true })
-      .select('title slug description tag category heroImage language prepTimeMinutes cookTimeMinutes')
+      .select('title slug description tag tags category heroImage language prepTimeMinutes cookTimeMinutes')
       .sort({ createdAt: -1 })
       .limit(200)
       .lean(),
     Video.find({ isPublished: true })
-      .select('title slug description tag category thumbnailUrl language')
+      .select('title slug description tag tags category thumbnailUrl language')
       .sort({ createdAt: -1 })
       .limit(200)
       .lean(),
@@ -40,6 +40,7 @@ export default async function SearchPage({
     slug: p.slug,
     excerpt: p.excerpt ?? '',
     tag: p.tag ?? '',
+    tags: p.tags ?? [],
     category: p.category ?? '',
     readTimeMinutes: p.readTimeMinutes ?? 5,
     heroImage: p.heroImage ?? '',
@@ -53,6 +54,7 @@ export default async function SearchPage({
     slug: r.slug,
     excerpt: r.description ?? '',
     tag: r.tag ?? '',
+    tags: r.tags ?? [],
     category: r.category ?? '',
     readTimeMinutes: (r.prepTimeMinutes ?? 0) + (r.cookTimeMinutes ?? 0),
     heroImage: r.heroImage ?? '',
@@ -66,6 +68,7 @@ export default async function SearchPage({
     slug: v.slug,
     excerpt: v.description ?? '',
     tag: v.tag ?? '',
+    tags: v.tags ?? [],
     category: v.category ?? '',
     readTimeMinutes: 0,
     heroImage: v.thumbnailUrl ?? '',

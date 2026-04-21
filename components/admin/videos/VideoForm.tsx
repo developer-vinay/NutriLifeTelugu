@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import slugify from 'slugify'
+import TagsInput from '@/components/admin/TagsInput'
 
 type VideoFormProps = {
   mode: 'create' | 'edit'
@@ -43,6 +44,11 @@ export default function VideoForm({ mode, initialData }: VideoFormProps) {
   const [category, setCategory] = useState(initialData?.category ?? 'cooking')
   const [language, setLanguage] = useState<'en' | 'te' | 'hi'>(initialData?.language ?? 'en')
   const [tag, setTag] = useState(initialData?.tag ?? '')
+  const [tags, setTags] = useState<string[]>(
+    initialData?.tags?.length
+      ? initialData.tags
+      : initialData?.tag ? [initialData.tag] : []
+  )
   const [durationSeconds, setDurationSeconds] = useState(initialData?.durationSeconds ?? '')
   const [isFeatured, setIsFeatured] = useState(initialData?.isFeatured ?? false)
   const [isPublished, setIsPublished] = useState(initialData?.isPublished ?? false)
@@ -76,7 +82,9 @@ export default function VideoForm({ mode, initialData }: VideoFormProps) {
       const body = {
         title, slug, description, youtubeUrl, youtubeId,
         thumbnailUrl: thumbnailUrl || undefined,
-        category, language, tag,
+        category, language,
+        tag: tags[0] ?? tag,
+        tags,
         durationSeconds: durationSeconds ? Number(durationSeconds) : undefined,
         isFeatured,
         isPublished: publish,
@@ -174,8 +182,18 @@ export default function VideoForm({ mode, initialData }: VideoFormProps) {
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-1">
-          <label className="text-sm font-medium text-gray-800">Tag</label>
-          <input type="text" value={tag} onChange={(e) => setTag(e.target.value)} className={inputCls} />
+          <label className="text-sm font-medium text-gray-800">
+            Search Tags
+            <span className="ml-1 text-xs font-normal text-gray-400">— add both Telugu & English phonetic tags</span>
+          </label>
+          <TagsInput
+            tags={tags}
+            onChange={setTags}
+            placeholder="e.g. వంట, cooking, diabetes, మధుమేహం…"
+          />
+          <p className="text-xs text-gray-400">
+            💡 Add tags in all languages so users can find this video from any keyboard.
+          </p>
         </div>
         <div className="space-y-1">
           <label className="text-sm font-medium text-gray-800">Duration (seconds)</label>

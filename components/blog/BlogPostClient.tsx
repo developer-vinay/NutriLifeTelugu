@@ -90,7 +90,7 @@ export default function BlogPostClient({ post, related }: Props) {
         />
       </div>
 
-      <div className="bg-gray-50 pb-12 pt-6 text-gray-900 dark:bg-slate-950 dark:text-slate-50">
+      <div className="bg-gray-50 pb-12 text-gray-900 dark:bg-slate-950 dark:text-slate-50">
         <div
           id="article-root"
           className="mx-auto flex max-w-6xl flex-col gap-8 px-4 md:flex-row"

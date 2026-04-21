@@ -75,7 +75,7 @@ export default function RecipeDetailClient({ recipe, related }: Props) {
 
   return (
     <div className="bg-white dark:bg-slate-900">
-      <div className="mx-auto max-w-5xl px-4 py-8">
+      <div className="mx-auto max-w-5xl px-4 pb-8">
         <Link href="/recipes" className="text-sm text-[#1A5C38] hover:underline dark:text-emerald-400">
           {t.back}
         </Link>

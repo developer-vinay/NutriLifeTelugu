@@ -20,6 +20,8 @@
 html, body {
   background-color: #ffffff;
   color: #171717;
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 html.dark, html.dark body {

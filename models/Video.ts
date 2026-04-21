@@ -16,7 +16,8 @@ export interface IVideo extends Document {
   youtubeId: string
   thumbnailUrl?: string
   category?: VideoCategory
-  tag?: string
+  tag?: string        // legacy
+  tags?: string[]     // multi-language search tags
   language: Language
   durationSeconds?: number
   views: number
@@ -38,6 +39,7 @@ const VideoSchema = new Schema<IVideo>(
       enum: ['cooking','health-education','weight-loss','diabetes','shorts'],
     },
     tag: { type: String },
+    tags: { type: [String], default: [] },
     language: { type: String, enum: ['te', 'en', 'hi'], default: 'te' },
     durationSeconds: { type: Number },
     views: { type: Number, default: 0 },

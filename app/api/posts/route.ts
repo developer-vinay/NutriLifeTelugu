@@ -19,11 +19,17 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const lang = searchParams.get('lang') ?? 'en'
   const limit = Number(searchParams.get('limit') ?? '60') || 60
-  const sort = searchParams.get('sort') ?? 'latest' // 'latest' | 'popular'
+  const sort = searchParams.get('sort') ?? 'latest'
+  const categories = searchParams.get('categories') // comma-separated
 
-  const posts = await Post.find({ isPublished: true, language: lang })
+  const query: any = { isPublished: true, language: lang }
+  if (categories) {
+    query.category = { $in: categories.split(',') }
+  }
+
+  const posts = await Post.find(query)
     .sort({ createdAt: -1 })
-    .limit(sort === 'popular' ? 100 : limit) // fetch more for scoring
+    .limit(sort === 'popular' ? 100 : limit)
     .select('title slug excerpt tag language heroImage readTimeMinutes views likes createdAt')
     .lean()
 

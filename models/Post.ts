@@ -19,7 +19,8 @@ export interface IPost extends Document {
   content: string
   excerpt?: string
   category?: PostCategory
-  tag?: string
+  tag?: string        // legacy single tag (kept for backward compat)
+  tags?: string[]     // multi-language search tags
   language: Language
   heroImage?: string
   heroImagePublicId?: string
@@ -46,6 +47,7 @@ const PostSchema = new Schema<IPost>(
       enum: ['weight-loss','diabetes','gut-health','immunity','thyroid','kids-nutrition','recipes','millets','general'],
     },
     tag: { type: String },
+    tags: { type: [String], default: [] },
     language: { type: String, enum: ['te', 'en', 'hi'], default: 'te' },
     heroImage: { type: String },
     heroImagePublicId: { type: String },

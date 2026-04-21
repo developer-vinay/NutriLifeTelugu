@@ -1,10 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState, useMemo, useRef } from 'react'
 import { useLanguage } from '@/components/LanguageProvider'
 import LikeSaveButtons from '@/components/ui/LikeSaveButtons'
-import { Play, Clock, Youtube } from 'lucide-react'
+import { Play, Clock, Youtube, Search, X } from 'lucide-react'
 import PromotionBlock from '@/components/promotions/PromotionBlock'
 
 type DBVideo = {
@@ -77,10 +77,21 @@ export default function VideosPage() {
   const [videos, setVideos] = useState<DBVideo[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('All')
+  const [searchInput, setSearchInput] = useState('')
+  const searchRef = useRef<HTMLInputElement>(null)
+
+  // Debounce: filter 300ms after user stops typing
+  const [search, setSearch] = useState('')
+  useEffect(() => {
+    const t = setTimeout(() => setSearch(searchInput), 300)
+    return () => clearTimeout(t)
+  }, [searchInput])
 
   useEffect(() => {
     setLoading(true)
     setActiveTab('All')
+    setSearchInput('')
+    setSearch('')
     fetch(`/api/videos?lang=${language}&limit=40`)
       .then((r) => r.json())
       .then((data) => { setVideos(Array.isArray(data) ? data : []); setLoading(false) })
@@ -90,16 +101,25 @@ export default function VideosPage() {
   const featured = videos.find((v) => v.isFeatured) ?? videos[0]
 
   const filtered = useMemo(() => {
-    if (activeTab === 'All') return videos
-    return videos.filter((v) => v.category === activeTab)
-  }, [videos, activeTab])
+    let items = activeTab === 'All' ? videos : videos.filter((v) => v.category === activeTab)
+    const q = search.trim().toLowerCase()
+    if (q) {
+      items = items.filter((v) =>
+        v.title.toLowerCase().includes(q) ||
+        (v.tag ?? '').toLowerCase().includes(q) ||
+        (v.description ?? '').toLowerCase().includes(q) ||
+        (v.category ?? '').toLowerCase().includes(q)
+      )
+    }
+    return items
+  }, [videos, activeTab, search])
 
   return (
     <div className="bg-white dark:bg-slate-900">
       {/* Hero banner */}
-      <section className="mt-16 bg-gradient-to-br from-[#1A5C38] to-emerald-700 dark:from-slate-900 dark:to-slate-800">
+      <section className="bg-gradient-to-br from-[#1A5C38] to-emerald-700 dark:from-slate-900 dark:to-slate-800">
         <div className="mx-auto max-w-6xl px-4 py-12">
-          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
               <span className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white">
                 <Youtube size={13} /> NutriLifeMitra
@@ -107,14 +127,33 @@ export default function VideosPage() {
               <h1 className="font-nunito text-4xl font-bold text-white">{t.heading}</h1>
               <p className="mt-2 text-sm text-emerald-100">{t.sub}</p>
             </div>
-            <a
-              href="https://youtube.com/@nutrilifemitra"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-full bg-red-600 px-6 py-3 text-sm font-bold text-white shadow-lg hover:bg-red-700 transition"
-            >
-              <Youtube size={16} /> {t.subscribe}
-            </a>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              {/* Search bar */}
+              <div className="relative">
+                <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/60" />
+                <input
+                  ref={searchRef}
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  placeholder={language === 'te' ? 'వీడియోలు వెతకండి...' : language === 'hi' ? 'वीडियो खोजें...' : 'Search videos…'}
+                  className="w-full rounded-full border border-white/30 bg-white/10 py-2 pl-9 pr-8 text-sm text-white placeholder:text-white/60 focus:border-white/60 focus:outline-none focus:ring-1 focus:ring-white/30 sm:w-56"
+                />
+                {searchInput && (
+                  <button type="button" onClick={() => { setSearchInput(''); setSearch(''); searchRef.current?.focus() }}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60 hover:text-white">
+                    <X size={13} />
+                  </button>
+                )}
+              </div>
+              <a
+                href="https://youtube.com/@nutrilifemitra"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-full bg-red-600 px-6 py-3 text-sm font-bold text-white shadow-lg hover:bg-red-700 transition"
+              >
+                <Youtube size={16} /> {t.subscribe}
+              </a>
+            </div>
           </div>
         </div>
       </section>

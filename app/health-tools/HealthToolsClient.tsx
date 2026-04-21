@@ -519,7 +519,7 @@ export default function HealthToolsClient() {
   return (
     <div className="bg-white dark:bg-slate-950">
       {/* Hero */}
-      <section className="mt-16 bg-[#F0FAF4] dark:bg-slate-900">
+      <section className="bg-[#F0FAF4] dark:bg-slate-900">
         <div className="mx-auto max-w-6xl px-4 py-10">
           <h1 className="font-nunito text-3xl font-bold text-[#1A5C38] dark:text-emerald-400">{heroTitle}</h1>
           <p className="mt-1 text-sm text-gray-600 dark:text-slate-400">{heroSub}</p>

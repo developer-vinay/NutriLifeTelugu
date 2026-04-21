@@ -79,22 +79,28 @@ function Dropdown({ label, items, open, onEnter, onLeave }: {
         {label}<ChevronDown open={open} />
       </button>
       {open && (
-        <div className="absolute left-0 top-full z-50 mt-1.5 w-80 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-900">
-          <div className="border-b border-gray-100 bg-gradient-to-r from-emerald-50 to-white px-4 py-2.5 dark:border-slate-700 dark:from-emerald-900/20 dark:to-slate-900">
-            <p className="text-[11px] font-semibold uppercase tracking-widest text-[#1A5C38] dark:text-emerald-400">{label}</p>
-          </div>
-          <div className="p-2">
-            {items.map((item) => (
-              <Link key={item.label} href={item.href} className="group flex items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-gray-50 dark:hover:bg-slate-800">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gray-100 text-lg transition group-hover:bg-emerald-100 dark:bg-slate-800 dark:group-hover:bg-emerald-900/40">
-                  {item.icon}
-                </span>
-                <span>
-                  <div className="text-[13px] font-semibold text-gray-900 group-hover:text-[#1A5C38] dark:text-slate-100 dark:group-hover:text-emerald-400">{item.label}</div>
-                  <div className="text-[11px] text-gray-500 dark:text-slate-400">{item.description}</div>
-                </span>
-              </Link>
-            ))}
+        <div className="absolute left-0 top-full z-50 w-80"
+          onMouseEnter={onEnter}
+          onMouseLeave={onLeave}>
+          {/* Invisible bridge — fills the gap so mouse doesn't leave the hover zone */}
+          <div className="h-2 w-full" />
+          <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-900">
+            <div className="border-b border-gray-100 bg-gradient-to-r from-emerald-50 to-white px-4 py-2.5 dark:border-slate-700 dark:from-emerald-900/20 dark:to-slate-900">
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-[#1A5C38] dark:text-emerald-400">{label}</p>
+            </div>
+            <div className="p-2">
+              {items.map((item) => (
+                <Link key={item.label} href={item.href} className="group flex items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-gray-50 dark:hover:bg-slate-800">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gray-100 text-lg transition group-hover:bg-emerald-100 dark:bg-slate-800 dark:group-hover:bg-emerald-900/40">
+                    {item.icon}
+                  </span>
+                  <span>
+                    <div className="text-[13px] font-semibold text-gray-900 group-hover:text-[#1A5C38] dark:text-slate-100 dark:group-hover:text-emerald-400">{item.label}</div>
+                    <div className="text-[11px] text-gray-500 dark:text-slate-400">{item.description}</div>
+                  </span>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       )}
@@ -259,6 +265,7 @@ function MobileUserSection({ session, onClose }: { session: ReturnType<typeof us
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
+  const closeTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null)
   const { data: session } = useSession()
   const { language } = useLanguage()
   const pathname = usePathname()
@@ -270,8 +277,13 @@ export default function Navbar() {
 
   const dd = (label: string) => ({
     open: openDropdown === label,
-    onEnter: () => setOpenDropdown(label),
-    onLeave: () => setOpenDropdown(null),
+    onEnter: () => {
+      if (closeTimer.current) clearTimeout(closeTimer.current)
+      setOpenDropdown(label)
+    },
+    onLeave: () => {
+      closeTimer.current = setTimeout(() => setOpenDropdown(null), 150)
+    },
   })
 
   return (

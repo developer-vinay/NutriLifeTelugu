@@ -81,7 +81,8 @@ export default function AdminSubscribersPage() {
         </div>
       )}
 
-      <div className="overflow-hidden rounded-xl border bg-white">
+      {/* Desktop table */}
+      <div className="hidden overflow-hidden rounded-xl border bg-white md:block">
         <table className="min-w-full text-left text-sm">
           <thead className="border-b bg-gray-50 text-xs font-semibold uppercase text-gray-500">
             <tr>
@@ -129,6 +130,39 @@ export default function AdminSubscribersPage() {
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile cards */}
+      <div className="space-y-3 md:hidden">
+        {loading ? (
+          <div className="rounded-xl border bg-white px-4 py-6 text-center text-sm text-gray-400">Loading...</div>
+        ) : subscribers.length === 0 ? (
+          <div className="rounded-xl border bg-white px-4 py-6 text-center text-sm text-gray-500">No subscribers yet.</div>
+        ) : subscribers.map((sub, idx) => (
+          <div key={sub._id} className={`rounded-xl border bg-white p-4 shadow-sm ${selected.has(sub._id) ? 'border-red-300 bg-red-50/30' : ''}`}>
+            <div className="flex items-center gap-3">
+              <input type="checkbox" checked={selected.has(sub._id)} onChange={() => toggleOne(sub._id)}
+                className="h-4 w-4 rounded border-gray-300 text-[#1A5C38] focus:ring-[#1A5C38]" />
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="truncate text-sm font-medium text-gray-900">{sub.email}</p>
+                  <span className={`shrink-0 inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${sub.isActive ? 'bg-emerald-50 text-emerald-700' : 'bg-gray-100 text-gray-600'}`}>
+                    {sub.isActive ? 'Active' : 'Inactive'}
+                  </span>
+                </div>
+                <p className="mt-0.5 text-xs text-gray-400">
+                  #{idx + 1} · {sub.subscribedAt ? format(new Date(sub.subscribedAt), 'dd MMM yyyy') : '-'}
+                </p>
+              </div>
+            </div>
+            <div className="mt-3 border-t border-gray-100 pt-3">
+              <button type="button" disabled={deleting === sub._id} onClick={() => handleDelete(sub._id, sub.email)}
+                className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-red-200 py-2 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50">
+                <Trash2 size={13} />{deleting === sub._id ? 'Removing...' : 'Remove Subscriber'}
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   )

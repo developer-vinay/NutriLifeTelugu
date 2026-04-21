@@ -131,7 +131,7 @@ export default function DietPlansClient({ plans }: { plans: any[] }) {
   return (
     <div className="bg-white dark:bg-slate-950">
       {/* Hero */}
-      <section className="mt-16 bg-gradient-to-br from-[#1A5C38] to-emerald-600 dark:from-slate-900 dark:to-slate-800">
+      <section className="bg-gradient-to-br from-[#1A5C38] to-emerald-600 dark:from-slate-900 dark:to-slate-800">
         <div className="mx-auto max-w-6xl px-4 py-14">
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div>

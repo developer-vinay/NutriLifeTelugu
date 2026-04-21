@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import slugify from 'slugify'
+import TagsInput from '@/components/admin/TagsInput'
 
 type RecipeFormProps = {
   mode: 'create' | 'edit'
@@ -29,6 +30,11 @@ export default function RecipeForm({ mode, initialData }: RecipeFormProps) {
   const [category, setCategory] = useState(initialData?.category ?? 'breakfast')
   const [language, setLanguage] = useState<'en' | 'te' | 'hi'>(initialData?.language ?? 'en')
   const [tag, setTag] = useState(initialData?.tag ?? '')
+  const [tags, setTags] = useState<string[]>(
+    initialData?.tags?.length
+      ? initialData.tags
+      : initialData?.tag ? [initialData.tag] : []
+  )
   const [heroImage, setHeroImage] = useState(initialData?.heroImage ?? '')
   const [heroImagePublicId, setHeroImagePublicId] = useState(initialData?.heroImagePublicId ?? '')
   const [prepTime, setPrepTime] = useState(initialData?.prepTimeMinutes ?? '')
@@ -104,7 +110,9 @@ export default function RecipeForm({ mode, initialData }: RecipeFormProps) {
     setError('')
     try {
       const body = {
-        title, slug, description, category, language, tag,
+        title, slug, description, category, language,
+        tag: tags[0] ?? tag,
+        tags,
         heroImage, heroImagePublicId,
         prepTimeMinutes: prepTime ? Number(prepTime) : undefined,
         cookTimeMinutes: cookTime ? Number(cookTime) : undefined,
@@ -208,8 +216,18 @@ export default function RecipeForm({ mode, initialData }: RecipeFormProps) {
       </div>
 
       <div className="space-y-1">
-        <label className="text-sm font-medium text-gray-800">Tag</label>
-        <input type="text" value={tag} onChange={(e) => setTag(e.target.value)} className={inputCls} />
+        <label className="text-sm font-medium text-gray-800">
+          Search Tags
+          <span className="ml-1 text-xs font-normal text-gray-400">— add both Telugu & English phonetic tags</span>
+        </label>
+        <TagsInput
+          tags={tags}
+          onChange={setTags}
+          placeholder="e.g. పెసరట్టు, pesarattu, green moong dosa, breakfast…"
+        />
+        <p className="text-xs text-gray-400">
+          💡 Add the same concept in multiple languages. Example: <code className="bg-gray-100 px-1 rounded">రాగి</code> + <code className="bg-gray-100 px-1 rounded">ragi</code> + <code className="bg-gray-100 px-1 rounded">finger millet</code>
+        </p>
       </div>
 
       <div className="space-y-1">

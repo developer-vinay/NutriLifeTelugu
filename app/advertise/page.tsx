@@ -51,7 +51,7 @@ export default function AdvertisePage() {
 
   return (
     <div className="bg-white dark:bg-slate-950">
-      <section className="mt-16 bg-[#F0FAF4] dark:bg-slate-900">
+      <section className="bg-[#F0FAF4] dark:bg-slate-900">
         <div className="mx-auto max-w-4xl px-4 py-12">
           <h1 className="font-nunito text-3xl font-bold text-[#1A5C38] dark:text-emerald-400">{tx.title}</h1>
           <p className="mt-2 text-sm text-gray-600 dark:text-slate-400">{tx.sub}</p>

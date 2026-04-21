@@ -1,8 +1,8 @@
 'use client'
 
-import React, { useState, useMemo, useEffect } from 'react'
+import React, { useState, useMemo, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { Search, UtensilsCrossed, FileText, Play } from 'lucide-react'
+import { Search, UtensilsCrossed, FileText, Play, X } from 'lucide-react'
 import PromotionBlock from '@/components/promotions/PromotionBlock'
 
 type Language = 'en' | 'te' | 'hi'
@@ -13,11 +13,22 @@ type Item = {
   slug: string
   excerpt: string
   tag: string
+  tags: string[]
   category: string
   readTimeMinutes: number
   heroImage: string
   language: string
   type: 'post' | 'recipe' | 'video'
+}
+
+/** Debounce: only update after user stops typing for `delay` ms */
+function useDebounce<T>(value: T, delay = 300): T {
+  const [debounced, setDebounced] = useState(value)
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(value), delay)
+    return () => clearTimeout(t)
+  }, [value, delay])
+  return debounced
 }
 
 const CATEGORIES = [
@@ -55,9 +66,13 @@ export default function SearchClient({
   initialQuery: string
   initialCategory: string
 }) {
-  const [query, setQuery] = useState(initialQuery)
+  const [searchInput, setSearchInput] = useState(initialQuery)
   const [activeCategory, setActiveCategory] = useState(initialCategory)
   const [language, setLanguage] = useState<Language>('en')
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  // Debounce the search — filter fires 300ms after user stops typing
+  const query = useDebounce(searchInput, 300)
 
   // Read language from localStorage (same source as LanguageProvider)
   useEffect(() => {
@@ -93,9 +108,13 @@ export default function SearchClient({
       items = items.filter(
         (i) =>
           i.title.toLowerCase().includes(q) ||
-          i.excerpt.toLowerCase().includes(q) ||
-          i.tag.toLowerCase().includes(q) ||
-          i.category.toLowerCase().includes(q),
+          (i.excerpt ?? '').toLowerCase().includes(q) ||
+          // search legacy single tag
+          (i.tag ?? '').toLowerCase().includes(q) ||
+          // search all multi-language tags
+          (i.tags ?? []).some((t) => t.toLowerCase().includes(q)) ||
+          i.category.toLowerCase().includes(q) ||
+          i.slug.replace(/-/g, ' ').includes(q),
       )
     }
 
@@ -107,29 +126,31 @@ export default function SearchClient({
   const videos = filtered.filter((i) => i.type === 'video')
 
   return (
-    <div className="min-h-screen bg-white pt-[72px] dark:bg-slate-950">
+    <div className="min-h-screen bg-white dark:bg-slate-950">
       {/* Search header */}
       <div className="bg-[#F0FAF4] dark:bg-slate-900">
         <div className="mx-auto max-w-4xl px-4 py-10">
           <h1 className="font-nunito text-2xl font-bold text-[#1A5C38] dark:text-emerald-400">{t.heading}</h1>
 
           {/* Search bar */}
-          <div className="mt-4 flex items-center gap-2 rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm dark:border-slate-700 dark:bg-slate-800">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-gray-400">
-              <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
-            </svg>
+          <div className="relative mt-4">
+            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
             <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              ref={inputRef}
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
               placeholder={t.placeholder}
-              className="w-full bg-transparent text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none dark:text-slate-100 dark:placeholder:text-slate-500"
+              className="w-full rounded-2xl border border-gray-200 bg-white py-3 pl-11 pr-10 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-[#1A5C38] focus:outline-none focus:ring-2 focus:ring-[#1A5C38]/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500"
             />
-            {query && (
-              <button type="button" onClick={() => setQuery('')} className="shrink-0 text-gray-400 hover:text-gray-600 dark:hover:text-slate-300">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M18 6 6 18M6 6l12 12" />
-                </svg>
+            {searchInput && (
+              <button type="button"
+                onClick={() => { setSearchInput(''); inputRef.current?.focus() }}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 rounded-full p-0.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-slate-700">
+                <X size={15} />
               </button>
+            )}
+            {searchInput && searchInput !== query && (
+              <span className="absolute right-10 top-1/2 -translate-y-1/2 text-[11px] text-gray-400">searching…</span>
             )}
           </div>
 
@@ -164,7 +185,6 @@ export default function SearchClient({
           {query ? ` for "${query}"` : ''}
           {activeCategory ? ` in ${CATEGORIES.find((c) => c.value === activeCategory)?.label}` : ''}
         </p>
-
         {posts.length > 0 && (
           <section className="mb-8">
             <h2 className="mb-3 font-nunito text-lg font-semibold text-gray-900 dark:text-slate-50">

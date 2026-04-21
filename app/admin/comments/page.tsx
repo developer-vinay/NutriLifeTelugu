@@ -69,76 +69,77 @@ export default function AdminCommentsPage() {
   const someChecked = selected.size > 0 && selected.size < items.length
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold text-gray-900">Comments ({total})</h1>
-        <div className="flex gap-2 text-sm">
+    <div className="space-y-5">
+      {/* ── Header ── */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-xl font-bold text-gray-900">Comments</h1>
+          <p className="text-sm text-gray-500">{total} total</p>
+        </div>
+        <div className="flex gap-1.5">
           {[['', 'All'], ['post', 'Posts'], ['recipe', 'Recipes']].map(([val, label]) => (
             <button key={val} type="button" onClick={() => { setTypeFilter(val); setPage(1) }}
-              className={`rounded-full px-3 py-1 font-medium ${typeFilter === val ? 'bg-[#1A5C38] text-white' : 'border border-gray-300 text-gray-700 hover:bg-gray-50'}`}>
+              className={`rounded-xl px-3 py-2 text-sm font-medium transition ${typeFilter === val ? 'bg-[#1A5C38] text-white shadow-sm' : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50'}`}>
               {label}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Bulk action bar */}
+      {/* ── Bulk bar ── */}
       {selected.size > 0 && (
         <div className="flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-2.5">
-          <span className="text-sm font-medium text-red-700">{selected.size} selected</span>
+          <span className="text-sm font-semibold text-red-700">{selected.size} selected</span>
           <button type="button" onClick={handleBulkDelete} disabled={bulkDeleting}
-            className="flex items-center gap-1.5 rounded-full bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700 disabled:opacity-60">
-            <Trash2 size={13} />
-            {bulkDeleting ? 'Deleting...' : `Delete ${selected.size}`}
+            className="flex items-center gap-1.5 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700 disabled:opacity-60 transition">
+            <Trash2 size={12} /> {bulkDeleting ? 'Deleting…' : `Delete ${selected.size}`}
           </button>
           <button type="button" onClick={() => setSelected(new Set())} className="text-xs text-red-500 hover:text-red-700">Cancel</button>
         </div>
       )}
 
-      <div className="overflow-hidden rounded-xl border bg-white shadow-sm">
+      {/* Desktop table */}
+      <div className="hidden overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm md:block">
         <table className="min-w-full text-left text-sm">
-          <thead className="border-b bg-gray-50 text-[11px] uppercase text-gray-500">
+          <thead className="border-b border-gray-100 bg-gray-50/80">
             <tr>
-              <th className="w-8 px-4 py-3">
+              <th className="w-10 px-4 py-3">
                 <input type="checkbox" checked={allChecked}
                   ref={(el) => { if (el) el.indeterminate = someChecked }}
                   onChange={toggleAll}
                   className="h-4 w-4 rounded border-gray-300 text-[#1A5C38] focus:ring-[#1A5C38]" />
               </th>
-              <th className="px-4 py-3">Name</th>
-              <th className="px-4 py-3">Email</th>
-              <th className="px-4 py-3">Comment</th>
-              <th className="px-4 py-3">Type</th>
-              <th className="px-4 py-3">Date</th>
-              <th className="px-4 py-3 text-right">Action</th>
+              {['Name', 'Email', 'Comment', 'Type', 'Date', 'Action'].map((h) => (
+                <th key={h} className={`px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500 ${h === 'Action' ? 'text-right' : ''}`}>{h}</th>
+              ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-gray-50">
             {loading ? (
-              <tr><td colSpan={7} className="px-4 py-8 text-center text-sm text-gray-400">Loading...</td></tr>
+              <tr><td colSpan={7} className="px-4 py-10 text-center text-sm text-gray-400">Loading…</td></tr>
             ) : items.length === 0 ? (
-              <tr><td colSpan={7} className="px-4 py-8 text-center text-sm text-gray-500">No comments yet.</td></tr>
+              <tr><td colSpan={7} className="px-4 py-10 text-center text-sm text-gray-500">No comments yet.</td></tr>
             ) : items.map((c) => (
-              <tr key={c._id} className={`hover:bg-gray-50 ${selected.has(c._id) ? 'bg-red-50/40' : ''}`}>
+              <tr key={c._id} className={`transition-colors hover:bg-gray-50/60 ${selected.has(c._id) ? 'bg-red-50/40' : ''}`}>
                 <td className="px-4 py-3">
                   <input type="checkbox" checked={selected.has(c._id)} onChange={() => toggleOne(c._id)}
                     className="h-4 w-4 rounded border-gray-300 text-[#1A5C38] focus:ring-[#1A5C38]" />
                 </td>
-                <td className="px-4 py-3 font-medium text-gray-900">{c.name}</td>
-                <td className="px-4 py-3 text-gray-500">{c.email}</td>
-                <td className="max-w-xs px-4 py-3 text-gray-700"><p className="line-clamp-2">{c.body}</p></td>
+                <td className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{c.name}</td>
+                <td className="px-4 py-3 text-sm text-gray-500">{c.email}</td>
+                <td className="max-w-xs px-4 py-3 text-sm text-gray-700"><p className="line-clamp-2">{c.body}</p></td>
                 <td className="px-4 py-3">
-                  <span className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold ${c.contentType === 'post' ? 'bg-blue-50 text-blue-700' : 'bg-emerald-50 text-emerald-700'}`}>
+                  <span className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold ${c.contentType === 'post' ? 'bg-blue-50 text-blue-700' : 'bg-emerald-50 text-emerald-700'}`}>
                     {c.contentType}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-[12px] text-gray-500">
-                  {c.createdAt ? format(new Date(c.createdAt), 'dd MMM yyyy') : '-'}
+                <td className="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">
+                  {c.createdAt ? format(new Date(c.createdAt), 'dd MMM yyyy') : '—'}
                 </td>
                 <td className="px-4 py-3 text-right">
                   <button type="button" disabled={deleting === c._id} onClick={() => handleDelete(c._id)}
-                    className="inline-flex items-center gap-1 rounded-md border border-red-200 px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50">
-                    <Trash2 size={12} />{deleting === c._id ? '...' : 'Delete'}
+                    className="inline-flex items-center gap-1 rounded-lg border border-red-200 px-2.5 py-1 text-[11px] font-semibold text-red-500 hover:bg-red-50 disabled:opacity-50 transition-colors">
+                    <Trash2 size={11} />{deleting === c._id ? '…' : 'Delete'}
                   </button>
                 </td>
               </tr>
@@ -147,18 +148,47 @@ export default function AdminCommentsPage() {
         </table>
       </div>
 
+      {/* Mobile cards */}
+      <div className="space-y-3 md:hidden">
+        {loading ? (
+          <div className="rounded-2xl border border-gray-100 bg-white p-6 text-center text-sm text-gray-400">Loading…</div>
+        ) : items.length === 0 ? (
+          <div className="rounded-2xl border border-gray-100 bg-white p-8 text-center text-sm text-gray-500">No comments yet.</div>
+        ) : items.map((c) => (
+          <div key={c._id} className={`rounded-2xl border bg-white p-4 shadow-sm transition ${selected.has(c._id) ? 'border-red-300 bg-red-50/20' : 'border-gray-100'}`}>
+            <div className="flex items-start gap-3">
+              <input type="checkbox" checked={selected.has(c._id)} onChange={() => toggleOne(c._id)}
+                className="mt-0.5 h-4 w-4 rounded border-gray-300 text-[#1A5C38] focus:ring-[#1A5C38]" />
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="font-semibold text-gray-900">{c.name}</p>
+                  <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold ${c.contentType === 'post' ? 'bg-blue-50 text-blue-700' : 'bg-emerald-50 text-emerald-700'}`}>
+                    {c.contentType}
+                  </span>
+                </div>
+                <p className="text-xs text-gray-500">{c.email}</p>
+                <p className="mt-2 text-sm text-gray-700 line-clamp-3">{c.body}</p>
+                <p className="mt-1.5 text-[11px] text-gray-400">{c.createdAt ? format(new Date(c.createdAt), 'dd MMM yyyy') : '—'}</p>
+              </div>
+            </div>
+            <div className="mt-3 border-t border-gray-100 pt-3">
+              <button type="button" disabled={deleting === c._id} onClick={() => handleDelete(c._id)}
+                className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-red-200 py-2 text-xs font-semibold text-red-500 hover:bg-red-50 disabled:opacity-50 transition-colors">
+                <Trash2 size={12} />{deleting === c._id ? 'Deleting…' : 'Delete Comment'}
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 text-sm">
-          {page > 1 && (
-            <button type="button" onClick={() => setPage(page - 1)}
-              className="rounded-md border border-gray-300 px-3 py-1.5 text-gray-700 hover:bg-gray-50">← Prev</button>
-          )}
-          <span className="text-gray-500">Page {page} of {totalPages}</span>
-          {page < totalPages && (
-            <button type="button" onClick={() => setPage(page + 1)}
-              className="rounded-md border border-gray-300 px-3 py-1.5 text-gray-700 hover:bg-gray-50">Next →</button>
-          )}
+        <div className="flex items-center justify-center gap-2">
+          <button type="button" onClick={() => setPage(page - 1)} disabled={page <= 1}
+            className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 disabled:opacity-40 transition">← Prev</button>
+          <span className="text-sm text-gray-500">Page {page} of {totalPages}</span>
+          <button type="button" onClick={() => setPage(page + 1)} disabled={page >= totalPages}
+            className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 disabled:opacity-40 transition">Next →</button>
         </div>
       )}
     </div>

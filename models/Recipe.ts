@@ -15,7 +15,8 @@ export interface IRecipe extends Document {
   description?: string
   content: string
   category?: RecipeCategory
-  tag?: string
+  tag?: string        // legacy
+  tags?: string[]     // multi-language search tags
   language: Language
   heroImage?: string
   heroImagePublicId?: string
@@ -49,6 +50,7 @@ const RecipeSchema = new Schema<IRecipe>(
       enum: ['breakfast','lunch','dinner','snacks','millets','diabetic-friendly'],
     },
     tag: { type: String },
+    tags: { type: [String], default: [] },
     language: { type: String, enum: ['te', 'en', 'hi'], default: 'te' },
     heroImage: { type: String },
     heroImagePublicId: { type: String },
