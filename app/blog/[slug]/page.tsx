@@ -8,7 +8,7 @@ import BlogPostClient from '@/components/blog/BlogPostClient'
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-const SITE_URL = 'https://nutrilifemitra.vercel.app'
+const SITE_URL = 'https://nutrilifemitra.com'
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
@@ -16,6 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const post = await Post.findOne({ slug, isPublished: true }).lean()
   if (!post) return {}
 
+  const langLabel = post.language === 'te' ? 'Telugu' : post.language === 'hi' ? 'Hindi' : 'English'
   const title = `${post.title} | NutriLifeMitra`
   const rawText = post.content.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim()
   const description = post.excerpt
@@ -24,28 +25,43 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const url = `${SITE_URL}/blog/${slug}`
   const image = post.heroImage ?? `${SITE_URL}/api/og`
 
-  // Build keyword list from tag + category
+  // Build keyword list from tags + category — all languages
   const keywords = [
+    ...(post.tags ?? []),
     post.tag,
     post.category,
     'NutriLifeMitra',
-    'Telugu health',
+    `${langLabel} health`,
     'Indian nutrition',
-    post.language === 'te' ? 'తెలుగు ఆరోగ్యం' : post.language === 'hi' ? 'हिंदी स्वास्थ्य' : undefined,
+    'healthy Indian diet',
+    post.language === 'te' ? 'తెలుగు ఆరోగ్యం' : post.language === 'hi' ? 'हिंदी स्वास्थ्य' : 'Telugu nutrition',
+    post.language === 'te' ? 'తెలుగు పోషకాహారం' : post.language === 'hi' ? 'भारतीय पोषण' : 'Hindi nutrition',
   ].filter(Boolean) as string[]
+
+  const locale = post.language === 'te' ? 'te_IN' : post.language === 'hi' ? 'hi_IN' : 'en_IN'
+  const altLocales = ['te_IN', 'hi_IN', 'en_IN'].filter(l => l !== locale)
 
   return {
     title,
     description,
     keywords,
-    alternates: { canonical: url },
+    alternates: {
+      canonical: url,
+      languages: {
+        'te-IN': `${url}?lang=te`,
+        'hi-IN': `${url}?lang=hi`,
+        'en-IN': `${url}?lang=en`,
+        'x-default': url,
+      },
+    },
     openGraph: {
       type: 'article',
       url,
       title,
       description,
       siteName: 'NutriLifeMitra',
-      locale: post.language === 'te' ? 'te_IN' : post.language === 'hi' ? 'hi_IN' : 'en_IN',
+      locale,
+      alternateLocale: altLocales,
       images: [{ url: image, width: 1200, height: 630, alt: post.title }],
       publishedTime: post.createdAt?.toISOString(),
       modifiedTime: post.updatedAt?.toISOString(),
@@ -135,7 +151,7 @@ export default async function BlogPostPage({
               '@type': 'Organization',
               name: 'NutriLifeMitra',
               url: SITE_URL,
-              logo: { '@type': 'ImageObject', url: `${SITE_URL}/EnglishLogo.png` },
+              logo: { '@type': 'ImageObject', url: `${SITE_URL}/logo.png` },
             },
             url: `${SITE_URL}/blog/${plain.slug}`,
             mainEntityOfPage: { '@type': 'WebPage', '@id': `${SITE_URL}/blog/${plain.slug}` },

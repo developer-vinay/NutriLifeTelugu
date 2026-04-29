@@ -7,7 +7,7 @@ import RecipeDetailClient from '@/components/recipes/RecipeDetailClient'
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-const SITE_URL = 'https://nutrilifemitra.vercel.app'
+const SITE_URL = 'https://nutrilifemitra.com'
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
@@ -15,33 +15,48 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const recipe = await Recipe.findOne({ slug, isPublished: true }).lean()
   if (!recipe) return {}
 
+  const langLabel = recipe.language === 'te' ? 'Telugu' : recipe.language === 'hi' ? 'Hindi' : 'English'
   const title = `${recipe.title} | NutriLifeMitra`
   const description = recipe.description
     ? recipe.description.slice(0, 160)
-    : `${recipe.title} — healthy Indian recipe on NutriLifeMitra`
+    : `${recipe.title} — healthy ${langLabel} Indian recipe on NutriLifeMitra`
   const url = `${SITE_URL}/recipes/${slug}`
   const image = recipe.heroImage ?? `${SITE_URL}/api/og`
+  const locale = recipe.language === 'te' ? 'te_IN' : recipe.language === 'hi' ? 'hi_IN' : 'en_IN'
+  const altLocales = ['te_IN', 'hi_IN', 'en_IN'].filter(l => l !== locale)
 
   const keywords = [
+    ...(recipe.tags ?? []),
     recipe.tag,
     recipe.category,
     'NutriLifeMitra recipe',
-    'Indian healthy recipe',
-    recipe.language === 'te' ? 'తెలుగు రెసిపీ' : recipe.language === 'hi' ? 'हिंदी रेसिपी' : undefined,
+    'healthy Indian recipe',
+    `${langLabel} recipe`,
+    recipe.language === 'te' ? 'తెలుగు రెసిపీ' : recipe.language === 'hi' ? 'हिंदी रेसिपी' : 'Indian recipe',
+    recipe.language === 'te' ? 'తెలుగు వంటకం' : recipe.language === 'hi' ? 'भारतीय रेसिपी' : 'Telugu recipe',
   ].filter(Boolean) as string[]
 
   return {
     title,
     description,
     keywords,
-    alternates: { canonical: url },
+    alternates: {
+      canonical: url,
+      languages: {
+        'te-IN': `${url}?lang=te`,
+        'hi-IN': `${url}?lang=hi`,
+        'en-IN': `${url}?lang=en`,
+        'x-default': url,
+      },
+    },
     openGraph: {
       type: 'article',
       url,
       title,
       description,
       siteName: 'NutriLifeMitra',
-      locale: recipe.language === 'te' ? 'te_IN' : recipe.language === 'hi' ? 'hi_IN' : 'en_IN',
+      locale,
+      alternateLocale: altLocales,
       images: [{ url: image, width: 1200, height: 630, alt: recipe.title }],
     },
     twitter: { card: 'summary_large_image', title, description, images: [image], site: '@nutrilifemitra' },
@@ -105,7 +120,7 @@ export default async function RecipeDetailPage({
               '@type': 'Organization',
               name: 'NutriLifeMitra',
               url: SITE_URL,
-              logo: { '@type': 'ImageObject', url: `${SITE_URL}/EnglishLogo.png` },
+              logo: { '@type': 'ImageObject', url: `${SITE_URL}/logo.png` },
             },
             datePublished: plain.createdAt,
             inLanguage: plain.language === 'te' ? 'te' : plain.language === 'hi' ? 'hi' : 'en',

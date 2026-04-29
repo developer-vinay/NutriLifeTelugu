@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { connectDB } from '@/lib/mongodb'
 import { Post } from '@/models/Post'
 import { Recipe } from '@/models/Recipe'
@@ -6,6 +7,14 @@ import SearchClient from '@/components/search/SearchClient'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: 'Search Telugu Recipes, Health Tips & Videos | NutriLifeMitra',
+  description: 'Search Telugu recipes, health tips, diet plans and videos. తెలుగు రెసిపీలు, హెల్త్ టిప్స్ వెతకండి. खोजें — रेसिपी, स्वास्थ्य टिप्स, वीडियो।',
+  keywords: ['search Telugu recipes', 'Telugu health tips search', 'Indian nutrition search', 'NutriLifeMitra search'],
+  alternates: { canonical: 'https://nutrilifemitra.com/search' },
+  robots: { index: false, follow: true },
+}
 
 export default async function SearchPage({
   searchParams,

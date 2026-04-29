@@ -11,9 +11,9 @@ export const LANG_LABELS: Record<Language, string> = {
 }
 
 export const LANG_LOGOS: Record<Language, string> = {
-  te: '/TeluguLogo.png',
-  en: '/EnglishLogo.png',
-  hi: '/HindiLogo.png',
+  te: '/logo.png',
+  en: '/logo.png',
+  hi: '/logo.png',
 }
 
 export const BRAND_NAME = 'NutriLifeMitra'

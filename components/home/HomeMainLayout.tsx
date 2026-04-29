@@ -371,13 +371,13 @@ export default function HomeMainLayout({ latestVideo }: { latestVideo: DBVideo |
               href="/health-tips/weight-loss"
             />
             {loading ? (
-              <div className="grid grid-cols-3 gap-3">{[...Array(3)].map((_, i) => <PostSkeleton key={i} />)}</div>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">{[...Array(3)].map((_, i) => <PostSkeleton key={i} />)}</div>
             ) : healthTipPosts.length === 0 ? (
               <p className="text-sm text-gray-500 dark:text-slate-400">
                 {language === 'te' ? 'హెల్త్ టిప్స్ త్వరలో వస్తాయి.' : language === 'hi' ? 'हेल्थ टिप्स जल्द आ रहे हैं।' : 'Health tips coming soon.'}
               </p>
             ) : (
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                 {healthTipPosts.map((post) => (
                   <Link key={post._id} href={`/blog/${post.slug}`}
                     className="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-800/60 dark:hover:border-emerald-600">

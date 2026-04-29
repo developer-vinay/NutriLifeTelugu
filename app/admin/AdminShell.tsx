@@ -17,7 +17,6 @@ import {
   Menu,
   X,
   Mail,
-  Leaf,
 } from 'lucide-react'
 
 interface AdminShellProps {
@@ -52,7 +51,7 @@ export default function AdminShell({
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-[#F6F8F6] lg:flex">
+    <div className="min-h-screen w-full bg-[#F6F8F6] lg:flex" style={{ overflowX: 'clip' }}>
 
       {/* ── Mobile top bar ── */}
       <header className="fixed inset-x-0 top-0 z-40 flex h-14 items-center justify-between border-b border-gray-200 bg-white px-4 shadow-sm lg:hidden">
@@ -64,9 +63,7 @@ export default function AdminShell({
           <Menu className="h-5 w-5" />
         </button>
         <div className="flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#1A5C38]">
-            <Leaf className="h-4 w-4 text-white" />
-          </div>
+          <img src="/logo.png" alt="NutriLifeMitra" className="h-7 w-7 rounded-full object-cover" />
           <span className="text-sm font-bold text-gray-900">NutriAdmin</span>
         </div>
         <div className="h-8 w-8 rounded-full bg-[#1A5C38] flex items-center justify-center text-xs font-bold text-white">
@@ -93,9 +90,7 @@ export default function AdminShell({
         {/* Logo */}
         <div className="flex h-14 items-center justify-between border-b border-gray-100 px-4">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#1A5C38]">
-              <Leaf className="h-4 w-4 text-white" />
-            </div>
+            <img src="/logo.png" alt="NutriLifeMitra" className="h-8 w-8 rounded-full object-cover" />
             <span className="text-base font-bold text-gray-900">NutriAdmin</span>
           </div>
           <button
@@ -167,7 +162,7 @@ export default function AdminShell({
       </aside>
 
       {/* ── Main ── */}
-      <main className="min-w-0 flex-1 overflow-x-hidden pt-14 lg:pt-0">
+      <main className="min-w-0 flex-1 pt-14 lg:pt-0" style={{ overflowX: 'clip' }}>
         <div className="w-full max-w-7xl p-4 lg:p-6 xl:p-8">
           {children}
         </div>
