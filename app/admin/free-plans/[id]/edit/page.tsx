@@ -6,7 +6,7 @@ import DietPlanForm from '@/components/admin/plans/DietPlanForm'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 
-export default function EditPlanPage({ params }: { params: Promise<{ id: string }> }) {
+export default function EditFreePlanPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
   const [plan, setPlan] = useState<any>(null)
   const [loading, setLoading] = useState(true)
@@ -20,11 +20,11 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string 
     if (!id) return
     
     async function fetchPlan() {
-      const res = await fetch(`/api/admin/plans/${id}`)
+      const res = await fetch(`/api/admin/free-plans/${id}`)
       if (res.ok) {
         const data = await res.json()
-        // Add planType to help the form know this is a premium plan
-        setPlan({ ...data, planType: 'premium' })
+        // Add planType to help the form know this is a free plan
+        setPlan({ ...data, planType: 'free' })
       }
       setLoading(false)
     }
@@ -32,7 +32,7 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string 
   }, [id])
 
   async function handleSave(data: any) {
-    const res = await fetch(`/api/admin/plans/${id}`, {
+    const res = await fetch(`/api/admin/free-plans/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
@@ -84,8 +84,8 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string 
           <ArrowLeft size={18} />
         </Link>
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Edit Premium Plan</h1>
-          <p className="text-sm text-gray-500">{plan.title}</p>
+          <h1 className="text-xl font-bold text-gray-900">Edit Free Plan</h1>
+          <p className="text-sm text-gray-500">{plan.titleEn}</p>
         </div>
       </div>
 

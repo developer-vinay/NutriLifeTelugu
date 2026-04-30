@@ -5,6 +5,16 @@ import { auth } from '@/auth'
 
 export const dynamic = 'force-dynamic'
 
+export async function GET(_req: Request, context: { params: Promise<{ id: string }> }) {
+  const session = await auth()
+  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const { id } = await context.params
+  await connectDB()
+  const plan = await PremiumPlan.findById(id).lean()
+  if (!plan) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  return NextResponse.json(plan)
+}
+
 export async function PUT(req: Request, context: { params: Promise<{ id: string }> }) {
   const session = await auth()
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

@@ -17,7 +17,7 @@ interface SendEmailOptions {
 export async function sendEmail({ to, toName, subject, htmlContent }: SendEmailOptions) {
   if (!BREVO_API_KEY) {
     console.warn('BREVO_API_KEY not set — skipping email send')
-    return
+    throw new Error('Email service not configured. Please contact support.')
   }
 
   const res = await fetch('https://api.brevo.com/v3/smtp/email', {
@@ -37,7 +37,18 @@ export async function sendEmail({ to, toName, subject, htmlContent }: SendEmailO
   if (!res.ok) {
     const err = await res.text()
     console.error('Brevo send error:', err)
-    throw new Error('Email send failed')
+    
+    // Parse error for better user feedback
+    try {
+      const errorData = JSON.parse(err)
+      if (errorData.code === 'unauthorized' || errorData.message?.includes('Key not found')) {
+        throw new Error('Email service configuration error. Please contact support.')
+      }
+    } catch (parseError) {
+      // If we can't parse, use generic error
+    }
+    
+    throw new Error('Failed to send email. Please try again later.')
   }
 }
 

@@ -17,6 +17,7 @@ import {
   Menu,
   X,
   Mail,
+  Gift,
 } from 'lucide-react'
 
 interface AdminShellProps {

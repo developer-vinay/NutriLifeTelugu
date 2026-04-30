@@ -14,6 +14,7 @@ export async function POST(request: Request) {
   const formData = await request.formData()
   const file = formData.get('file')
   const folderParam = (formData.get('folder') as string | null) ?? 'general'
+  const resourceType = (formData.get('resource_type') as string | null) ?? 'image'
 
   if (!file || !(file instanceof Blob)) {
     return new NextResponse('No file uploaded', { status: 400 })
@@ -26,6 +27,7 @@ export async function POST(request: Request) {
     const { url, publicId } = await uploadImage(
       buffer,
       `nutrilifetelugu/${folderParam}`,
+      resourceType as 'image' | 'raw'
     )
 
     return NextResponse.json({ url, publicId })

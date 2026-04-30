@@ -1,17 +1,22 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useLanguage } from '@/components/LanguageProvider'
 import BuyPlanButton from '@/components/payment/BuyPlanButton'
 import {
   Download, CheckCircle2, Leaf, Heart, Baby, Wheat, Activity, Flame,
   Star, Users, Shield, ChevronDown, ChevronUp, ArrowRight, Zap,
-  Clock, FileText, Sparkles, BadgeCheck
+  Clock, FileText, Sparkles, BadgeCheck, Gift
 } from 'lucide-react'
 import PromotionBlock from '@/components/promotions/PromotionBlock'
 
-const freePlans = [
+// Icon mapping for dynamic free plans
+const iconMap: Record<string, any> = {
+  Flame, Activity, Wheat, Leaf, Heart, Baby
+}
+
+const freePlansStatic = [
   {
     icon: Flame,
     tag: { te: 'వెయిట్ లాస్', en: 'Weight Loss', hi: 'वजन घटाना' },
@@ -254,6 +259,97 @@ export default function DietPlansClient({ plans }: { plans: any[] }) {
   const faqList = faqs[language]
   const [openFaq, setOpenFaq] = useState<number | null>(null)
   const [emails, setEmails] = useState<Record<string, string>>({})
+  const [freePlans, setFreePlans] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [sending, setSending] = useState<Record<string, boolean>>({})
+  const [success, setSuccess] = useState<Record<string, boolean>>({})
+  const [errors, setErrors] = useState<Record<string, string>>({})
+
+  // Fetch free plans from API
+  useEffect(() => {
+    async function fetchFreePlans() {
+      try {
+        const res = await fetch('/api/free-plans')
+        if (res.ok) {
+          const data = await res.json()
+          // Map database plans to component format - only show active plans
+          const mapped = data
+            .filter((p: any) => p.isActive)
+            .map((p: any) => ({
+              _id: p._id,
+              icon: iconMap[p.iconName] || Leaf,
+              tag: { te: p.tagTe || p.tagEn, en: p.tagEn, hi: p.tagHi || p.tagEn },
+              title: { te: p.titleTe || p.titleEn, en: p.titleEn, hi: p.titleHi || p.titleEn },
+              desc: { te: p.descTe || p.descEn, en: p.descEn, hi: p.descHi || p.descEn },
+              highlights: {
+                te: p.highlightsTe?.length ? p.highlightsTe : (p.highlightsEn || []),
+                en: p.highlightsEn || [],
+                hi: p.highlightsHi?.length ? p.highlightsHi : (p.highlightsEn || []),
+              },
+              gradient: p.gradient || 'from-emerald-500 to-teal-500',
+              bg: p.bgColor || 'bg-emerald-50 dark:bg-emerald-900/10',
+              border: p.borderColor || 'border-emerald-200 dark:border-emerald-800',
+              iconBg: p.iconBg || 'bg-emerald-100 dark:bg-emerald-900/30',
+              iconColor: p.iconColor || 'text-emerald-600',
+              pdfUrl: p.pdfUrl,
+            }))
+          setFreePlans(mapped)
+        } else {
+          setFreePlans([])
+        }
+      } catch (err) {
+        console.error('Failed to fetch free plans:', err)
+        setFreePlans([])
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchFreePlans()
+  }, [])
+
+  // Handle email submission for a specific plan
+  async function handleSendEmail(planId: string, planTitle: string) {
+    const email = emails[planId]
+    if (!email || !email.trim()) {
+      setErrors(prev => ({ ...prev, [planId]: 'Please enter your email' }))
+      return
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      setErrors(prev => ({ ...prev, [planId]: 'Please enter a valid email address' }))
+      return
+    }
+
+    setSending(prev => ({ ...prev, [planId]: true }))
+    setErrors(prev => ({ ...prev, [planId]: '' }))
+
+    try {
+      const res = await fetch('/api/free-plans/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, planId, language }),
+      })
+
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.error || 'Failed to send email')
+      }
+
+      setSuccess(prev => ({ ...prev, [planId]: true }))
+      setEmails(prev => ({ ...prev, [planId]: '' }))
+      
+      // Reset success message after 5 seconds
+      setTimeout(() => {
+        setSuccess(prev => ({ ...prev, [planId]: false }))
+      }, 5000)
+    } catch (err: any) {
+      setErrors(prev => ({ ...prev, [planId]: err.message || 'Failed to send email. Please try again.' }))
+    } finally {
+      setSending(prev => ({ ...prev, [planId]: false }))
+    }
+  }
 
   return (
     <div className="bg-white dark:bg-slate-950">
@@ -332,47 +428,113 @@ export default function DietPlansClient({ plans }: { plans: any[] }) {
           </div>
           <h2 className="font-nunito text-3xl font-bold text-gray-900 dark:text-slate-50">{tx.free_title}</h2>
           <p className="mt-2 text-gray-500 dark:text-slate-400">{tx.free_sub}</p>
-          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {freePlans.map((p) => {
-              const Icon = p.icon
-              const emailVal = emails[p.title.en] ?? ''
-              return (
-                <div key={p.title.en}
-                  className={`group flex flex-col overflow-hidden rounded-2xl border ${p.border} ${p.bg} transition hover:-translate-y-1 hover:shadow-lg`}>
-                  <div className={`h-1.5 w-full bg-gradient-to-r ${p.gradient}`} />
-                  <div className="flex flex-1 flex-col p-5">
-                    <div className="mb-4 flex items-start gap-3">
-                      <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${p.iconBg}`}>
-                        <Icon size={22} className={p.iconColor} />
+          
+          {loading ? (
+            <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="h-96 animate-pulse rounded-2xl bg-gray-100 dark:bg-slate-800" />
+              ))}
+            </div>
+          ) : freePlans.length === 0 ? (
+            <div className="mt-8 rounded-2xl border-2 border-dashed border-emerald-300 bg-emerald-50 p-12 text-center dark:border-emerald-700 dark:bg-emerald-900/10">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/30">
+                <Gift size={28} className="text-emerald-500" />
+              </div>
+              <p className="font-nunito text-xl font-bold text-emerald-800 dark:text-emerald-300">
+                {language === 'te' ? 'ఉచిత ప్లాన్స్ త్వరలో వస్తాయి' : language === 'hi' ? 'मुफ्त प्लान्स जल्द आ रहे हैं' : 'Free plans coming soon'}
+              </p>
+              <p className="mt-2 text-sm text-emerald-700 dark:text-emerald-400">
+                {language === 'te' ? 'మేము మీ కోసం అద్భుతమైన ఉచిత మీల్ ప్లాన్స్ తయారు చేస్తున్నాము' : language === 'hi' ? 'हम आपके लिए शानदार मुफ्त मील प्लान्स तैयार कर रहे हैं' : 'We are preparing amazing free meal plans for you'}
+              </p>
+              <a href="#premium" className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#1A5C38] px-6 py-3 text-sm font-bold text-white transition hover:bg-emerald-800">
+                {language === 'te' ? 'ప్రీమియం చూడండి' : language === 'hi' ? 'प्रीमियम देखें' : 'View Premium Plans'} <ArrowRight size={14} />
+              </a>
+            </div>
+          ) : (
+            <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {freePlans.map((p) => {
+                const Icon = p.icon
+                const planId = p._id || p.title.en
+                const emailVal = emails[planId] ?? ''
+                const isSending = sending[planId] || false
+                const isSuccess = success[planId] || false
+                const error = errors[planId] || ''
+                
+                return (
+                  <div key={planId}
+                    className={`group flex flex-col overflow-hidden rounded-2xl border ${p.border} ${p.bg} transition hover:-translate-y-1 hover:shadow-lg`}>
+                    <div className={`h-1.5 w-full bg-gradient-to-r ${p.gradient}`} />
+                    <div className="flex flex-1 flex-col p-5">
+                      <div className="mb-4 flex items-start gap-3">
+                        <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${p.iconBg}`}>
+                          <Icon size={22} className={p.iconColor} />
+                        </div>
+                        <div>
+                          <span className={`text-[10px] font-bold uppercase tracking-widest ${p.iconColor}`}>{p.tag[language]}</span>
+                          <p className="font-nunito text-base font-bold leading-snug text-gray-900 dark:text-slate-50">{p.title[language]}</p>
+                        </div>
                       </div>
-                      <div>
-                        <span className={`text-[10px] font-bold uppercase tracking-widest ${p.iconColor}`}>{p.tag[language]}</span>
-                        <p className="font-nunito text-base font-bold leading-snug text-gray-900 dark:text-slate-50">{p.title[language]}</p>
+                      <p className="mb-4 text-sm text-gray-600 dark:text-slate-400">{p.desc[language]}</p>
+                      {p.highlights[language]?.length > 0 && (
+                        <ul className="mb-5 space-y-1.5">
+                          {p.highlights[language].map((h: string, idx: number) => (
+                            <li key={idx} className="flex items-center gap-2 text-xs text-gray-700 dark:text-slate-300">
+                              <CheckCircle2 size={13} className="shrink-0 text-emerald-500" /> {h}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                      <div className="mt-auto space-y-2">
+                        {isSuccess ? (
+                          <div className="rounded-xl bg-emerald-100 px-4 py-3 text-center dark:bg-emerald-900/30">
+                            <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">
+                              ✓ {language === 'te' ? 'ఇమెయిల్ పంపబడింది!' : language === 'hi' ? 'ईमेल भेजा गया!' : 'Email sent!'}
+                            </p>
+                            <p className="mt-0.5 text-xs text-emerald-600 dark:text-emerald-500">
+                              {language === 'te' ? 'మీ ఇన్‌బాక్స్ చెక్ చేయండి' : language === 'hi' ? 'अपना इनबॉक्स चेक करें' : 'Check your inbox'}
+                            </p>
+                          </div>
+                        ) : (
+                          <>
+                            <input 
+                              type="email" 
+                              value={emailVal}
+                              onChange={(e) => {
+                                setEmails((prev) => ({ ...prev, [planId]: e.target.value }))
+                                setErrors((prev) => ({ ...prev, [planId]: '' }))
+                              }}
+                              placeholder={tx.email_placeholder}
+                              disabled={isSending}
+                              className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#1A5C38] focus:outline-none focus:ring-2 focus:ring-[#1A5C38]/20 disabled:opacity-60 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500" 
+                            />
+                            {error && (
+                              <p className="text-xs text-red-600 dark:text-red-400">{error}</p>
+                            )}
+                            <button 
+                              type="button"
+                              onClick={() => handleSendEmail(planId, p.title[language])}
+                              disabled={isSending}
+                              className={`flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r ${p.gradient} px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:opacity-90 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed`}>
+                              {isSending ? (
+                                <>
+                                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                                  {language === 'te' ? 'పంపుతోంది...' : language === 'hi' ? 'भेजा जा रहा है...' : 'Sending...'}
+                                </>
+                              ) : (
+                                <>
+                                  <Download size={14} /> {tx.download}
+                                </>
+                              )}
+                            </button>
+                          </>
+                        )}
                       </div>
-                    </div>
-                    <p className="mb-4 text-sm text-gray-600 dark:text-slate-400">{p.desc[language]}</p>
-                    <ul className="mb-5 space-y-1.5">
-                      {p.highlights[language].map((h) => (
-                        <li key={h} className="flex items-center gap-2 text-xs text-gray-700 dark:text-slate-300">
-                          <CheckCircle2 size={13} className="shrink-0 text-emerald-500" /> {h}
-                        </li>
-                      ))}
-                    </ul>
-                    <div className="mt-auto space-y-2">
-                      <input type="email" value={emailVal}
-                        onChange={(e) => setEmails((prev) => ({ ...prev, [p.title.en]: e.target.value }))}
-                        placeholder={tx.email_placeholder}
-                        className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#1A5C38] focus:outline-none focus:ring-2 focus:ring-[#1A5C38]/20 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500" />
-                      <button type="button"
-                        className={`flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r ${p.gradient} px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:opacity-90 active:scale-95`}>
-                        <Download size={14} /> {tx.download}
-                      </button>
                     </div>
                   </div>
-                </div>
-              )
-            })}
-          </div>
+                )
+              })}
+            </div>
+          )}
         </section>
 
         {/* ── Premium Plans ── */}

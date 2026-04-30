@@ -14,7 +14,7 @@ cloudinary.config({
   api_secret: CLOUDINARY_API_SECRET,
 })
 
-export async function uploadImage(file: Buffer, folder: string) {
+export async function uploadImage(file: Buffer, folder: string, resourceType: 'image' | 'raw' = 'image') {
   const result = await new Promise<{
     secure_url: string
     public_id: string
@@ -23,7 +23,7 @@ export async function uploadImage(file: Buffer, folder: string) {
       .upload_stream(
         {
           folder,
-          resource_type: 'image',
+          resource_type: resourceType,
         },
         (error, uploadResult) => {
           if (error || !uploadResult) {
@@ -51,6 +51,14 @@ export async function deleteImage(publicId: string) {
 
   await cloudinary.uploader.destroy(publicId, {
     resource_type: 'image',
+  })
+}
+
+export async function deleteFile(publicId: string, resourceType: 'image' | 'raw' = 'image') {
+  if (!publicId) return
+
+  await cloudinary.uploader.destroy(publicId, {
+    resource_type: resourceType,
   })
 }
 
