@@ -35,7 +35,7 @@ const toolsMeta = {
   ],
 }
 
-function UpgradeCTA({ result }: { result: string }) {
+function UpgradeCTA({ result, price }: { result: string; price: string }) {
   return (
     <div className="mt-6 rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 p-5 dark:border-amber-700 dark:from-amber-900/20 dark:to-orange-900/20">
       <div className="flex items-start gap-3">
@@ -43,7 +43,7 @@ function UpgradeCTA({ result }: { result: string }) {
         <div className="flex-1">
           <p className="text-sm font-bold text-amber-900 dark:text-amber-200">Want a personalized diet plan?</p>
           <p className="mt-1 text-xs text-amber-800 dark:text-amber-300">
-            Based on your result ({result}), our nutritionists have curated a Telugu meal plan tailored for you.
+            Based on your result ({result}), our nutritionists have curated a meal plan tailored for you.
             Get structured 4-week plans, grocery lists, and blood-sugar friendly recipes.
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
@@ -51,7 +51,7 @@ function UpgradeCTA({ result }: { result: string }) {
               href="/diet-plans#premium"
               className="inline-flex items-center rounded-full bg-[#D97706] px-4 py-1.5 text-xs font-semibold text-white shadow-sm hover:opacity-90"
             >
-              Upgrade to Premium Plan ₹299 →
+              Upgrade to Premium Plan {price} →
             </Link>
             <Link
               href="/diet-plans#free"
@@ -66,7 +66,7 @@ function UpgradeCTA({ result }: { result: string }) {
   )
 }
 
-function BMICalculator() {
+function BMICalculator({ price }: { price: string }) {
   const [height, setHeight] = useState('')
   const [weight, setWeight] = useState('')
   const [result, setResult] = useState<{ bmi: number; category: string; color: string } | null>(null)
@@ -111,14 +111,14 @@ function BMICalculator() {
           <div className="mt-1 flex justify-between text-[10px] text-gray-400">
             <span>Underweight</span><span>Normal</span><span>Overweight</span><span>Obese</span>
           </div>
-          <UpgradeCTA result={`BMI ${result.bmi} — ${result.category}`} />
+          <UpgradeCTA result={`BMI ${result.bmi} — ${result.category}`} price={price} />
         </div>
       )}
     </div>
   )
 }
 
-function CalorieCalculator() {
+function CalorieCalculator({ price }: { price: string }) {
   const [age, setAge] = useState('')
   const [gender, setGender] = useState<'male' | 'female'>('female')
   const [height, setHeight] = useState('')
@@ -197,14 +197,14 @@ function CalorieCalculator() {
             </div>
           </div>
           <p className="mt-3 text-xs text-gray-600 dark:text-slate-400">{result.goal}</p>
-          <UpgradeCTA result={`${result.tdee} kcal/day TDEE`} />
+          <UpgradeCTA result={`${result.tdee} kcal/day TDEE`} price={price} />
         </div>
       )}
     </div>
   )
 }
 
-function IdealWeightCalculator() {
+function IdealWeightCalculator({ price }: { price: string }) {
   const [height, setHeight] = useState('')
   const [gender, setGender] = useState<'male' | 'female'>('female')
   const [result, setResult] = useState<{ min: number; max: number; robinson: number } | null>(null)
@@ -253,14 +253,14 @@ function IdealWeightCalculator() {
               <p className="text-[11px] text-emerald-100">Robinson formula</p>
             </div>
           </div>
-          <UpgradeCTA result={`Ideal weight ${result.min}–${result.max} kg`} />
+          <UpgradeCTA result={`Ideal weight ${result.min}–${result.max} kg`} price={price} />
         </div>
       )}
     </div>
   )
 }
 
-function SugarIntakeChecker() {
+function SugarIntakeChecker({ price }: { price: string }) {
   const [weight, setWeight] = useState('')
   const [isDiabetic, setIsDiabetic] = useState(false)
   const [foods, setFoods] = useState([
@@ -332,14 +332,14 @@ function SugarIntakeChecker() {
               style={{ width: `${Math.min((result.consumed / result.limit) * 100, 100)}%` }} />
           </div>
           <p className={`mt-2 text-center text-sm font-semibold ${result.color}`}>{result.status}</p>
-          <UpgradeCTA result={`${result.consumed}g sugar consumed vs ${result.limit}g limit`} />
+          <UpgradeCTA result={`${result.consumed}g sugar consumed vs ${result.limit}g limit`} price={price} />
         </div>
       )}
     </div>
   )
 }
 
-function WaterIntakeCalculator() {
+function WaterIntakeCalculator({ price }: { price: string }) {
   const [weight, setWeight] = useState('')
   const [activity, setActivity] = useState<'low' | 'moderate' | 'high'>('moderate')
   const [climate, setClimate] = useState<'cool' | 'hot'>('hot')
@@ -403,14 +403,14 @@ function WaterIntakeCalculator() {
             </div>
           </div>
           <p className="mt-3 text-center text-xs text-gray-600 dark:text-slate-400"><Lightbulb size={12} className="inline mr-1 text-amber-500" />{result.tip}</p>
-          <UpgradeCTA result={`${result.liters}L water/day needed`} />
+          <UpgradeCTA result={`${result.liters}L water/day needed`} price={price} />
         </div>
       )}
     </div>
   )
 }
 
-function WaistHipCalculator() {
+function WaistHipCalculator({ price }: { price: string }) {
   const [waist, setWaist] = useState('')
   const [hip, setHip] = useState('')
   const [gender, setGender] = useState<'male' | 'female'>('female')
@@ -468,7 +468,7 @@ function WaistHipCalculator() {
           <p className="text-4xl font-bold text-gray-900 dark:text-slate-50">{result.ratio}</p>
           <p className={`mt-1 text-sm font-semibold ${result.color}`}>{result.risk}</p>
           <p className="mt-1 text-xs text-gray-500 dark:text-slate-400">{result.detail}</p>
-          <UpgradeCTA result={`WHR ${result.ratio} — ${result.risk}`} />
+          <UpgradeCTA result={`WHR ${result.ratio} — ${result.risk}`} price={price} />
         </div>
       )}
     </div>
@@ -479,6 +479,19 @@ export default function HealthToolsClient() {
   const [activeTool, setActiveTool] = useState<Tool>('bmi')
   const { language } = useLanguage()
   const tools = toolsMeta[language]
+  const [featuredPlanPrice, setFeaturedPlanPrice] = useState<string>('₹299')
+
+  useEffect(() => {
+    // Fetch featured plan price
+    fetch('/api/plans?featured=true&limit=1')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data && data.length > 0) {
+          setFeaturedPlanPrice(`${data[0].currency}${data[0].price}`)
+        }
+      })
+      .catch(() => {})
+  }, [])
 
   const panelTitles = {
     te: {
@@ -555,12 +568,12 @@ export default function HealthToolsClient() {
           <div className="flex-1 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800/60">
             <h2 className="mb-1 font-nunito text-xl font-bold text-gray-900 dark:text-slate-50">{panel.title}</h2>
             <p className="mb-5 text-xs text-gray-500 dark:text-slate-400">{panel.sub}</p>
-            {activeTool === 'bmi' && <BMICalculator />}
-            {activeTool === 'calorie' && <CalorieCalculator />}
-            {activeTool === 'ideal-weight' && <IdealWeightCalculator />}
-            {activeTool === 'sugar' && <SugarIntakeChecker />}
-            {activeTool === 'water' && <WaterIntakeCalculator />}
-            {activeTool === 'waist-hip' && <WaistHipCalculator />}
+            {activeTool === 'bmi' && <BMICalculator price={featuredPlanPrice} />}
+            {activeTool === 'calorie' && <CalorieCalculator price={featuredPlanPrice} />}
+            {activeTool === 'ideal-weight' && <IdealWeightCalculator price={featuredPlanPrice} />}
+            {activeTool === 'sugar' && <SugarIntakeChecker price={featuredPlanPrice} />}
+            {activeTool === 'water' && <WaterIntakeCalculator price={featuredPlanPrice} />}
+            {activeTool === 'waist-hip' && <WaistHipCalculator price={featuredPlanPrice} />}
           </div>
         </div>
 

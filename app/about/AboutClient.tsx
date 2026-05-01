@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useLanguage } from '@/components/LanguageProvider'
 import { Leaf, Home, Heart, Users, Salad, BookOpen, Stethoscope, Send, CheckCircle } from 'lucide-react'
@@ -15,11 +15,11 @@ const content = {
     story_title: 'Our Story',
     story_body: 'NutriLife was born from a simple observation: most nutrition content online is either too generic or too expensive to be useful for everyday families. We set out to change that by creating content rooted in local food culture.',
     what_title: 'What We Offer',
-    what_items: [
-      '500+ healthy recipes with step-by-step instructions',
+    what_items: (totalRecipes: string, totalArticles: string, totalVideos: string) => [
+      `${totalRecipes} healthy recipes with step-by-step instructions`,
       'Free diet plans for weight loss, diabetes, thyroid, and more',
-      'Evidence-based health articles written in plain language',
-      'YouTube videos with cooking guides and health education',
+      `${totalArticles} evidence-based health articles written in plain language`,
+      `${totalVideos} YouTube videos with cooking guides and health education`,
       'Weekly newsletter with nutrition tips and seasonal recipes',
     ],
     values_title: 'Our Values',
@@ -55,11 +55,11 @@ const content = {
     story_title: 'हमारी कहानी',
     story_body: 'न्यूट्रीलाइफ एक सरल अवलोकन से जन्मा: ऑनलाइन अधिकांश पोषण सामग्री या तो बहुत सामान्य है या रोजमर्रा के परिवारों के लिए बहुत महंगी। हमने स्थानीय खाद्य संस्कृति में निहित सामग्री बनाकर इसे बदलने का निर्णय लिया।',
     what_title: 'हम क्या प्रदान करते हैं',
-    what_items: [
-      'चरण-दर-चरण निर्देशों के साथ 500+ स्वस्थ रेसिपी',
+    what_items: (totalRecipes: string, totalArticles: string, totalVideos: string) => [
+      `चरण-दर-चरण निर्देशों के साथ ${totalRecipes} स्वस्थ रेसिपी`,
       'वजन घटाने, मधुमेह, थायरॉइड और अधिक के लिए मुफ्त डाइट प्लान',
-      'सरल भाषा में लिखे गए साक्ष्य-आधारित स्वास्थ्य लेख',
-      'खाना पकाने की गाइड और स्वास्थ्य शिक्षा के साथ YouTube वीडियो',
+      `सरल भाषा में लिखे गए ${totalArticles} साक्ष्य-आधारित स्वास्थ्य लेख`,
+      `खाना पकाने की गाइड और स्वास्थ्य शिक्षा के साथ ${totalVideos} YouTube वीडियो`,
       'पोषण टिप्स और मौसमी रेसिपी के साथ साप्ताहिक न्यूज़लेटर',
     ],
     values_title: 'हमारे मूल्य',
@@ -95,11 +95,11 @@ const content = {
     story_title: 'మా కథ',
     story_body: 'న్యూట్రిలైఫ్ ఒక సాధారణ పరిశీలన నుండి పుట్టింది: ఆన్‌లైన్‌లో చాలా పోషకాహార కంటెంట్ రోజువారీ కుటుంబాలకు ఉపయోగపడేంత సాధారణంగా లేదా చాలా ఖరీదుగా ఉంటుంది.',
     what_title: 'మేము అందించేది',
-    what_items: [
-      'దశల వారీ సూచనలతో 500+ ఆరోగ్యకరమైన వంటకాలు',
+    what_items: (totalRecipes: string, totalArticles: string, totalVideos: string) => [
+      `దశల వారీ సూచనలతో ${totalRecipes} ఆరోగ్యకరమైన వంటకాలు`,
       'బరువు తగ్గడం, మధుమేహం, థైరాయిడ్ మరియు మరిన్నింటికి ఉచిత డైట్ ప్లాన్‌లు',
-      'సాధారణ భాషలో రాసిన సాక్ష్యం-ఆధారిత ఆరోగ్య వ్యాసాలు',
-      'వంట గైడ్‌లు మరియు ఆరోగ్య విద్యతో YouTube వీడియోలు',
+      `సాధారణ భాషలో రాసిన ${totalArticles} సాక్ష్యం-ఆధారిత ఆరోగ్య వ్యాసాలు`,
+      `వంట గైడ్‌లు మరియు ఆరోగ్య విద్యతో ${totalVideos} YouTube వీడియోలు`,
       'పోషకాహార చిట్కాలు మరియు సీజనల్ వంటకాలతో వారపు న్యూస్‌లెటర్',
     ],
     values_title: 'మా విలువలు',
@@ -131,14 +131,40 @@ const content = {
 
 export default function AboutClient() {
   const { language } = useLanguage()
-  const t = content[language] ?? content.en
-
+  
   const [contactName, setContactName] = useState('')
   const [contactEmail, setContactEmail] = useState('')
   const [contactMsg, setContactMsg] = useState('')
   const [contactLoading, setContactLoading] = useState(false)
   const [contactDone, setContactDone] = useState(false)
   const [contactError, setContactError] = useState('')
+  
+  // Dynamic settings
+  const [totalRecipes, setTotalRecipes] = useState('500+')
+  const [totalArticles, setTotalArticles] = useState('200+')
+  const [totalVideos, setTotalVideos] = useState('100+')
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchSettings() {
+      try {
+        const res = await fetch('/api/site-settings')
+        if (res.ok) {
+          const data = await res.json()
+          setTotalRecipes(data.total_recipes || '500+')
+          setTotalArticles(data.total_articles || '200+')
+          setTotalVideos(data.total_videos || '100+')
+        }
+      } catch (err) {
+        console.error('Failed to fetch site settings:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchSettings()
+  }, [])
+
+  const t = content[language] ?? content.en
 
   async function handleContact(e: React.FormEvent) {
     e.preventDefault()
@@ -202,7 +228,7 @@ export default function AboutClient() {
         <section>
           <h2 className="mb-6 font-nunito text-2xl font-bold text-gray-900 dark:text-slate-50">{t.what_title}</h2>
           <ul className="grid gap-3 sm:grid-cols-2">
-            {t.what_items.map((item, i) => (
+            {t.what_items(totalRecipes, totalArticles, totalVideos).map((item, i) => (
               <li key={i} className="flex items-start gap-3 rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3 dark:border-slate-700 dark:bg-slate-900">
                 <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#1A5C38] text-[10px] font-bold text-white">✓</span>
                 <span className="text-sm text-gray-700 dark:text-slate-300">{item}</span>

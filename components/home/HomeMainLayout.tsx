@@ -243,9 +243,14 @@ export default function HomeMainLayout({ latestVideo }: { latestVideo: DBVideo |
   const [healthTipPosts, setHealthTipPosts] = useState<DBPost[]>([])
   const [loading, setLoading] = useState(true)
   const [subscriberCount, setSubscriberCount] = useState<number | null>(null)
+  const [featuredPlanPrice, setFeaturedPlanPrice] = useState('299')
 
   useEffect(() => {
     fetch('/api/subscribers/count').then(r => r.json()).then(d => setSubscriberCount(d.count)).catch(() => {})
+    // Fetch featured plan price
+    fetch('/api/plans?featured=true&limit=1').then(r => r.json()).then(plans => {
+      if (plans && plans.length > 0) setFeaturedPlanPrice(String(plans[0].price))
+    }).catch(() => {})
   }, [])
 
   useEffect(() => {
@@ -572,7 +577,7 @@ export default function HomeMainLayout({ latestVideo }: { latestVideo: DBVideo |
           </div>
 
           <div className="space-y-2 rounded-2xl bg-amber-500 p-4 text-xs text-white shadow-md">
-            <p className="text-sm font-bold">Premium Meal Plan — ₹299</p>
+            <p className="text-sm font-bold">Premium Meal Plan — ₹{featuredPlanPrice}</p>
             <p className="text-[11px] text-amber-100">Structured 4-week Telugu meal plan with grocery lists, recipes, and blood-sugar friendly swaps.</p>
             <Link href="/diet-plans#premium" className="block w-full rounded-md bg-white px-3 py-2 text-center text-[11px] font-semibold text-amber-700 hover:bg-amber-50">Buy Now →</Link>
           </div>

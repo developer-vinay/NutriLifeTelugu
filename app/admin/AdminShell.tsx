@@ -18,6 +18,8 @@ import {
   X,
   Mail,
   Gift,
+  Settings,
+  ShoppingBag,
 } from 'lucide-react'
 
 interface AdminShellProps {
@@ -34,10 +36,12 @@ const navItems = [
   { href: '/admin/recipes', label: 'Recipes', icon: ChefHat },
   { href: '/admin/videos', label: 'Videos', icon: Video },
   { href: '/admin/plans', label: 'Diet Plans', icon: CreditCard },
+  { href: '/admin/products', label: 'Shop Products', icon: ShoppingBag },
   { href: '/admin/promotions', label: 'Promotions', icon: Megaphone },
   { href: '/admin/subscribers', label: 'Subscribers', icon: Mail },
   { href: '/admin/comments', label: 'Comments', icon: MessageSquare },
   { href: '/admin/hero-slides', label: 'Hero Slides', icon: Image },
+  { href: '/admin/settings', label: 'Site Settings', icon: Settings },
   { href: '/admin/profile', label: 'Profile', icon: User },
 ]
 

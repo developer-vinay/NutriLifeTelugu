@@ -11,7 +11,8 @@
     "seed:content": "ts-node --project tsconfig.scripts.json scripts/seed-content.ts",
     "seed:recipes": "ts-node --project tsconfig.scripts.json scripts/seed-recipes.ts",
     "seed:videos": "ts-node --project tsconfig.scripts.json scripts/seed-videos.ts",
-    "seed:hindi": "ts-node --project tsconfig.scripts.json scripts/seed-hindi.ts"
+    "seed:hindi": "ts-node --project tsconfig.scripts.json scripts/seed-hindi.ts",
+    "seed:settings": "ts-node --project tsconfig.scripts.json scripts/seed-site-settings.ts"
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.11.1",

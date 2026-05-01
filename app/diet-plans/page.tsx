@@ -52,5 +52,22 @@ export default async function DietPlansPage() {
     features: p.features ?? [],
   }))
 
-  return <DietPlansClient plans={serialized} />
+  // Get free plans count dynamically
+  const { FreeMealPlan } = await import('@/models/FreeMealPlan')
+  const freePlansCount = await FreeMealPlan.countDocuments()
+
+  // Get site settings
+  const { SiteSettings } = await import('@/models/SiteSettings')
+  const settings = await SiteSettings.find().select('key value').lean()
+  const settingsObj = settings.reduce((acc: any, s: any) => {
+    acc[s.key] = s.value
+    return acc
+  }, {})
+
+  return <DietPlansClient 
+    plans={serialized} 
+    freePlansCount={freePlansCount}
+    familiesServed={settingsObj.families_served || '10,000+'}
+    cuisinePercentage={settingsObj.cuisine_percentage || '100%'}
+  />
 }

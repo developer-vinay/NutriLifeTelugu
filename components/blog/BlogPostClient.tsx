@@ -40,9 +40,20 @@ export default function BlogPostClient({ post, related }: Props) {
   const [copied, setCopied] = useState(false)
   const [newsletterState, setNewsletterState] = useState<'idle' | 'success'>('idle')
   const [subscriberCount, setSubscriberCount] = useState<number | null>(null)
+  const [featuredPlanPrice, setFeaturedPlanPrice] = useState<string>('₹299')
 
   useEffect(() => {
     fetch('/api/subscribers/count').then(r => r.json()).then(d => setSubscriberCount(d.count)).catch(() => {})
+    
+    // Fetch featured plan price
+    fetch('/api/plans?featured=true&limit=1')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data && data.length > 0) {
+          setFeaturedPlanPrice(`${data[0].currency}${data[0].price}`)
+        }
+      })
+      .catch(() => {})
   }, [])
 
   // Sync navbar language to match the post's language
@@ -389,11 +400,11 @@ export default function BlogPostClient({ post, related }: Props) {
 
             <div className="rounded-2xl border border-amber-300 bg-amber-50 p-4 text-xs text-amber-900 dark:border-amber-700 dark:bg-amber-900/20 dark:text-amber-200">
               <p className="mb-1 text-[13px] font-semibold">Premium 30-Day Meal Plan</p>
-              <p className="mb-2 text-[12px] text-amber-800 dark:text-amber-300">Personalized Telugu diet plan · Diabetic friendly · Shopping list.</p>
-              <p className="mb-2 text-xl font-bold text-amber-900 dark:text-amber-200">₹299</p>
-              <button type="button" className="w-full rounded-lg bg-[#D97706] px-3 py-2 text-[13px] font-semibold text-white hover:opacity-90">
+              <p className="mb-2 text-[12px] text-amber-800 dark:text-amber-300">Personalized diet plan · Diabetic friendly · Shopping list.</p>
+              <p className="mb-2 text-xl font-bold text-amber-900 dark:text-amber-200">{featuredPlanPrice}</p>
+              <Link href="/diet-plans#premium" className="block w-full rounded-lg bg-[#D97706] px-3 py-2 text-center text-[13px] font-semibold text-white hover:opacity-90">
                 Buy Now →
-              </button>
+              </Link>
             </div>
           </aside>
         </div>

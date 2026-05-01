@@ -34,7 +34,6 @@ const UI = {
     loadMore: 'మరిన్ని రెసిపీలు',
     noResults: 'రెసిపీలు కనుగొనబడలేదు.',
     popular: 'అత్యంత ప్రజాదరణ పొందిన రెసిపీలు',
-    premium: 'ప్రీమియం మీల్ ప్లాన్ ₹299',
     premiumSub: 'ప్రింటబుల్ PDF · డయాబెటిక్ ఫ్రెండ్లీ · షాపింగ్ లిస్ట్',
     buyNow: 'ఇప్పుడే కొనండి →',
   },
@@ -48,7 +47,6 @@ const UI = {
     loadMore: 'और रेसिपी लोड करें',
     noResults: 'कोई रेसिपी नहीं मिली।',
     popular: 'सबसे लोकप्रिय रेसिपी',
-    premium: 'प्रीमियम मील प्लान ₹299',
     premiumSub: 'प्रिंटेबल PDF · डायबिटिक फ्रेंडली · शॉपिंग लिस्ट',
     buyNow: 'अभी खरीदें →',
   },
@@ -62,7 +60,6 @@ const UI = {
     loadMore: 'Load more recipes',
     noResults: 'No recipes found.',
     popular: 'Most Popular Recipes',
-    premium: 'Premium Meal Plan ₹299',
     premiumSub: 'Printable PDF · Diabetic friendly · Shopping list',
     buyNow: 'Buy Now →',
   },
@@ -78,6 +75,7 @@ export default function RecipesClient() {
   const [activeTab, setActiveTab] = useState('All')
   const [visibleCount, setVisibleCount] = useState(12)
   const searchRef = useRef<HTMLInputElement>(null)
+  const [featuredPlanPrice, setFeaturedPlanPrice] = useState<string>('₹299')
 
   // Debounce: filter 300ms after user stops typing
   const [search, setSearch] = useState('')
@@ -96,6 +94,16 @@ export default function RecipesClient() {
       .then((r) => r.json())
       .then((data) => { setRecipes(Array.isArray(data) ? data : []); setLoading(false) })
       .catch(() => setLoading(false))
+    
+    // Fetch featured plan price
+    fetch('/api/plans?featured=true&limit=1')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data && data.length > 0) {
+          setFeaturedPlanPrice(`${data[0].currency}${data[0].price}`)
+        }
+      })
+      .catch(() => {})
   }, [language])
 
   const featured = recipes.find((r) => r.isFeatured) ?? recipes[0]
@@ -277,11 +285,13 @@ export default function RecipesClient() {
             </ol>
           </div>
           <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-700 dark:bg-amber-900/20">
-            <p className="text-sm font-semibold text-amber-900 dark:text-amber-200">{t.premium}</p>
+            <p className="text-sm font-semibold text-amber-900 dark:text-amber-200">
+              {language === 'te' ? 'ప్రీమియం మీల్ ప్లాన్' : language === 'hi' ? 'प्रीमियम मील प्लान' : 'Premium Meal Plan'} {featuredPlanPrice}
+            </p>
             <p className="mt-1 text-xs text-amber-800 dark:text-amber-300">{t.premiumSub}</p>
-            <button type="button" className="mt-3 w-full rounded-lg bg-[#D97706] px-3 py-2 text-sm font-semibold text-white hover:opacity-90">
+            <Link href="/diet-plans#premium" className="mt-3 block w-full rounded-lg bg-[#D97706] px-3 py-2 text-center text-sm font-semibold text-white hover:opacity-90">
               {t.buyNow}
-            </button>
+            </Link>
           </div>
         </aside>
       </div>
