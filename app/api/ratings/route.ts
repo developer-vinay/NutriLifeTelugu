@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { connectDB } from '@/lib/mongodb'
 import { Rating } from '@/models/Rating'
 import { Types } from 'mongoose'
+import { rateLimit, RateLimits, getClientIp, createRateLimitResponse } from '@/lib/ratelimit'
 
 export const runtime = 'nodejs'
 
@@ -25,6 +26,15 @@ export async function GET(req: Request) {
 
 // POST /api/ratings
 export async function POST(req: Request) {
+  // Rate limiting: 100 ratings per 15 minutes per IP
+  // Prevents fake rating manipulation while allowing legitimate browsing
+  const ip = getClientIp(req)
+  const rateLimitResult = rateLimit(ip, RateLimits.RELAXED)
+  
+  if (!rateLimitResult.success) {
+    return createRateLimitResponse(rateLimitResult)
+  }
+  
   const body = await req.json()
   const { contentType, contentId, stars, userIdentifier } = body
 

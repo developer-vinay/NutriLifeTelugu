@@ -2,11 +2,21 @@ import { NextResponse } from 'next/server'
 import { connectDB } from '@/lib/mongodb'
 import { FreeMealPlan } from '@/models/FreeMealPlan'
 import { sendEmail } from '@/lib/brevo'
+import { rateLimit, RateLimits, getClientIp, createRateLimitResponse } from '@/lib/ratelimit'
 
 export const runtime = 'nodejs'
 
 export async function POST(req: Request) {
   try {
+    // Rate limiting: 10 free plan requests per hour per IP
+    // Prevents email quota abuse while allowing legitimate downloads
+    const ip = getClientIp(req)
+    const rateLimitResult = rateLimit(ip, RateLimits.MODERATE)
+    
+    if (!rateLimitResult.success) {
+      return createRateLimitResponse(rateLimitResult)
+    }
+    
     const { email, planId, language = 'en' } = await req.json()
 
     if (!email || !planId) {

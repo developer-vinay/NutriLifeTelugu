@@ -4,11 +4,12 @@ import React, { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useLanguage, LANG_LABELS, type Language } from '@/components/LanguageProvider'
-import { Bookmark, Heart, ChefHat, Video, FileText, UtensilsCrossed, Play } from 'lucide-react'
+import { Bookmark, Heart, ChefHat, Video, FileText, UtensilsCrossed, Play, ShoppingBag, Download, Clock } from 'lucide-react'
 
 type Post = { _id: string; title: string; slug: string; tag?: string; heroImage?: string; readTimeMinutes?: number }
 type Recipe = { _id: string; title: string; slug: string; tag?: string; heroImage?: string }
 type Video = { _id: string; title: string; slug: string; tag?: string; thumbnailUrl?: string; youtubeUrl: string }
+type PurchasedPlan = { _id: string; title: string; titleEn?: string; titleTe?: string; titleHi?: string; description?: string; descEn?: string; descTe?: string; descHi?: string; price: number; currency: string; durationWeeks: number; fileUrl?: string; language: Language }
 
 type ProfileData = {
   user: { name?: string; email: string; image?: string; language: Language }
@@ -18,9 +19,10 @@ type ProfileData = {
   likedRecipes: Recipe[]
   savedVideos: Video[]
   likedVideos: Video[]
+  purchasedPlans: PurchasedPlan[]
 }
 
-type TabKey = 'saved' | 'liked' | 'recipes' | 'videos'
+type TabKey = 'saved' | 'liked' | 'recipes' | 'videos' | 'plans'
 type TabDef = { key: TabKey; icon: React.ReactNode; label: string; count: number }
 
 export default function ProfileClient() {
@@ -33,6 +35,15 @@ export default function ProfileClient() {
   const [saved, setSaved] = useState(false)
 
   useEffect(() => {
+    // Check URL params for tab and success
+    const params = new URLSearchParams(window.location.search)
+    const urlTab = params.get('tab')
+    const success = params.get('success')
+    
+    if (urlTab === 'plans' || success === '1') {
+      setTab('plans')
+    }
+
     fetch('/api/user/profile')
       .then((r) => r.json())
       .then((d) => { setData(d); setName(d.user?.name ?? '') })
@@ -63,10 +74,11 @@ export default function ProfileClient() {
   const initials = (data.user.name?.[0] ?? data.user.email[0]).toUpperCase()
 
   const tabs: TabDef[] = [
-    { key: 'saved',   icon: <Bookmark size={14} />, label: 'Saved Posts',   count: data.savedPosts.length },
-    { key: 'liked',   icon: <Heart size={14} />,    label: 'Liked Posts',   count: data.likedPosts.length },
-    { key: 'recipes', icon: <ChefHat size={14} />,  label: 'Saved Recipes', count: data.savedRecipes.length },
-    { key: 'videos',  icon: <Video size={14} />,    label: 'Saved Videos',  count: data.savedVideos.length },
+    { key: 'plans',   icon: <ShoppingBag size={14} />, label: 'My Plans',      count: data.purchasedPlans.length },
+    { key: 'saved',   icon: <Bookmark size={14} />,    label: 'Saved Posts',   count: data.savedPosts.length },
+    { key: 'liked',   icon: <Heart size={14} />,       label: 'Liked Posts',   count: data.likedPosts.length },
+    { key: 'recipes', icon: <ChefHat size={14} />,     label: 'Saved Recipes', count: data.savedRecipes.length },
+    { key: 'videos',  icon: <Video size={14} />,       label: 'Saved Videos',  count: data.savedVideos.length },
   ]
 
   const inputCls = 'w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#1A5C38] focus:outline-none focus:ring-1 focus:ring-[#1A5C38] dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500'
@@ -157,6 +169,7 @@ export default function ProfileClient() {
 
         {/* Content grid — 2 cols on mobile */}
         <div className="mx-3 mt-3 pb-8">
+          {tab === 'plans'   && <MobileGrid items={data.purchasedPlans} render={(p: PurchasedPlan) => <PlanCard key={p._id} item={p} language={language} />} empty="No purchased plans yet." />}
           {tab === 'saved'   && <MobileGrid items={data.savedPosts}   render={(p: Post)   => <PostCard   key={p._id} item={p} />} empty="No saved posts yet." />}
           {tab === 'liked'   && <MobileGrid items={data.likedPosts}   render={(p: Post)   => <PostCard   key={p._id} item={p} />} empty="No liked posts yet." />}
           {tab === 'recipes' && <MobileGrid items={data.savedRecipes} render={(r: Recipe) => <RecipeCard key={r._id} item={r} />} empty="No saved recipes yet." />}
@@ -232,7 +245,7 @@ export default function ProfileClient() {
             {/* Right content */}
             <div className="min-w-0 flex-1">
               {/* Tab bar */}
-              <div className="mb-5 flex gap-2 border-b border-gray-200 pb-4 dark:border-slate-700">
+              <div className="mb-5 flex flex-wrap gap-2 border-b border-gray-200 pb-4 dark:border-slate-700">
                 {tabs.map((t) => (
                   <button key={t.key} type="button" onClick={() => setTab(t.key)}
                     className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
@@ -246,6 +259,7 @@ export default function ProfileClient() {
               </div>
 
               {/* Content grid — 3 cols on desktop */}
+              {tab === 'plans'   && <DesktopGrid items={data.purchasedPlans} render={(p: PurchasedPlan) => <PlanCard key={p._id} item={p} language={language} />} empty="No purchased plans yet. Purchase a premium plan to see it here." />}
               {tab === 'saved'   && <DesktopGrid items={data.savedPosts}   render={(p: Post)   => <PostCard   key={p._id} item={p} />} empty="No saved posts yet. Save any article to see it here." />}
               {tab === 'liked'   && <DesktopGrid items={data.likedPosts}   render={(p: Post)   => <PostCard   key={p._id} item={p} />} empty="No liked posts yet. Like any article to see it here." />}
               {tab === 'recipes' && <DesktopGrid items={data.savedRecipes} render={(r: Recipe) => <RecipeCard key={r._id} item={r} />} empty="No saved recipes yet. Save any recipe to see it here." />}
@@ -329,5 +343,69 @@ function VideoCard({ item }: { item: Video }) {
         <p className="mt-2 text-[11px] font-semibold text-[#1A5C38] dark:text-emerald-400">Watch →</p>
       </div>
     </a>
+  )
+}
+
+function PlanCard({ item, language }: { item: PurchasedPlan; language: Language }) {
+  const getTitle = () => {
+    if (language === 'te' && item.titleTe) return item.titleTe
+    if (language === 'hi' && item.titleHi) return item.titleHi
+    return item.titleEn || item.title
+  }
+
+  const getDescription = () => {
+    if (language === 'te' && item.descTe) return item.descTe
+    if (language === 'hi' && item.descHi) return item.descHi
+    return item.descEn || item.description || ''
+  }
+
+  const handleDownload = () => {
+    if (item.fileUrl) {
+      // Use PDF proxy route for mobile-friendly download
+      const downloadUrl = `/api/pdf/${item._id}`
+      window.open(downloadUrl, '_blank')
+    }
+  }
+
+  return (
+    <div className="group flex flex-col overflow-hidden rounded-2xl border border-amber-200 bg-gradient-to-b from-amber-50 to-white shadow-sm transition hover:-translate-y-1 hover:shadow-md dark:border-amber-700 dark:from-amber-900/20 dark:to-slate-900">
+      <div className="h-1.5 w-full bg-gradient-to-r from-amber-400 to-orange-400" />
+      <div className="flex flex-1 flex-col p-4">
+        <div className="mb-3 flex items-start justify-between gap-2">
+          <div className="flex-1">
+            <p className="font-nunito text-sm font-bold leading-snug text-gray-900 dark:text-slate-50">{getTitle()}</p>
+            {getDescription() && (
+              <p className="mt-1 line-clamp-2 text-[11px] text-gray-500 dark:text-slate-400">{getDescription()}</p>
+            )}
+          </div>
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/30">
+            <ShoppingBag size={18} className="text-amber-600 dark:text-amber-400" />
+          </div>
+        </div>
+        
+        <div className="mb-3 flex items-center gap-3 text-xs text-gray-600 dark:text-slate-400">
+          <span className="flex items-center gap-1">
+            <Clock size={12} /> {item.durationWeeks} weeks
+          </span>
+          <span className="font-semibold text-amber-600 dark:text-amber-400">
+            {item.currency}{item.price}
+          </span>
+        </div>
+
+        {item.fileUrl ? (
+          <button
+            type="button"
+            onClick={handleDownload}
+            className="mt-auto flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#1A5C38] to-emerald-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm transition hover:opacity-90 active:scale-95">
+            <Download size={13} />
+            {language === 'te' ? 'డౌన్‌లోడ్ చేయండి' : language === 'hi' ? 'डाउनलोड करें' : 'Download PDF'}
+          </button>
+        ) : (
+          <div className="mt-auto rounded-xl bg-gray-100 px-4 py-2.5 text-center text-xs text-gray-500 dark:bg-slate-800 dark:text-slate-400">
+            {language === 'te' ? 'PDF త్వరలో అందుబాటులో ఉంటుంది' : language === 'hi' ? 'PDF जल्द उपलब्ध होगा' : 'PDF coming soon'}
+          </div>
+        )}
+      </div>
+    </div>
   )
 }

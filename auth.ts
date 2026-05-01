@@ -8,6 +8,7 @@ import { User } from '@/models/User'
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: 'jwt' },
   pages: { signIn: '/login' },
+  debug: false, // Disable debug logs in development
   providers: [
     Credentials({
       name: 'Email and Password',

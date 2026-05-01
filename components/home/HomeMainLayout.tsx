@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useLanguage } from '@/components/LanguageProvider'
 import { Play, Leaf, Scale, Stethoscope, Wind, Microscope, Shield, Baby, BarChart2, Flame, Droplets, Candy, ArrowRight, UtensilsCrossed } from 'lucide-react'
 import PromotionBlock from '@/components/promotions/PromotionBlock'
+import NewsletterBox from '@/components/home/NewsletterBox'
 
 type DBPost = {
   _id: string
@@ -532,19 +533,7 @@ export default function HomeMainLayout({ latestVideo }: { latestVideo: DBVideo |
           </div>
 
           {/* Newsletter */}
-          <div className="space-y-2 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/60">
-            <h3 className="text-xs font-semibold text-gray-900 dark:text-slate-50">Get free weekly recipes</h3>
-            <p className="text-[11px] text-gray-500 dark:text-slate-400">
-              {subscriberCount !== null ? `Join ${subscriberCount.toLocaleString('en-IN')}+ readers getting weekly Telugu nutrition tips.` : 'Join readers getting weekly Telugu nutrition tips.'}
-            </p>
-            <form action="/api/subscribe" method="post" className="space-y-2 text-xs">
-              <input type="email" name="email" placeholder="Your email address"
-                className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-[11px] text-gray-900 placeholder:text-gray-400 focus:border-[#1A5C38] focus:outline-none focus:ring-1 focus:ring-[#1A5C38] dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500" />
-              <button type="submit" className="w-full rounded-md bg-[#1A5C38] px-3 py-2 text-[11px] font-semibold text-white hover:bg-emerald-700">
-                Subscribe — it&apos;s free
-              </button>
-            </form>
-          </div>
+          <NewsletterBox subscriberCount={subscriberCount} />
 
           {/* Popular Posts */}
           <div className="space-y-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/60">

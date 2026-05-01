@@ -1,11 +1,20 @@
 import { NextResponse } from 'next/server'
 import { sendEmail } from '@/lib/brevo'
+import { rateLimit, RateLimits, getClientIp, createRateLimitResponse } from '@/lib/ratelimit'
 
 export const runtime = 'nodejs'
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? 'vinaybuttala@gmail.com'
 
 export async function POST(req: Request) {
+  // Rate limiting: 10 contact form submissions per hour per IP
+  // Prevents spam while allowing legitimate follow-ups
+  const ip = getClientIp(req)
+  const rateLimitResult = rateLimit(ip, RateLimits.MODERATE)
+  
+  if (!rateLimitResult.success) {
+    return createRateLimitResponse(rateLimitResult)
+  }
   const { name, email, message } = await req.json()
 
   if (!name || !email || !message) {

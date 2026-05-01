@@ -3,12 +3,22 @@ import crypto from 'crypto'
 import { connectDB } from '@/lib/mongodb'
 import { User } from '@/models/User'
 import { sendEmail, passwordResetEmailHtml } from '@/lib/brevo'
+import { rateLimit, RateLimits, getClientIp, createRateLimitResponse } from '@/lib/ratelimit'
 
 export const runtime = 'nodejs'
 
 const SITE_URL = 'https://nutrilifemitra.vercel.app'
 
 export async function POST(req: Request) {
+  // Rate limiting: 5 password reset requests per hour per IP
+  // Prevents password reset spam and enumeration attacks
+  const ip = getClientIp(req)
+  const rateLimitResult = rateLimit(ip, RateLimits.STRICT)
+  
+  if (!rateLimitResult.success) {
+    return createRateLimitResponse(rateLimitResult)
+  }
+  
   const { email } = await req.json()
   if (!email) return NextResponse.json({ error: 'Email required' }, { status: 400 })
 

@@ -98,8 +98,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   let session = null
   try {
     session = await auth()
-  } catch {
+  } catch (error) {
     // Invalid or expired session token — treat as logged out
+    // This is normal during development when server restarts
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Session validation failed (likely stale cookie) - treating as logged out')
+    }
   }
 
   return (

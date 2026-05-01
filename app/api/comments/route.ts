@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { connectDB } from '@/lib/mongodb'
 import { Comment } from '@/models/Comment'
 import { Types } from 'mongoose'
+import { rateLimit, RateLimits, getClientIp, createRateLimitResponse } from '@/lib/ratelimit'
 
 export const runtime = 'nodejs'
 
@@ -35,6 +36,15 @@ export async function GET(req: Request) {
 
 // POST /api/comments
 export async function POST(req: Request) {
+  // Rate limiting: 10 comments per hour per IP
+  // Prevents comment spam while allowing legitimate discussions
+  const ip = getClientIp(req)
+  const rateLimitResult = rateLimit(ip, RateLimits.MODERATE)
+  
+  if (!rateLimitResult.success) {
+    return createRateLimitResponse(rateLimitResult)
+  }
+  
   const body = await req.json()
   const { contentType, contentId, name, email, comment, parentId } = body
 

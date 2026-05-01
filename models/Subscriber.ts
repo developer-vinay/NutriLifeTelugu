@@ -4,6 +4,7 @@ export interface ISubscriber extends Document {
   email: string
   subscribedAt: Date
   isActive: boolean
+  language: 'en' | 'te' | 'hi'
 }
 
 const SubscriberSchema = new Schema<ISubscriber>({
@@ -21,6 +22,11 @@ const SubscriberSchema = new Schema<ISubscriber>({
   isActive: {
     type: Boolean,
     default: true,
+  },
+  language: {
+    type: String,
+    enum: ['en', 'te', 'hi'],
+    default: 'en',
   },
 })
 

@@ -5,6 +5,7 @@ import { User } from '@/models/User'
 import { Post } from '@/models/Post'
 import { Recipe } from '@/models/Recipe'
 import { Video } from '@/models/Video'
+import { PremiumPlan } from '@/models/PremiumPlan'
 
 export const runtime = 'nodejs'
 
@@ -14,18 +15,19 @@ export async function GET() {
 
   await connectDB()
   const user = await User.findOne({ email: session.user.email })
-    .select('name email image language savedPosts likedPosts savedRecipes likedRecipes savedVideos likedVideos')
+    .select('name email image language savedPosts likedPosts savedRecipes likedRecipes savedVideos likedVideos purchasedPlans')
     .lean()
 
   if (!user) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
-  const [savedPosts, likedPosts, savedRecipes, likedRecipes, savedVideos, likedVideos] = await Promise.all([
+  const [savedPosts, likedPosts, savedRecipes, likedRecipes, savedVideos, likedVideos, purchasedPlans] = await Promise.all([
     Post.find({ _id: { $in: user.savedPosts ?? [] } }).select('title slug tag heroImage readTimeMinutes').lean(),
     Post.find({ _id: { $in: user.likedPosts ?? [] } }).select('title slug tag heroImage readTimeMinutes').lean(),
     Recipe.find({ _id: { $in: user.savedRecipes ?? [] } }).select('title slug tag heroImage').lean(),
     Recipe.find({ _id: { $in: user.likedRecipes ?? [] } }).select('title slug tag heroImage').lean(),
     Video.find({ _id: { $in: (user as any).savedVideos ?? [] } }).select('title slug tag thumbnailUrl youtubeUrl').lean(),
     Video.find({ _id: { $in: (user as any).likedVideos ?? [] } }).select('title slug tag thumbnailUrl youtubeUrl').lean(),
+    PremiumPlan.find({ _id: { $in: (user as any).purchasedPlans ?? [] } }).select('title titleEn titleTe titleHi description descEn descTe descHi price currency durationWeeks fileUrl language').lean(),
   ])
 
   return NextResponse.json({
@@ -36,6 +38,7 @@ export async function GET() {
     likedRecipes: likedRecipes.map((r: any) => ({ ...r, _id: r._id.toString() })),
     savedVideos: savedVideos.map((v: any) => ({ ...v, _id: v._id.toString() })),
     likedVideos: likedVideos.map((v: any) => ({ ...v, _id: v._id.toString() })),
+    purchasedPlans: purchasedPlans.map((p: any) => ({ ...p, _id: p._id.toString() })),
   })
 }
 

@@ -10,6 +10,7 @@ type Subscriber = {
   email: string
   isActive: boolean
   subscribedAt?: string
+  language?: 'en' | 'te' | 'hi'
 }
 
 export default function AdminSubscribersPage() {
@@ -18,6 +19,8 @@ export default function AdminSubscribersPage() {
   const [deleting, setDeleting] = useState<string | null>(null)
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [bulkDeleting, setBulkDeleting] = useState(false)
+  const [deleteModal, setDeleteModal] = useState<{ show: boolean; id: string; email: string } | null>(null)
+  const [bulkDeleteModal, setBulkDeleteModal] = useState(false)
 
   const fetchSubscribers = useCallback(async () => {
     setLoading(true)
@@ -36,7 +39,13 @@ export default function AdminSubscribersPage() {
   const toggleAll = () => setSelected(selected.size === subscribers.length ? new Set() : new Set(subscribers.map((s) => s._id)))
 
   const handleDelete = async (id: string, email: string) => {
-    if (!confirm(`Remove subscriber "${email}"?`)) return
+    setDeleteModal({ show: true, id, email })
+  }
+
+  const confirmDelete = async () => {
+    if (!deleteModal) return
+    const { id } = deleteModal
+    setDeleteModal(null)
     setDeleting(id)
     await fetch(`/api/admin/subscribers/${id}`, { method: 'DELETE' })
     setSubscribers((prev) => prev.filter((s) => s._id !== id))
@@ -46,7 +55,11 @@ export default function AdminSubscribersPage() {
 
   const handleBulkDelete = async () => {
     if (!selected.size) return
-    if (!confirm(`Remove ${selected.size} subscriber${selected.size > 1 ? 's' : ''}?`)) return
+    setBulkDeleteModal(true)
+  }
+
+  const confirmBulkDelete = async () => {
+    setBulkDeleteModal(false)
     setBulkDeleting(true)
     await Promise.all([...selected].map((id) => fetch(`/api/admin/subscribers/${id}`, { method: 'DELETE' })))
     setSubscribers((prev) => prev.filter((s) => !selected.has(s._id)))
@@ -55,6 +68,13 @@ export default function AdminSubscribersPage() {
   }
 
   const activeCount = subscribers.filter((s) => s.isActive).length
+  // Count only ACTIVE subscribers by language
+  const langCounts = {
+    en: subscribers.filter((s) => s.isActive && s.language === 'en').length,
+    te: subscribers.filter((s) => s.isActive && s.language === 'te').length,
+    hi: subscribers.filter((s) => s.isActive && s.language === 'hi').length,
+  }
+  
   const allChecked = subscribers.length > 0 && selected.size === subscribers.length
   const someChecked = selected.size > 0 && selected.size < subscribers.length
 
@@ -63,9 +83,14 @@ export default function AdminSubscribersPage() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-gray-900">Subscribers</h2>
-          <p className="text-sm text-gray-500">{subscribers.length} total · {activeCount} active</p>
+          <p className="text-sm text-gray-500">
+            {subscribers.length} total · {activeCount} active
+          </p>
+          <p className="text-xs text-gray-400">
+            English: {langCounts.en} · Telugu: {langCounts.te} · Hindi: {langCounts.hi}
+          </p>
         </div>
-        <SendDigestButton activeCount={activeCount} />
+        <SendDigestButton activeCount={activeCount} langCounts={langCounts} />
       </div>
 
       {/* Bulk action bar */}
@@ -94,6 +119,7 @@ export default function AdminSubscribersPage() {
               </th>
               <th className="px-4 py-2">#</th>
               <th className="px-4 py-2">Email</th>
+              <th className="px-4 py-2">Language</th>
               <th className="px-4 py-2">Status</th>
               <th className="px-4 py-2">Subscribed On</th>
               <th className="px-4 py-2 text-right">Action</th>
@@ -101,9 +127,9 @@ export default function AdminSubscribersPage() {
           </thead>
           <tbody className="divide-y divide-gray-100">
             {loading ? (
-              <tr><td colSpan={6} className="px-4 py-6 text-center text-sm text-gray-400">Loading...</td></tr>
+              <tr><td colSpan={7} className="px-4 py-6 text-center text-sm text-gray-400">Loading...</td></tr>
             ) : subscribers.length === 0 ? (
-              <tr><td colSpan={6} className="px-4 py-6 text-center text-sm text-gray-500">No subscribers yet.</td></tr>
+              <tr><td colSpan={7} className="px-4 py-6 text-center text-sm text-gray-500">No subscribers yet.</td></tr>
             ) : subscribers.map((sub, idx) => (
               <tr key={sub._id} className={`hover:bg-gray-50 ${selected.has(sub._id) ? 'bg-red-50/40' : ''}`}>
                 <td className="px-4 py-2">
@@ -112,6 +138,15 @@ export default function AdminSubscribersPage() {
                 </td>
                 <td className="px-4 py-2 text-sm text-gray-500">{idx + 1}</td>
                 <td className="px-4 py-2 text-sm font-medium text-gray-900">{sub.email}</td>
+                <td className="px-4 py-2">
+                  <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
+                    sub.language === 'te' ? 'bg-blue-50 text-blue-700' :
+                    sub.language === 'hi' ? 'bg-purple-50 text-purple-700' :
+                    'bg-gray-50 text-gray-700'
+                  }`}>
+                    {sub.language === 'te' ? 'తెలుగు' : sub.language === 'hi' ? 'हिंदी' : 'English'}
+                  </span>
+                </td>
                 <td className="px-4 py-2">
                   <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${sub.isActive ? 'bg-emerald-50 text-emerald-700' : 'bg-gray-100 text-gray-600'}`}>
                     {sub.isActive ? 'Active' : 'Inactive'}
@@ -164,6 +199,70 @@ export default function AdminSubscribersPage() {
           </div>
         ))}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteModal?.show && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-slate-800">
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-50">
+                Remove Subscriber
+              </h3>
+            </div>
+
+            <p className="mb-6 text-sm text-gray-600 dark:text-slate-400">
+              Are you sure you want to remove <strong>{deleteModal.email}</strong>? This action cannot be undone.
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setDeleteModal(null)}
+                className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="flex-1 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk Delete Confirmation Modal */}
+      {bulkDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-slate-800">
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-50">
+                Remove Multiple Subscribers
+              </h3>
+            </div>
+
+            <p className="mb-6 text-sm text-gray-600 dark:text-slate-400">
+              Are you sure you want to remove <strong>{selected.size} subscriber{selected.size > 1 ? 's' : ''}</strong>? This action cannot be undone.
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setBulkDeleteModal(false)}
+                className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmBulkDelete}
+                className="flex-1 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700"
+              >
+                Remove {selected.size}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

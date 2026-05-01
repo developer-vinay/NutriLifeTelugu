@@ -149,16 +149,16 @@ export default function DietPlanForm({ initialData, onSave, onCancel }: DietPlan
         data.discountLabel = discountLabel
         data.currency = currency
         data.durationWeeks = Number(durationWeeks)
-        data.features = features.split('\n').map(f => f.trim()).filter(Boolean)
+        data.features = features.split('\n').map((f: string) => f.trim()).filter(Boolean)
         data.isFeatured = isFeatured
       } else {
         // Free plan data
         data.tagEn = language === 'en' ? tagEn : (tagEn || '')
         data.tagTe = language === 'te' ? tagTe : (tagTe || '')
         data.tagHi = language === 'hi' ? tagHi : (tagHi || '')
-        data.highlightsEn = language === 'en' ? highlightsEn.split(',').map(s => s.trim()).filter(Boolean) : []
-        data.highlightsTe = language === 'te' ? highlightsTe.split(',').map(s => s.trim()).filter(Boolean) : []
-        data.highlightsHi = language === 'hi' ? highlightsHi.split(',').map(s => s.trim()).filter(Boolean) : []
+        data.highlightsEn = language === 'en' ? highlightsEn.split(',').map((s: string) => s.trim()).filter(Boolean) : []
+        data.highlightsTe = language === 'te' ? highlightsTe.split(',').map((s: string) => s.trim()).filter(Boolean) : []
+        data.highlightsHi = language === 'hi' ? highlightsHi.split(',').map((s: string) => s.trim()).filter(Boolean) : []
         data.pdfUrl = pdfUrl
         data.iconName = iconName
         data.gradient = gradient
@@ -334,7 +334,7 @@ export default function DietPlanForm({ initialData, onSave, onCancel }: DietPlan
             <span className="text-sm font-medium text-gray-700">Active (visible to users)</span>
             <div
               className={`relative h-6 w-11 rounded-full transition-colors ${isActive ? 'bg-[#1A5C38]' : 'bg-gray-300'}`}
-              onClick={() => setIsActive(p => !p)}
+              onClick={() => setIsActive((p: boolean) => !p)}
             >
               <div
                 className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
@@ -424,7 +424,7 @@ export default function DietPlanForm({ initialData, onSave, onCancel }: DietPlan
             </div>
             <div
               className={`relative h-6 w-11 rounded-full transition-colors ${isFeatured ? 'bg-[#1A5C38]' : 'bg-gray-300'}`}
-              onClick={() => setIsFeatured(p => !p)}
+              onClick={() => setIsFeatured((p: boolean) => !p)}
             >
               <div
                 className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
@@ -517,7 +517,7 @@ export default function DietPlanForm({ initialData, onSave, onCancel }: DietPlan
           <div>
             <label className={labelCls}>Card Color Gradient</label>
             <div className="grid grid-cols-3 gap-3">
-              {GRADIENTS.map(g => (
+              {GRADIENTS.map((g) => (
                 <button
                   key={g.value}
                   type="button"
