@@ -13,11 +13,12 @@ async function ensureAdmin() {
 }
 
 // GET single product
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   if (!await ensureAdmin()) return new NextResponse('Unauthorized', { status: 401 })
   
+  const { id } = await params
   await connectDB()
-  const product = await Product.findById(params.id).lean()
+  const product = await Product.findById(id).lean()
   
   if (!product) return NextResponse.json({ error: 'Product not found' }, { status: 404 })
   
@@ -25,13 +26,14 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
 }
 
 // PUT update product
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   if (!await ensureAdmin()) return new NextResponse('Unauthorized', { status: 401 })
   
   const body = await req.json()
+  const { id } = await params
   
   await connectDB()
-  const product = await Product.findByIdAndUpdate(params.id, body, { new: true })
+  const product = await Product.findByIdAndUpdate(id, body, { new: true })
   
   if (!product) return NextResponse.json({ error: 'Product not found' }, { status: 404 })
   
@@ -39,11 +41,12 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 }
 
 // DELETE product
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   if (!await ensureAdmin()) return new NextResponse('Unauthorized', { status: 401 })
   
+  const { id } = await params
   await connectDB()
-  const product = await Product.findByIdAndDelete(params.id)
+  const product = await Product.findByIdAndDelete(id)
   
   if (!product) return NextResponse.json({ error: 'Product not found' }, { status: 404 })
   

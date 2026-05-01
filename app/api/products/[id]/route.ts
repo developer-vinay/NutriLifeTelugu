@@ -6,11 +6,12 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 // GET single product by ID (public)
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     await connectDB()
     
-    const product = await Product.findById(params.id).lean()
+    const product = await Product.findById(id).lean()
     
     if (!product) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 })

@@ -18,9 +18,16 @@ export const metadata: Metadata = {
     default: 'NutriLifeMitra — Healthy Indian Recipes, Diet Plans & Nutrition Tips',
     template: '%s | NutriLifeMitra',
   },
+  manifest: '/manifest.json',
   icons: {
-    icon: [{ url: '/logo.png', type: 'image/png' }],
-    apple: '/logo.png',
+    icon: [
+      { url: '/icon.png', sizes: '1024x1024', type: 'image/png' },
+      { url: '/logo.png', sizes: '32x32', type: 'image/png' },
+      { url: '/logo.png', sizes: '16x16', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/apple-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
     shortcut: '/logo.png',
   },
   description:
@@ -112,8 +119,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {/* PWA manifest */}
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#1A5C38" />
-        <link rel="icon" href="/logo.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/logo.png" />
+        <link rel="icon" href="/icon.png" type="image/png" sizes="1024x1024" />
+        <link rel="icon" href="/logo.png" type="image/png" sizes="32x32" />
+        <link rel="apple-touch-icon" href="/apple-icon.png" sizes="180x180" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="NutriLifeMitra" />
