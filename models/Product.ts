@@ -120,7 +120,7 @@ const ProductSchema = new Schema<IProduct>({
 ProductSchema.index({ sortOrder: 1, createdAt: -1 })
 
 // Calculate final price before saving
-ProductSchema.pre('save', function(next) {
+ProductSchema.pre('save', function() {
   if (this.discountType === 'percentage' && this.discountValue) {
     this.finalPrice = this.price - (this.price * this.discountValue / 100)
   } else if (this.discountType === 'fixed' && this.discountValue) {
@@ -128,7 +128,6 @@ ProductSchema.pre('save', function(next) {
   } else {
     this.finalPrice = this.price
   }
-  next()
 })
 
 export const Product: Model<IProduct> =

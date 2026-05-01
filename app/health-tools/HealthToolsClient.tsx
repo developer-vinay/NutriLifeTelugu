@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useLanguage } from '@/components/LanguageProvider'
 import { Scale, Flame, Ruler, Candy, Droplets, Activity, Star, Sun, Snowflake, Lightbulb } from 'lucide-react'
