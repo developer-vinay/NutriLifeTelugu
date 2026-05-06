@@ -15,7 +15,7 @@
 - Deleted `.next` folder (Next.js build cache)
 - Fresh build will use new configuration
 jh
----
+---jh
 
 ## 🎯 Current Icon Setup:
 
