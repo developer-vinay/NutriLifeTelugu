@@ -52,8 +52,8 @@ export async function POST(req: Request) {
       const planTitle = plan.titleEn || plan.title || 'Premium Diet Plan'
       
       // Use PDF proxy for mobile-friendly download
-      const isDev = process.env.NODE_ENV === 'development'
-      const baseUrl = isDev ? 'http://localhost:3000' : 'https://nutrilifemitra.com'
+      // Get base URL from environment variable
+      const baseUrl = process.env.NEXTAUTH_URL || 'https://nutrilifemitra.com'
       const pdfDownloadUrl = `${baseUrl}/api/pdf/${plan._id}`
       
       const emailSubject = `Your Premium Plan: ${planTitle}`
