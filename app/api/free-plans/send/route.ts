@@ -19,6 +19,8 @@ export async function POST(req: Request) {
     
     const { email, planId, language = 'en' } = await req.json()
 
+    console.log('📧 Diet plan email request:', { email, planId, language })
+
     if (!email || !planId) {
       return NextResponse.json({ error: 'Email and planId are required' }, { status: 400 })
     }
@@ -29,11 +31,22 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid email address' }, { status: 400 })
     }
 
+    // Check Brevo configuration
+    if (!process.env.BREVO_API_KEY) {
+      console.error('❌ BREVO_API_KEY not configured')
+      return NextResponse.json({ 
+        error: 'Email service not configured. Please contact support.' 
+      }, { status: 500 })
+    }
+
     await connectDB()
     const plan = await FreeMealPlan.findById(planId).lean() as any
     if (!plan) {
+      console.error('❌ Plan not found:', planId)
       return NextResponse.json({ error: 'Plan not found' }, { status: 404 })
     }
+
+    console.log('✅ Plan found:', plan.titleEn)
 
     const title = language === 'te' ? (plan.titleTe || plan.titleEn)
       : language === 'hi' ? (plan.titleHi || plan.titleEn)
@@ -57,12 +70,16 @@ export async function POST(req: Request) {
 
     const htmlContent = freePlanEmailHtml({ email, title, pdfUrl, language })
 
+    console.log('📤 Sending email to:', email)
     await sendEmail({ to: email, subject, htmlContent })
+    console.log('✅ Email sent successfully to:', email)
 
     return NextResponse.json({ ok: true, hasPdf })
   } catch (err: any) {
-    console.error('Free plan email error:', err)
-    return NextResponse.json({ error: err.message ?? 'Failed to send email' }, { status: 500 })
+    console.error('❌ Free plan email error:', err)
+    return NextResponse.json({ 
+      error: err.message ?? 'Failed to send email. Please try again.' 
+    }, { status: 500 })
   }
 }
 

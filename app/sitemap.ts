@@ -3,6 +3,7 @@ import { connectDB } from '@/lib/mongodb'
 import { Post } from '@/models/Post'
 import { Recipe } from '@/models/Recipe'
 import { Video } from '@/models/Video'
+import { Product } from '@/models/Product'
 
 const SITE_URL = 'https://nutrilifemitra.com'
 
@@ -12,10 +13,11 @@ export const runtime = 'nodejs'
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   await connectDB()
 
-  const [posts, recipes, videos] = await Promise.all([
+  const [posts, recipes, videos, products] = await Promise.all([
     Post.find({ isPublished: true }).select('slug updatedAt').lean(),
     Recipe.find({ isPublished: true }).select('slug updatedAt').lean(),
     Video.find({ isPublished: true }).select('slug updatedAt').lean(),
+    Product.find({ isActive: true }).select('_id updatedAt').lean(),
   ])
 
   const staticRoutes: MetadataRoute.Sitemap = [
@@ -59,5 +61,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }))
 
-  return [...staticRoutes, ...postRoutes, ...recipeRoutes, ...videoRoutes]
+  const productRoutes: MetadataRoute.Sitemap = products.map((p: any) => ({
+    url: `${SITE_URL}/products/${p._id}`,
+    lastModified: p.updatedAt ?? new Date(),
+    changeFrequency: 'weekly',
+    priority: 0.7,
+  }))
+
+  return [...staticRoutes, ...postRoutes, ...recipeRoutes, ...videoRoutes, ...productRoutes]
 }

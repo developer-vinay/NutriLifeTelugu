@@ -237,6 +237,119 @@ export default function AboutClient() {
           </ul>
         </section>
 
+        {/* SEO-Rich Content Section - "People Also Search For" Keywords */}
+        <section className="rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-white p-8 dark:border-emerald-900/30 dark:from-emerald-950/20 dark:to-slate-950">
+          <h2 className="mb-6 font-nunito text-2xl font-bold text-gray-900 dark:text-slate-50">
+            {language === 'te' ? 'మేము ఏమి అందిస్తాము' : language === 'hi' ? 'हम क्या प्रदान करते हैं' : 'What We Provide'}
+          </h2>
+          
+          <div className="space-y-6">
+            {/* English, Telugu, Hindi Content */}
+            <div className="space-y-4 text-sm leading-relaxed text-gray-700 dark:text-slate-300">
+              {language === 'en' && (
+                <>
+                  <p>
+                    <strong>NutriLifeMitra</strong> is your trusted source for <strong>healthy Indian recipes</strong>, <strong>nutrition posts in Telugu</strong>, <strong>nutrition posts in Hindi</strong>, and <strong>nutrition posts in English</strong>. We provide <strong>recipes in Telugu</strong>, <strong>recipes in Hindi</strong>, and <strong>recipes in English</strong> for every meal of the day.
+                  </p>
+                  <p>
+                    Looking for <strong>weight loss tips</strong>? We offer <strong>weight loss diet plans</strong>, <strong>weight loss recipes</strong>, and <strong>weight loss tips in Telugu</strong> and <strong>Hindi</strong>. Our <strong>diabetes diet plan</strong>, <strong>diabetes recipes</strong>, and <strong>diabetic-friendly recipes</strong> help manage blood sugar naturally.
+                  </p>
+                  <p>
+                    Explore our <strong>millet recipes</strong> including <strong>ragi recipes</strong>, <strong>jowar recipes</strong>, <strong>foxtail millet recipes</strong>, and <strong>bajra recipes</strong>. We also provide <strong>thyroid diet plans</strong>, <strong>PCOS diet plans</strong>, <strong>gut health tips</strong>, and <strong>kids nutrition advice</strong>.
+                  </p>
+                  <p>
+                    Find <strong>healthy breakfast recipes</strong>, <strong>healthy lunch recipes</strong>, <strong>healthy dinner recipes</strong>, and <strong>healthy snacks for kids</strong>. Our <strong>Indian diet plans</strong> include <strong>free diet plans</strong> and <strong>premium meal plans</strong> for various health goals.
+                  </p>
+                  <p>
+                    Use our free <strong>BMI calculator</strong>, <strong>calorie calculator</strong>, <strong>water intake calculator</strong>, and <strong>sugar intake checker</strong>. Watch our <strong>cooking videos in Telugu</strong>, <strong>cooking videos in Hindi</strong>, and <strong>health education videos</strong>.
+                  </p>
+                </>
+              )}
+              
+              {language === 'te' && (
+                <>
+                  <p>
+                    <strong>న్యూట్రిలైఫ్‌మిత్ర</strong> మీ విశ్వసనీయ మూలం <strong>ఆరోగ్యకరమైన భారతీయ వంటకాలు</strong>, <strong>తెలుగులో పోషకాహార పోస్ట్‌లు</strong>, <strong>హిందీలో పోషకాహార పోస్ట్‌లు</strong>, మరియు <strong>ఇంగ్లీష్‌లో పోషకాహార పోస్ట్‌లు</strong>. మేము <strong>తెలుగు రెసిపీలు</strong>, <strong>హిందీ రెసిపీలు</strong>, మరియు <strong>ఇంగ్లీష్ రెసిపీలు</strong> అందిస్తాము.
+                  </p>
+                  <p>
+                    <strong>బరువు తగ్గడం టిప్స్</strong> కోసం చూస్తున్నారా? మేము <strong>బరువు తగ్గడం డైట్ ప్లాన్</strong>, <strong>బరువు తగ్గడం రెసిపీలు</strong>, మరియు <strong>తెలుగులో బరువు తగ్గడం టిప్స్</strong> అందిస్తాము. మా <strong>షుగర్ డైట్ ప్లాన్</strong>, <strong>డయాబెటిస్ రెసిపీలు</strong>, మరియు <strong>డయాబెటిక్-ఫ్రెండ్లీ రెసిపీలు</strong> రక్తంలో చక్కెరను సహజంగా నిర్వహించడంలో సహాయపడతాయి.
+                  </p>
+                  <p>
+                    మా <strong>మిల్లెట్ రెసిపీలు</strong> అన్వేషించండి - <strong>రాగి రెసిపీలు</strong>, <strong>జొన్న రెసిపీలు</strong>, <strong>కొర్రలు రెసిపీలు</strong>, మరియు <strong>సజ్జ రెసిపీలు</strong>. మేము <strong>థైరాయిడ్ డైట్ ప్లాన్</strong>, <strong>PCOS డైట్ ప్లాన్</strong>, <strong>గట్ హెల్త్ టిప్స్</strong>, మరియు <strong>పిల్లల పోషకాహార సలహా</strong> కూడా అందిస్తాము.
+                  </p>
+                  <p>
+                    <strong>ఆరోగ్యకరమైన బ్రేక్‌ఫాస్ట్ రెసిపీలు</strong>, <strong>ఆరోగ్యకరమైన లంచ్ రెసిపీలు</strong>, <strong>ఆరోగ్యకరమైన డిన్నర్ రెసిపీలు</strong>, మరియు <strong>పిల్లలకు ఆరోగ్యకరమైన స్నాక్స్</strong> కనుగొనండి. మా <strong>భారతీయ డైట్ ప్లాన్‌లు</strong> <strong>ఉచిత డైట్ ప్లాన్‌లు</strong> మరియు <strong>ప్రీమియం మీల్ ప్లాన్‌లు</strong> కలిగి ఉన్నాయి.
+                  </p>
+                  <p>
+                    మా ఉచిత <strong>BMI కాలిక్యులేటర్</strong>, <strong>కేలరీ కాలిక్యులేటర్</strong>, <strong>నీటి తీసుకోవడం కాలిక్యులేటర్</strong>, మరియు <strong>చక్కెర తీసుకోవడం చెకర్</strong> ఉపయోగించండి. మా <strong>తెలుగులో వంట వీడియోలు</strong>, <strong>హిందీలో వంట వీడియోలు</strong>, మరియు <strong>ఆరోగ్య విద్య వీడియోలు</strong> చూడండి.
+                  </p>
+                </>
+              )}
+              
+              {language === 'hi' && (
+                <>
+                  <p>
+                    <strong>न्यूट्रिलाइफमित्र</strong> आपका विश्वसनीय स्रोत है <strong>स्वस्थ भारतीय व्यंजन</strong>, <strong>तेलुगु में पोषण पोस्ट</strong>, <strong>हिंदी में पोषण पोस्ट</strong>, और <strong>अंग्रेजी में पोषण पोस्ट</strong>। हम <strong>तेलुगु रेसिपी</strong>, <strong>हिंदी रेसिपी</strong>, और <strong>अंग्रेजी रेसिपी</strong> प्रदान करते हैं।
+                  </p>
+                  <p>
+                    <strong>वजन घटाने के टिप्स</strong> खोज रहे हैं? हम <strong>वजन घटाने की डाइट प्लान</strong>, <strong>वजन घटाने की रेसिपी</strong>, और <strong>हिंदी में वजन घटाने के टिप्स</strong> प्रदान करते हैं। हमारी <strong>डायबिटीज डाइट प्लान</strong>, <strong>डायबिटीज रेसिपी</strong>, और <strong>डायबिटिक-फ्रेंडली रेसिपी</strong> रक्त शर्करा को स्वाभाविक रूप से प्रबंधित करने में मदद करती हैं।
+                  </p>
+                  <p>
+                    हमारी <strong>मिलेट रेसिपी</strong> देखें - <strong>रागी रेसिपी</strong>, <strong>ज्वार रेसिपी</strong>, <strong>कंगनी रेसिपी</strong>, और <strong>बाजरा रेसिपी</strong>। हम <strong>थायराइड डाइट प्लान</strong>, <strong>PCOS डाइट प्लान</strong>, <strong>गट हेल्थ टिप्स</strong>, और <strong>बच्चों के पोषण सलाह</strong> भी प्रदान करते हैं।
+                  </p>
+                  <p>
+                    <strong>स्वस्थ नाश्ता रेसिपी</strong>, <strong>स्वस्थ लंच रेसिपी</strong>, <strong>स्वस्थ डिनर रेसिपी</strong>, और <strong>बच्चों के लिए स्वस्थ स्नैक्स</strong> खोजें। हमारी <strong>भारतीय डाइट प्लान</strong> में <strong>मुफ्त डाइट प्लान</strong> और <strong>प्रीमियम मील प्लान</strong> शामिल हैं।
+                  </p>
+                  <p>
+                    हमारे मुफ्त <strong>BMI कैलकुलेटर</strong>, <strong>कैलोरी कैलकुलेटर</strong>, <strong>पानी का सेवन कैलकुलेटर</strong>, और <strong>चीनी का सेवन चेकर</strong> का उपयोग करें। हमारे <strong>हिंदी में खाना पकाने के वीडियो</strong>, <strong>तेलुगु में खाना पकाने के वीडियो</strong>, और <strong>स्वास्थ्य शिक्षा वीडियो</strong> देखें।
+                  </p>
+                </>
+              )}
+            </div>
+
+            {/* Popular Search Terms */}
+            <div className="mt-6 border-t border-emerald-200 pt-6 dark:border-emerald-900/30">
+              <h3 className="mb-3 text-sm font-semibold text-gray-900 dark:text-slate-50">
+                {language === 'te' ? 'ప్రజలు కూడా వెతుకుతున్నారు:' : language === 'hi' ? 'लोग यह भी खोजते हैं:' : 'People Also Search For:'}
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {language === 'en' && [
+                  'recipes in Telugu', 'recipes in Hindi', 'nutrition posts', 'weight loss tips',
+                  'diabetes diet', 'thyroid diet', 'PCOS diet', 'millet recipes', 'ragi recipes',
+                  'healthy Indian recipes', 'diet plans in Telugu', 'diet plans in Hindi',
+                  'BMI calculator', 'calorie calculator', 'gut health tips', 'kids nutrition',
+                ].map((term, i) => (
+                  <span key={i} className="rounded-full bg-white px-3 py-1 text-xs font-medium text-gray-700 shadow-sm dark:bg-slate-800 dark:text-slate-300">
+                    {term}
+                  </span>
+                ))}
+                
+                {language === 'te' && [
+                  'తెలుగు రెసిపీలు', 'పోషకాహార పోస్ట్‌లు', 'బరువు తగ్గడం టిప్స్', 'షుగర్ డైట్',
+                  'థైరాయిడ్ డైట్', 'PCOS డైట్', 'మిల్లెట్ రెసిపీలు', 'రాగి రెసిపీలు',
+                  'ఆరోగ్యకరమైన వంటకాలు', 'తెలుగు డైట్ ప్లాన్', 'BMI కాలిక్యులేటర్',
+                  'కేలరీ కాలిక్యులేటర్', 'గట్ హెల్త్ టిప్స్', 'పిల్లల పోషకాహారం',
+                ].map((term, i) => (
+                  <span key={i} className="rounded-full bg-white px-3 py-1 text-xs font-medium text-gray-700 shadow-sm dark:bg-slate-800 dark:text-slate-300">
+                    {term}
+                  </span>
+                ))}
+                
+                {language === 'hi' && [
+                  'हिंदी रेसिपी', 'पोषण पोस्ट', 'वजन घटाने के टिप्स', 'डायबिटीज डाइट',
+                  'थायराइड डाइट', 'PCOS डाइट', 'मिलेट रेसिपी', 'रागी रेसिपी',
+                  'स्वस्थ भारतीय व्यंजन', 'हिंदी डाइट प्लान', 'BMI कैलकुलेटर',
+                  'कैलोरी कैलकुलेटर', 'गट हेल्थ टिप्स', 'बच्चों का पोषण',
+                ].map((term, i) => (
+                  <span key={i} className="rounded-full bg-white px-3 py-1 text-xs font-medium text-gray-700 shadow-sm dark:bg-slate-800 dark:text-slate-300">
+                    {term}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Values */}
         <section>
           <h2 className="mb-6 font-nunito text-2xl font-bold text-gray-900 dark:text-slate-50">{t.values_title}</h2>

@@ -16,39 +16,59 @@ interface SendEmailOptions {
 
 export async function sendEmail({ to, toName, subject, htmlContent }: SendEmailOptions) {
   if (!BREVO_API_KEY) {
-    console.warn('BREVO_API_KEY not set — skipping email send')
+    console.error('❌ BREVO_API_KEY not set')
     throw new Error('Email service not configured. Please contact support.')
   }
 
-  const res = await fetch('https://api.brevo.com/v3/smtp/email', {
-    method: 'POST',
-    headers: {
-      'api-key': BREVO_API_KEY,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      sender: { name: FROM_NAME, email: FROM_EMAIL },
-      to: [{ email: to, name: toName ?? to }],
-      subject,
-      htmlContent,
-    }),
-  })
+  console.log('📧 Sending email via Brevo:', { to, subject, from: FROM_EMAIL })
 
-  if (!res.ok) {
-    const err = await res.text()
-    console.error('Brevo send error:', err)
-    
-    // Parse error for better user feedback
-    try {
-      const errorData = JSON.parse(err)
-      if (errorData.code === 'unauthorized' || errorData.message?.includes('Key not found')) {
-        throw new Error('Email service configuration error. Please contact support.')
+  try {
+    const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        'api-key': BREVO_API_KEY,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        sender: { name: FROM_NAME, email: FROM_EMAIL },
+        to: [{ email: to, name: toName ?? to }],
+        subject,
+        htmlContent,
+      }),
+    })
+
+    if (!res.ok) {
+      const err = await res.text()
+      console.error('❌ Brevo API error:', { status: res.status, statusText: res.statusText, body: err })
+      
+      // Parse error for better user feedback
+      try {
+        const errorData = JSON.parse(err)
+        console.error('❌ Brevo error details:', errorData)
+        
+        if (errorData.code === 'unauthorized' || errorData.message?.includes('Key not found')) {
+          throw new Error('Email service configuration error. Please contact support.')
+        }
+        if (errorData.message?.includes('sender')) {
+          throw new Error('Email sender not verified. Please contact support.')
+        }
+        if (errorData.message) {
+          throw new Error(`Email error: ${errorData.message}`)
+        }
+      } catch (parseError) {
+        // If we can't parse, use generic error
+        console.error('❌ Could not parse Brevo error response')
       }
-    } catch (parseError) {
-      // If we can't parse, use generic error
+      
+      throw new Error('Failed to send email. Please try again later.')
     }
-    
-    throw new Error('Failed to send email. Please try again later.')
+
+    const responseData = await res.json()
+    console.log('✅ Brevo email sent successfully:', responseData)
+    return responseData
+  } catch (error: any) {
+    console.error('❌ Brevo sendEmail exception:', error)
+    throw error
   }
 }
 
