@@ -71,7 +71,7 @@ export default function Hero() {
       <div className="relative mx-4 overflow-hidden rounded-2xl sm:mx-6 lg:mx-10">
 
         {/* Slides — crossfade */}
-        <div className="relative h-[45vh] min-h-[280px] w-full md:h-[55vh]">
+        <div className="relative h-[30vh] min-h-[220px] w-full md:h-[55vh]">
           {slides.map((slide, i) => (
             <div
               key={slide._id ?? slide.imageUrl}

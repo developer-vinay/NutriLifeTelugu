@@ -45,7 +45,7 @@ export default function RootShell({
           aria-hidden
           className="pointer-events-none absolute bottom-0 left-0 top-0 z-30"
           style={{
-            width: 'clamp(16px, 3.5vw, 60px)',
+            width: 'clamp(28px, 3.5vw, 60px)',
             backgroundImage: isDark ? 'url(/DarkBorder.png)' : 'url(/LeftBorder.png)',
             backgroundRepeat: 'repeat-y',
             backgroundSize: '100% auto',
@@ -58,7 +58,7 @@ export default function RootShell({
           aria-hidden
           className="pointer-events-none absolute bottom-0 right-0 top-0 z-30"
           style={{
-            width: 'clamp(14px, 3vw, 50px)',
+            width: 'clamp(26px, 3vw, 50px)',
             backgroundImage: isDark ? 'url(/DarkBorder.png)' : 'url(/RightBorder.png)',
             backgroundRepeat: 'repeat-y',
             backgroundSize: '100% auto',

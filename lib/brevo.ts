@@ -3,9 +3,9 @@
 // Free tier: 300 emails/day forever
 
 const BREVO_API_KEY = process.env.BREVO_API_KEY ?? ''
-const FROM_EMAIL = process.env.BREVO_FROM_EMAIL ?? 'noreply@nutrilifemitra.com'
+const FROM_EMAIL = process.env.BREVO_FROM_EMAIL ?? 'nutrilifemitra@gmail.com'
 const FROM_NAME = 'NutriLifeMitra'
-const SITE_URL = 'https://nutrilifemitra.vercel.app'
+const SITE_URL = 'https://nutrilifemitra.com'
 
 interface SendEmailOptions {
   to: string

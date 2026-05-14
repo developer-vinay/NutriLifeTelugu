@@ -294,7 +294,7 @@ export default function Navbar() {
           <img
             src={LANG_LOGOS[language]}
             alt="NutriLifeMitra"
-            className="h-11 w-11 rounded-full object-cover ring-2 ring-[#1A5C38]/20"
+            className="h-11 w-11 rounded-full object-cover ring-[6px] ring-[#1A5C38]/40"
           />
           <span className="hidden font-nunito text-[15px] font-bold tracking-wide text-[#1A5C38] sm:block dark:text-emerald-400">
             {siteName}
@@ -384,6 +384,16 @@ export default function Navbar() {
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" /></svg>
             Search
           </Link>
+          
+          {/* Language Selection in Mobile */}
+          <div className="pt-2">
+            <div className="mb-2 px-3">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-slate-500">Language</p>
+            </div>
+            <div className="flex items-center justify-center gap-2 px-3 py-2">
+              <LanguageToggle disabled={isReadingPost} />
+            </div>
+          </div>
         </div>
 
         {/* Drawer footer */}
