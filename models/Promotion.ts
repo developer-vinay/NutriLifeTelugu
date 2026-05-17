@@ -8,6 +8,7 @@ const PromotionSchema = new Schema({
   // image type
   imageUrl: { type: String, default: '' },
   imagePublicId: { type: String, default: '' },
+  imageObjectFit: { type: String, enum: ['cover', 'contain', 'fill'], default: 'cover' },
 
   // video type (YouTube)
   youtubeUrl: { type: String, default: '' },

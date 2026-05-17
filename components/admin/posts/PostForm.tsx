@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import slugify from 'slugify'
 import TagsInput from '@/components/admin/TagsInput'
+import ImageObjectFitSelector from '@/components/admin/ImageObjectFitSelector'
 
 type PostFormProps = {
   mode: 'create' | 'edit'
@@ -40,6 +41,9 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
   )
   const [heroImage, setHeroImage] = useState(initialData?.heroImage ?? '')
   const [heroImagePublicId, setHeroImagePublicId] = useState(initialData?.heroImagePublicId ?? '')
+  const [heroImageObjectFit, setHeroImageObjectFit] = useState<'cover' | 'contain' | 'fill'>(
+    initialData?.heroImageObjectFit ?? 'cover'
+  )
   const [youtubeUrl, setYoutubeUrl] = useState(initialData?.youtubeUrl ?? '')
   const [contentImages, setContentImages] = useState<string[]>(initialData?.contentImages ?? [])
   const [content, setContent] = useState(initialData?.content ?? '')
@@ -104,7 +108,7 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
         title, slug, excerpt, category, language,
         tag: tags[0] ?? tag,  // keep legacy tag as first tag
         tags,
-        heroImage, heroImagePublicId, youtubeUrl, content,
+        heroImage, heroImagePublicId, heroImageObjectFit, youtubeUrl, content,
         isFeatured, isPublished: publish, readTimeMinutes, contentImages, author,
       }
       const url = mode === 'create' ? '/api/admin/posts' : `/api/admin/posts/${initialData._id}`
@@ -249,6 +253,7 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
           }} className="text-sm" />
           {heroImage && <img src={heroImage} alt="" className="h-12 w-20 rounded object-cover" />}
         </div>
+        {heroImage && <ImageObjectFitSelector value={heroImageObjectFit} onChange={setHeroImageObjectFit} />}
       </div>
 
       {/* Content images */}

@@ -18,6 +18,7 @@ export interface IProduct extends Document {
   featuresHi?: string[]
   featuresTe?: string[]
   imageUrl?: string
+  imageObjectFit?: 'cover' | 'contain' | 'fill'
   fileUrl?: string // For downloadable PDFs/ebooks
   isActive: boolean
   isFeatured: boolean
@@ -96,6 +97,11 @@ const ProductSchema = new Schema<IProduct>({
   },
   imageUrl: {
     type: String,
+  },
+  imageObjectFit: {
+    type: String,
+    enum: ['cover', 'contain', 'fill'],
+    default: 'cover',
   },
   fileUrl: {
     type: String,

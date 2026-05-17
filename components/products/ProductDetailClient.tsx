@@ -25,6 +25,7 @@ type Product = {
   featuresHi?: string[]
   featuresTe?: string[]
   imageUrl?: string
+  imageObjectFit?: 'cover' | 'contain' | 'fill'
   fileUrl?: string
   isActive: boolean
   isFeatured: boolean
@@ -125,7 +126,8 @@ export default function ProductDetailClient({ product }: { product: Product }) {
                 <img
                   src={product.imageUrl}
                   alt={getProductName()}
-                  className="h-[500px] w-full object-cover"
+                  className="h-[500px] w-full"
+                  style={{ objectFit: product.imageObjectFit || 'cover' }}
                 />
               ) : (
                 <div className="flex h-[500px] items-center justify-center bg-gray-100 dark:bg-slate-800">

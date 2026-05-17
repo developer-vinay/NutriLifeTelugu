@@ -10,6 +10,7 @@ const HeroSlideSchema = new Schema({
   buttonLink: { type: String, default: '' },
   order: { type: Number, default: 0 },
   isActive: { type: Boolean, default: true },
+  objectFit: { type: String, enum: ['cover', 'contain', 'fill'], default: 'fill' },
 }, { timestamps: true })
 
 export const HeroSlide = (models.HeroSlide as mongoose.Model<any>) ?? mongoose.model('HeroSlide', HeroSlideSchema)

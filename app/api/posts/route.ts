@@ -18,7 +18,8 @@ export async function GET(request: Request) {
 
   const { searchParams } = new URL(request.url)
   const lang = searchParams.get('lang') ?? 'en'
-  const limit = Number(searchParams.get('limit') ?? '60') || 60
+  const page = searchParams.get('page') ? Number(searchParams.get('page')) : null
+  const limit = Number(searchParams.get('limit') ?? '12') || 12
   const sort = searchParams.get('sort') ?? 'latest'
   const categories = searchParams.get('categories') // comma-separated
 
@@ -27,17 +28,71 @@ export async function GET(request: Request) {
     query.category = { $in: categories.split(',') }
   }
 
-  const posts = await Post.find(query)
-    .sort({ createdAt: -1 })
-    .limit(sort === 'popular' ? 100 : limit)
-    .select('title slug excerpt tag language heroImage readTimeMinutes views likes createdAt')
-    .lean()
-
+  // For popular sort, we need to fetch more and then sort
   if (sort === 'popular') {
-    const scored = (posts as any[]).map(p => ({ ...p, _id: p._id.toString() }))
+    const allPosts = await Post.find(query)
+      .sort({ createdAt: -1 })
+      .limit(100)
+      .select('title slug excerpt tag language heroImage heroImageObjectFit readTimeMinutes views likes createdAt')
+      .lean()
+
+    const scored = (allPosts as any[]).map(p => ({ ...p, _id: p._id.toString() }))
     scored.sort((a, b) => popularityScore(b) - popularityScore(a))
+    
+    // If page parameter is provided, return paginated format
+    if (page !== null) {
+      const skip = (page - 1) * limit
+      const paginatedPosts = scored.slice(skip, skip + limit)
+      const hasMore = skip + paginatedPosts.length < scored.length
+
+      return NextResponse.json({
+        data: paginatedPosts,
+        pagination: {
+          page,
+          limit,
+          total: scored.length,
+          hasMore
+        }
+      })
+    }
+    
+    // Otherwise return old format (backward compatible)
     return NextResponse.json(scored.slice(0, limit))
   }
+
+  // For latest sort
+  // If page parameter is provided, use pagination
+  if (page !== null) {
+    const skip = (page - 1) * limit
+    const [posts, total] = await Promise.all([
+      Post.find(query)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .select('title slug excerpt tag language heroImage heroImageObjectFit readTimeMinutes views likes createdAt')
+        .lean(),
+      Post.countDocuments(query)
+    ])
+
+    const hasMore = skip + posts.length < total
+
+    return NextResponse.json({
+      data: posts,
+      pagination: {
+        page,
+        limit,
+        total,
+        hasMore
+      }
+    })
+  }
+
+  // Otherwise return old format (backward compatible)
+  const posts = await Post.find(query)
+    .sort({ createdAt: -1 })
+    .limit(limit)
+    .select('title slug excerpt tag language heroImage heroImageObjectFit readTimeMinutes views likes createdAt')
+    .lean()
 
   return NextResponse.json(posts)
 }

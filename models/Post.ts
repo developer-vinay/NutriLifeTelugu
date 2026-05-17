@@ -24,6 +24,7 @@ export interface IPost extends Document {
   language: Language
   heroImage?: string
   heroImagePublicId?: string
+  heroImageObjectFit?: 'cover' | 'contain' | 'fill'
   youtubeUrl?: string
   contentImages?: string[]
   readTimeMinutes?: number
@@ -51,6 +52,7 @@ const PostSchema = new Schema<IPost>(
     language: { type: String, enum: ['te', 'en', 'hi'], default: 'te' },
     heroImage: { type: String },
     heroImagePublicId: { type: String },
+    heroImageObjectFit: { type: String, enum: ['cover', 'contain', 'fill'], default: 'cover' },
     youtubeUrl: { type: String },
     contentImages: [{ type: String }],
     readTimeMinutes: { type: Number },

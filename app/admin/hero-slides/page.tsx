@@ -13,6 +13,7 @@ type Slide = {
   buttonLink: string
   order: number
   isActive: boolean
+  objectFit?: 'cover' | 'contain' | 'fill'
 }
 
 const inputCls = 'w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#1A5C38] focus:outline-none focus:ring-1 focus:ring-[#1A5C38]'
@@ -31,6 +32,7 @@ function SlideForm({ initial, onSaved, onCancel }: {
   const [buttonLink, setButtonLink] = useState(initial?.buttonLink ?? '')
   const [order, setOrder] = useState(initial?.order ?? 0)
   const [isActive, setIsActive] = useState(initial?.isActive ?? true)
+  const [objectFit, setObjectFit] = useState<'cover' | 'contain' | 'fill'>(initial?.objectFit ?? 'fill')
   const [uploading, setUploading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -52,7 +54,7 @@ function SlideForm({ initial, onSaved, onCancel }: {
     if (!imageUrl) { setError('Image is required'); return }
     setSaving(true)
     setError('')
-    const payload = { imageUrl, imagePublicId, alt, title, subtitle, buttonText, buttonLink, order, isActive }
+    const payload = { imageUrl, imagePublicId, alt, title, subtitle, buttonText, buttonLink, order, isActive, objectFit }
     const url = initial?._id ? `/api/admin/hero-slides/${initial._id}` : '/api/admin/hero-slides'
     const res = await fetch(url, {
       method: initial?._id ? 'PUT' : 'POST',
@@ -120,6 +122,31 @@ function SlideForm({ initial, onSaved, onCancel }: {
         <div>
           <label className="mb-1 block text-xs font-medium text-gray-700">Order (0 = first)</label>
           <input type="number" value={order} onChange={e => setOrder(Number(e.target.value))} className={inputCls} />
+        </div>
+      </div>
+
+      {/* Image Fit Option */}
+      <div>
+        <label className="mb-2 block text-xs font-medium text-gray-700">Image Display Mode</label>
+        <div className="grid grid-cols-3 gap-2">
+          <button type="button"
+            onClick={() => setObjectFit('fill')}
+            className={`rounded-lg border-2 px-3 py-2.5 text-left transition ${objectFit === 'fill' ? 'border-[#1A5C38] bg-emerald-50' : 'border-gray-200 hover:border-gray-300'}`}>
+            <p className="text-xs font-semibold text-gray-900">Stretch (Fill)</p>
+            <p className="mt-0.5 text-[10px] text-gray-500">Fills space, may distort</p>
+          </button>
+          <button type="button"
+            onClick={() => setObjectFit('cover')}
+            className={`rounded-lg border-2 px-3 py-2.5 text-left transition ${objectFit === 'cover' ? 'border-[#1A5C38] bg-emerald-50' : 'border-gray-200 hover:border-gray-300'}`}>
+            <p className="text-xs font-semibold text-gray-900">Cover (Crop)</p>
+            <p className="mt-0.5 text-[10px] text-gray-500">Fills space, may crop</p>
+          </button>
+          <button type="button"
+            onClick={() => setObjectFit('contain')}
+            className={`rounded-lg border-2 px-3 py-2.5 text-left transition ${objectFit === 'contain' ? 'border-[#1A5C38] bg-emerald-50' : 'border-gray-200 hover:border-gray-300'}`}>
+            <p className="text-xs font-semibold text-gray-900">Fit (Contain)</p>
+            <p className="mt-0.5 text-[10px] text-gray-500">Shows full image</p>
+          </button>
         </div>
       </div>
 

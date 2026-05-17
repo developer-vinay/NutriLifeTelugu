@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { format } from 'date-fns'
 import DashboardDeleteButton from './DashboardDeleteButton'
 import { FileText, ChefHat, Video as VideoIcon, Users, Plus, ArrowRight } from 'lucide-react'
+import mongoose from 'mongoose'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -22,9 +23,27 @@ export default async function AdminDashboardPage() {
   ])
 
   const [recentPosts, recentRecipes, recentVideos] = await Promise.all([
-    Post.find().sort({ createdAt: -1 }).limit(5).lean(),
-    Recipe.find().sort({ createdAt: -1 }).limit(5).lean(),
-    Video.find().sort({ createdAt: -1 }).limit(5).lean(),
+    Post.find().sort({ createdAt: -1 }).limit(5).lean<Array<{
+      _id: mongoose.Types.ObjectId
+      title: string
+      language?: string
+      isPublished: boolean
+      createdAt?: Date
+    }>>(),
+    Recipe.find().sort({ createdAt: -1 }).limit(5).lean<Array<{
+      _id: mongoose.Types.ObjectId
+      title: string
+      language?: string
+      isPublished: boolean
+      createdAt?: Date
+    }>>(),
+    Video.find().sort({ createdAt: -1 }).limit(5).lean<Array<{
+      _id: mongoose.Types.ObjectId
+      title: string
+      language?: string
+      isPublished: boolean
+      createdAt?: Date
+    }>>(),
   ])
 
   return (
@@ -33,7 +52,7 @@ export default async function AdminDashboardPage() {
       {/* Page heading */}
       <div>
         <h1 className="text-xl font-bold text-gray-900 sm:text-2xl">Dashboard</h1>
-        <p className="mt-0.5 text-sm text-gray-500">Welcome back — here's what's happening.</p>
+        <p className="mt-0.5 text-sm text-gray-500">Welcome back — here&apos;s what&apos;s happening.</p>
       </div>
 
       {/* ── Stat cards ── */}
@@ -64,7 +83,7 @@ export default async function AdminDashboardPage() {
           rows={recentPosts.map((p) => ({
             id: p._id.toString(),
             title: p.title,
-            lang: (p as any).language,
+            lang: p.language,
             published: p.isPublished,
             date: p.createdAt ? format(new Date(p.createdAt), 'dd MMM') : '-',
             editHref: `/admin/posts/${p._id.toString()}/edit`,
@@ -77,7 +96,7 @@ export default async function AdminDashboardPage() {
           rows={recentRecipes.map((r) => ({
             id: r._id.toString(),
             title: r.title,
-            lang: (r as any).language,
+            lang: r.language,
             published: r.isPublished,
             date: r.createdAt ? format(new Date(r.createdAt), 'dd MMM') : '-',
             editHref: `/admin/recipes/${r._id.toString()}/edit`,
@@ -94,7 +113,7 @@ export default async function AdminDashboardPage() {
           rows={recentVideos.map((v) => ({
             id: v._id.toString(),
             title: v.title,
-            lang: (v as any).language,
+            lang: v.language,
             published: v.isPublished,
             date: v.createdAt ? format(new Date(v.createdAt), 'dd MMM') : '-',
             editHref: `/admin/videos/${v._id.toString()}/edit`,

@@ -19,6 +19,7 @@ export type DBPost = {
   tag?: string
   language?: string
   heroImage?: string
+  heroImageObjectFit?: 'cover' | 'contain' | 'fill'
   youtubeUrl?: string
   contentImages?: string[]
   readTimeMinutes?: number
@@ -122,7 +123,8 @@ export default function BlogPostClient({ post, related }: Props) {
               <img
                 src={post.heroImage}
                 alt={post.title}
-                className="mb-4 h-56 w-full rounded-2xl object-cover md:h-96"
+                className="mb-4 h-56 w-full rounded-2xl md:h-96"
+                style={{ objectFit: post.heroImageObjectFit || 'cover' }}
               />
             ) : (
               <div className="mb-4 flex h-56 items-center justify-center rounded-2xl bg-gray-200 dark:bg-slate-900 md:h-80">
@@ -334,7 +336,7 @@ export default function BlogPostClient({ post, related }: Props) {
                       className="group flex flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-gray-200 transition-transform duration-200 hover:scale-105 hover:ring-emerald-400 dark:bg-slate-900/70 dark:ring-slate-800 dark:hover:ring-emerald-600"
                     >
                       {rp.heroImage ? (
-                        <img src={rp.heroImage} alt={rp.title} className="h-36 w-full object-cover" />
+                        <img src={rp.heroImage} alt={rp.title} className="h-36 w-full" style={{ objectFit: rp.heroImageObjectFit || 'cover' }} />
                       ) : (
                         <div className="flex h-36 items-center justify-center bg-gray-100 dark:bg-slate-800"><UtensilsCrossed size={24} className="text-gray-400 dark:text-slate-600" /></div>
                       )}

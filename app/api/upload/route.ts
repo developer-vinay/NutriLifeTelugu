@@ -1,36 +1,16 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@/auth'
+import { v2 as cloudinary } from 'cloudinary'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-/**
- * File Upload API Endpoint
- * 
- * IMPORTANT: This is a placeholder implementation.
- * For production, you should integrate with a cloud storage service:
- * 
- * 1. **Cloudinary** (Recommended for images/PDFs):
- *    - npm install cloudinary
- *    - Free tier: 25GB storage, 25GB bandwidth/month
- *    - Automatic image optimization
- *    - Example: https://cloudinary.com/documentation/node_integration
- * 
- * 2. **AWS S3**:
- *    - npm install @aws-sdk/client-s3
- *    - Scalable, pay-as-you-go
- *    - Example: https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/s3-example-creating-buckets.html
- * 
- * 3. **Vercel Blob** (if hosting on Vercel):
- *    - npm install @vercel/blob
- *    - Integrated with Vercel platform
- *    - Example: https://vercel.com/docs/storage/vercel-blob
- * 
- * 4. **UploadThing** (Easy setup):
- *    - npm install uploadthing
- *    - Free tier: 2GB storage
- *    - Example: https://docs.uploadthing.com/getting-started/appdir
- */
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+})
 
 async function ensureAdmin() {
   const session = await auth()
@@ -47,54 +27,48 @@ export async function POST(req: Request) {
   try {
     const formData = await req.formData()
     const file = formData.get('file') as File
+    const folder = (formData.get('folder') as string) || 'uploads'
+    const resourceType = (formData.get('resource_type') as string) || 'auto'
     
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
-    // TODO: Implement actual file upload to cloud storage
-    // For now, return a placeholder response
-    
-    // Example Cloudinary implementation:
-    /*
-    const cloudinary = require('cloudinary').v2
-    
-    cloudinary.config({
-      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-      api_key: process.env.CLOUDINARY_API_KEY,
-      api_secret: process.env.CLOUDINARY_API_SECRET,
-    })
-
+    // Convert file to buffer
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    const result = await new Promise((resolve, reject) => {
-      cloudinary.uploader.upload_stream(
-        { folder: 'products', resource_type: 'auto' },
+    // Upload to Cloudinary
+    const result = await new Promise<any>((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        { 
+          folder: `nutrilifemitra/${folder}`,
+          resource_type: resourceType as any,
+          transformation: resourceType === 'image' ? [
+            { quality: 'auto', fetch_format: 'auto' }
+          ] : undefined
+        },
         (error, result) => {
           if (error) reject(error)
           else resolve(result)
         }
-      ).end(buffer)
+      )
+      uploadStream.end(buffer)
     })
 
-    return NextResponse.json({ url: result.secure_url })
-    */
-
-    // Placeholder response - replace with actual upload
-    return NextResponse.json(
-      { 
-        error: 'File upload not configured',
-        message: 'Please configure cloud storage (Cloudinary, AWS S3, etc.) in /api/upload/route.ts',
-        placeholder: true
-      },
-      { status: 501 }
-    )
+    return NextResponse.json({ 
+      url: result.secure_url,
+      publicId: result.public_id,
+      format: result.format,
+      width: result.width,
+      height: result.height,
+      bytes: result.bytes
+    })
 
   } catch (error) {
     console.error('Upload error:', error)
     return NextResponse.json(
-      { error: 'Upload failed' },
+      { error: 'Upload failed', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     )
   }

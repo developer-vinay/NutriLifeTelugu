@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import slugify from 'slugify'
 import TagsInput from '@/components/admin/TagsInput'
+import ImageObjectFitSelector from '@/components/admin/ImageObjectFitSelector'
 
 type RecipeFormProps = {
   mode: 'create' | 'edit'
@@ -37,6 +38,9 @@ export default function RecipeForm({ mode, initialData }: RecipeFormProps) {
   )
   const [heroImage, setHeroImage] = useState(initialData?.heroImage ?? '')
   const [heroImagePublicId, setHeroImagePublicId] = useState(initialData?.heroImagePublicId ?? '')
+  const [heroImageObjectFit, setHeroImageObjectFit] = useState<'cover' | 'contain' | 'fill'>(
+    initialData?.heroImageObjectFit ?? 'cover'
+  )
   const [prepTime, setPrepTime] = useState(initialData?.prepTimeMinutes ?? '')
   const [cookTime, setCookTime] = useState(initialData?.cookTimeMinutes ?? '')
   const [servings, setServings] = useState(initialData?.servings ?? '')
@@ -113,7 +117,7 @@ export default function RecipeForm({ mode, initialData }: RecipeFormProps) {
         title, slug, description, category, language,
         tag: tags[0] ?? tag,
         tags,
-        heroImage, heroImagePublicId,
+        heroImage, heroImagePublicId, heroImageObjectFit,
         prepTimeMinutes: prepTime ? Number(prepTime) : undefined,
         cookTimeMinutes: cookTime ? Number(cookTime) : undefined,
         servings: servings ? Number(servings) : undefined,
@@ -245,6 +249,7 @@ export default function RecipeForm({ mode, initialData }: RecipeFormProps) {
           }} className="text-sm" />
           {heroImage && <img src={heroImage} alt="" className="h-12 w-20 rounded object-cover" />}
         </div>
+        {heroImage && <ImageObjectFitSelector value={heroImageObjectFit} onChange={setHeroImageObjectFit} />}
       </div>
 
       <div className="space-y-2">

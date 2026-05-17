@@ -20,6 +20,7 @@ export interface IRecipe extends Document {
   language: Language
   heroImage?: string
   heroImagePublicId?: string
+  heroImageObjectFit?: 'cover' | 'contain' | 'fill'
   prepTimeMinutes?: number
   cookTimeMinutes?: number
   servings?: number
@@ -54,6 +55,7 @@ const RecipeSchema = new Schema<IRecipe>(
     language: { type: String, enum: ['te', 'en', 'hi'], default: 'te' },
     heroImage: { type: String },
     heroImagePublicId: { type: String },
+    heroImageObjectFit: { type: String, enum: ['cover', 'contain', 'fill'], default: 'cover' },
     prepTimeMinutes: { type: Number },
     cookTimeMinutes: { type: Number },
     servings: { type: Number },

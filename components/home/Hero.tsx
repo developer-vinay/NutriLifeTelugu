@@ -12,6 +12,7 @@ type Slide = {
   subtitle?: string
   buttonText?: string
   buttonLink?: string
+  objectFit?: 'cover' | 'contain' | 'fill'
 }
 
 // Fallback static slides used until DB slides load
@@ -71,7 +72,7 @@ export default function Hero() {
       <div className="relative mx-4 overflow-hidden rounded-2xl sm:mx-6 lg:mx-10">
 
         {/* Slides — crossfade */}
-        <div className="relative h-[30vh] min-h-[220px] w-full md:h-[55vh]">
+        <div className="relative h-[35vh] min-h-[240px] w-full md:h-[60vh]">
           {slides.map((slide, i) => (
             <div
               key={slide._id ?? slide.imageUrl}
@@ -82,7 +83,7 @@ export default function Hero() {
                 <img
                   src={slide.imageUrl}
                   alt={slide.alt || 'Hero slide'}
-                  className="h-full w-full object-cover object-center"
+                  className={`h-full w-full ${slide.objectFit ? `object-${slide.objectFit}` : 'object-fill'}`}
                 />
               ) : (
                 <Image
@@ -90,7 +91,7 @@ export default function Hero() {
                   alt={slide.alt || 'Hero slide'}
                   fill
                   priority={i === 0}
-                  className="object-cover object-center"
+                  className={slide.objectFit ? `object-${slide.objectFit}` : 'object-fill'}
                 />
               )}
 

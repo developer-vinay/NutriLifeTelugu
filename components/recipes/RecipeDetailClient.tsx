@@ -19,6 +19,7 @@ type DBRecipe = {
   tag?: string
   language?: string
   heroImage?: string
+  heroImageObjectFit?: 'cover' | 'contain' | 'fill'
   prepTimeMinutes?: number
   cookTimeMinutes?: number
   servings?: number
@@ -82,7 +83,12 @@ export default function RecipeDetailClient({ recipe, related }: Props) {
 
         <div className="mt-4 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
           {recipe.heroImage ? (
-            <img src={recipe.heroImage} alt={recipe.title} className="h-56 w-full object-cover md:h-80" />
+            <img 
+              src={recipe.heroImage} 
+              alt={recipe.title} 
+              className="h-56 w-full md:h-80"
+              style={{ objectFit: recipe.heroImageObjectFit || 'cover' }}
+            />
           ) : (
             <div className="flex h-56 items-center justify-center bg-emerald-50 dark:bg-slate-700 md:h-80"><UtensilsCrossed size={48} className="text-emerald-300" /></div>
           )}
@@ -208,7 +214,7 @@ export default function RecipeDetailClient({ recipe, related }: Props) {
                   className="group overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-transform duration-200 hover:scale-[1.02] hover:border-emerald-300 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-emerald-600"
                 >
                   {r.heroImage
-                    ? <img src={r.heroImage} alt={r.title} className="h-36 w-full object-cover" />
+                    ? <img src={r.heroImage} alt={r.title} className="h-36 w-full" style={{ objectFit: r.heroImageObjectFit || 'cover' }} />
                     : <div className="flex h-36 items-center justify-center bg-emerald-50 dark:bg-slate-700"><UtensilsCrossed size={28} className="text-emerald-300" /></div>
                   }
                   <div className="p-4">

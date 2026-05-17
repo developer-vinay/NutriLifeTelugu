@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import { ExternalLink, Play, ImageIcon, Link2, Eye } from 'lucide-react'
+import ImageObjectFitSelector from '@/components/admin/ImageObjectFitSelector'
 
 type PromoType = 'image' | 'video' | 'link'
 
@@ -11,6 +12,7 @@ type FormData = {
   type: PromoType
   imageUrl: string
   imagePublicId: string
+  imageObjectFit: 'cover' | 'contain' | 'fill'
   youtubeUrl: string
   youtubeId: string
   thumbnailUrl: string
@@ -26,7 +28,7 @@ type FormData = {
 
 const empty: FormData = {
   title: '', type: 'image',
-  imageUrl: '', imagePublicId: '',
+  imageUrl: '', imagePublicId: '', imageObjectFit: 'cover',
   youtubeUrl: '', youtubeId: '', thumbnailUrl: '',
   linkUrl: '', linkLabel: 'Learn More', description: '',
   placement: 'sidebar', language: 'all',
@@ -224,6 +226,7 @@ export default function PromotionForm({
             }} />
           </label>
           {form.imageUrl && <img src={form.imageUrl} alt="" className="h-24 w-full rounded-lg object-cover" />}
+          {form.imageUrl && <ImageObjectFitSelector value={form.imageObjectFit} onChange={(val) => set('imageObjectFit', val)} />}
           <div>
             <label className="mb-1 block text-xs font-medium text-gray-700">Click-through URL (optional)</label>
             <input type="url" value={form.linkUrl} onChange={(e) => set('linkUrl', e.target.value)}
@@ -278,7 +281,14 @@ export default function PromotionForm({
                 const file = e.target.files?.[0]; if (file) await handleImageUpload(file)
               }} />
             </label>
-            {form.imageUrl && <img src={form.imageUrl} alt="" className="mt-2 h-14 rounded-lg object-cover" />}
+            {form.imageUrl && (
+              <>
+                <img src={form.imageUrl} alt="" className="mt-2 h-14 rounded-lg object-cover" />
+                <div className="mt-2">
+                  <ImageObjectFitSelector value={form.imageObjectFit} onChange={(val) => set('imageObjectFit', val)} />
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

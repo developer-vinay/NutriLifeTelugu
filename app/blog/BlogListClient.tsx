@@ -1,10 +1,11 @@
 'use client'
 
-import React, { useEffect, useState, useMemo, useRef } from 'react'
+import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { useLanguage } from '@/components/LanguageProvider'
-import { FileText, Search, X } from 'lucide-react'
+import { FileText, Search, X, Loader2 } from 'lucide-react'
 import PromotionBlock from '@/components/promotions/PromotionBlock'
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
 
 type Post = {
   _id: string
@@ -16,6 +17,7 @@ type Post = {
   category?: string
   language?: string
   heroImage?: string
+  heroImageObjectFit?: 'cover' | 'contain' | 'fill'
   readTimeMinutes?: number
   views?: number
   createdAt: string
@@ -33,25 +35,27 @@ function useDebounce<T>(value: T, delay = 300): T {
 
 export default function BlogListClient() {
   const { language } = useLanguage()
-  const [posts, setPosts] = useState<Post[]>([])
-  const [loading, setLoading] = useState(true)
   const [searchInput, setSearchInput] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
   // Debounce: only filter 300ms after user stops typing
   const query = useDebounce(searchInput, 300)
 
-  useEffect(() => {
-    setLoading(true)
-    setSearchInput('')
-    fetch(`/api/posts?lang=${language}&limit=100`)
-      .then((r) => r.json())
-      .then((data) => {
-        setPosts(Array.isArray(data) ? data : [])
-        setLoading(false)
-      })
-      .catch(() => setLoading(false))
+  // Fetch function for infinite scroll
+  const fetchPosts = useCallback(async (page: number) => {
+    const res = await fetch(`/api/posts?lang=${language}&page=${page}&limit=12`)
+    const json = await res.json()
+    return {
+      data: json.data || [],
+      hasMore: json.pagination?.hasMore || false
+    }
   }, [language])
+
+  // Use infinite scroll hook
+  const { items: posts, initialLoading, loading, hasMore, loadMoreRef, error, retry } = useInfiniteScroll<Post>(
+    fetchPosts,
+    [language]
+  )
 
   const filtered = useMemo(() => {
     if (!query.trim()) return posts
@@ -95,7 +99,7 @@ export default function BlogListClient() {
                   </h1>
                   <p className="mt-1 text-sm text-gray-600 dark:text-slate-400">{ui.sub}</p>
                 </div>
-                {!loading && (
+                {!initialLoading && (
                   <span className="shrink-0 rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-[#1A5C38] dark:bg-emerald-900/30 dark:text-emerald-400">
                     {filtered.length} articles
                   </span>
@@ -132,7 +136,7 @@ export default function BlogListClient() {
             </div>
 
             {/* ── Results ── */}
-            {loading ? (
+            {initialLoading ? (
               <div className="grid gap-4 md:grid-cols-2">
                 {[...Array(6)].map((_, i) => (
                   <div key={i} className="h-64 animate-pulse rounded-2xl bg-gray-100 dark:bg-slate-800" />
@@ -158,11 +162,43 @@ export default function BlogListClient() {
                 </button>
               </div>
             ) : (
-              <div className="grid gap-4 md:grid-cols-2">
-                {filtered.map((post) => (
-                  <PostCard key={post._id} post={post} query={query} />
-                ))}
-              </div>
+              <>
+                <div className="grid gap-4 md:grid-cols-2">
+                  {filtered.map((post) => (
+                    <PostCard key={post._id} post={post} query={query} />
+                  ))}
+                </div>
+
+                {/* Infinite scroll trigger */}
+                <div ref={loadMoreRef} className="py-8">
+                  {loading && (
+                    <div className="flex items-center justify-center gap-2 text-gray-500 dark:text-slate-400">
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                      <span className="text-sm">
+                        {language === 'te' ? 'లోడ్ అవుతోంది...' : language === 'hi' ? 'लोड हो रहा है...' : 'Loading more...'}
+                      </span>
+                    </div>
+                  )}
+                  {error && (
+                    <div className="text-center">
+                      <p className="text-sm text-red-600 dark:text-red-400">
+                        {language === 'te' ? 'లోడ్ చేయడంలో విఫలమైంది' : language === 'hi' ? 'लोड करने में विफल' : 'Failed to load'}
+                      </p>
+                      <button
+                        onClick={retry}
+                        className="mt-2 text-sm font-medium text-[#1A5C38] hover:underline dark:text-emerald-400"
+                      >
+                        {language === 'te' ? 'మళ్లీ ప్రయత్నించండి' : language === 'hi' ? 'पुनः प्रयास करें' : 'Retry'}
+                      </button>
+                    </div>
+                  )}
+                  {!hasMore && !loading && filtered.length > 12 && (
+                    <p className="text-center text-sm text-gray-500 dark:text-slate-400">
+                      {language === 'te' ? 'అన్ని వ్యాసాలు చూపించబడ్డాయి' : language === 'hi' ? 'सभी लेख दिखाए गए' : 'All articles loaded'}
+                    </p>
+                  )}
+                </div>
+              </>
             )}
           </div>
 
@@ -196,7 +232,7 @@ function PostCard({ post, query }: { post: Post; query: string }) {
     >
       <div className="h-36 w-full overflow-hidden bg-emerald-50 dark:bg-emerald-900/30">
         {post.heroImage
-          ? <img src={post.heroImage} alt={post.title} className="h-full w-full object-cover" />
+          ? <img src={post.heroImage} alt={post.title} className={`h-full w-full object-${post.heroImageObjectFit || 'cover'}`} />
           : <div className="flex h-full items-center justify-center"><FileText size={28} className="text-emerald-300" /></div>
         }
       </div>

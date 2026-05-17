@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { Trash2 } from 'lucide-react'
 
@@ -18,25 +18,23 @@ export default function AdminCommentsPage() {
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
   const [typeFilter, setTypeFilter] = useState('')
-  const [loading, setLoading] = useState(true)
   const [deleting, setDeleting] = useState<string | null>(null)
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [bulkDeleting, setBulkDeleting] = useState(false)
   const pageSize = 25
 
-  const fetchComments = useCallback(async () => {
-    setLoading(true)
-    const params = new URLSearchParams({ page: String(page), pageSize: String(pageSize) })
-    if (typeFilter) params.set('contentType', typeFilter)
-    const res = await fetch(`/api/admin/comments?${params}`)
-    const data = await res.json()
-    setItems(data.items ?? [])
-    setTotal(data.total ?? 0)
-    setSelected(new Set())
-    setLoading(false)
+  useEffect(() => {
+    const fetchComments = async () => {
+      const params = new URLSearchParams({ page: String(page), pageSize: String(pageSize) })
+      if (typeFilter) params.set('contentType', typeFilter)
+      const res = await fetch(`/api/admin/comments?${params}`)
+      const data = await res.json()
+      setItems(data.items ?? [])
+      setTotal(data.total ?? 0)
+      setSelected(new Set())
+    }
+    fetchComments()
   }, [page, typeFilter])
-
-  useEffect(() => { fetchComments() }, [fetchComments])
 
   const toggleOne = (id: string) => setSelected((prev) => {
     const next = new Set(prev); next.has(id) ? next.delete(id) : next.add(id); return next
@@ -115,9 +113,7 @@ export default function AdminCommentsPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
-            {loading ? (
-              <tr><td colSpan={7} className="px-4 py-10 text-center text-sm text-gray-400">Loading…</td></tr>
-            ) : items.length === 0 ? (
+            {items.length === 0 ? (
               <tr><td colSpan={7} className="px-4 py-10 text-center text-sm text-gray-500">No comments yet.</td></tr>
             ) : items.map((c) => (
               <tr key={c._id} className={`transition-colors hover:bg-gray-50/60 ${selected.has(c._id) ? 'bg-red-50/40' : ''}`}>
@@ -150,9 +146,7 @@ export default function AdminCommentsPage() {
 
       {/* Mobile cards */}
       <div className="space-y-3 md:hidden">
-        {loading ? (
-          <div className="rounded-2xl border border-gray-100 bg-white p-6 text-center text-sm text-gray-400">Loading…</div>
-        ) : items.length === 0 ? (
+        {items.length === 0 ? (
           <div className="rounded-2xl border border-gray-100 bg-white p-8 text-center text-sm text-gray-500">No comments yet.</div>
         ) : items.map((c) => (
           <div key={c._id} className={`rounded-2xl border bg-white p-4 shadow-sm transition ${selected.has(c._id) ? 'border-red-300 bg-red-50/20' : 'border-gray-100'}`}>

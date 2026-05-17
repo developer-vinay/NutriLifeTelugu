@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Save } from 'lucide-react'
 import Link from 'next/link'
+import ImageObjectFitSelector from '@/components/admin/ImageObjectFitSelector'
 
 export default function NewProductPage() {
   const router = useRouter()
@@ -26,6 +27,7 @@ export default function NewProductPage() {
     featuresHi: '',
     featuresTe: '',
     imageUrl: '',
+    imageObjectFit: 'cover' as 'cover' | 'contain' | 'fill',
     fileUrl: '',
     isActive: true,
     isFeatured: false,
@@ -406,7 +408,15 @@ export default function NewProductPage() {
               </div>
               <p className="mt-1 text-xs text-gray-500">Enter URL or upload image (max 5MB, JPG/PNG/WebP)</p>
               {formData.imageUrl && (
-                <img src={formData.imageUrl} alt="Preview" className="mt-2 h-32 w-32 rounded-lg border object-cover" />
+                <>
+                  <img src={formData.imageUrl} alt="Preview" className="mt-2 h-32 w-32 rounded-lg border object-cover" />
+                  <div className="mt-3">
+                    <ImageObjectFitSelector 
+                      value={formData.imageObjectFit} 
+                      onChange={(val) => setFormData(prev => ({ ...prev, imageObjectFit: val }))} 
+                    />
+                  </div>
+                </>
               )}
             </div>
 

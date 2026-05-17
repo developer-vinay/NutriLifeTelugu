@@ -9,6 +9,7 @@ type Promo = {
   type: 'image' | 'video' | 'link'
   placement: string
   imageUrl?: string
+  imageObjectFit?: 'cover' | 'contain' | 'fill'
   youtubeUrl?: string
   youtubeId?: string
   thumbnailUrl?: string
@@ -28,8 +29,8 @@ function PromoCard({ promo, compact = false }: { promo: Promo; compact?: boolean
   if (promo.type === 'image' && promo.imageUrl) {
     const img = (
       <img src={promo.imageUrl} alt={promo.title}
-        className="w-full rounded-xl object-cover transition hover:opacity-95"
-        style={{ maxHeight: compact ? 120 : 280 }} />
+        className="w-full rounded-xl transition hover:opacity-95"
+        style={{ maxHeight: compact ? 120 : 280, objectFit: promo.imageObjectFit || 'cover' }} />
     )
     return promo.linkUrl ? (
       <a href={promo.linkUrl} target="_blank" rel="noreferrer sponsored" onClick={handleClick}
@@ -64,7 +65,7 @@ function PromoCard({ promo, compact = false }: { promo: Promo; compact?: boolean
         className="group flex gap-3 overflow-hidden rounded-xl border border-gray-200 bg-white p-3 shadow-sm transition hover:border-emerald-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-800">
         {promo.imageUrl && (
           <img src={promo.imageUrl} alt={promo.title}
-            className="h-16 w-16 shrink-0 rounded-lg object-cover" />
+            className="h-16 w-16 shrink-0 rounded-lg" style={{ objectFit: promo.imageObjectFit || 'cover' }} />
         )}
         <div className="min-w-0 flex-1">
           <p className="text-[10px] font-semibold uppercase tracking-wide text-amber-600">Sponsored</p>
@@ -136,7 +137,7 @@ function HomeBanner({ promos }: { promos: Promo[] }) {
       {promo.type === 'image' && promo.imageUrl && (
         <a href={promo.linkUrl || '#'} target={promo.linkUrl ? '_blank' : '_self'} rel="noreferrer sponsored"
           onClick={() => trackClick(promo._id)}>
-          <img src={promo.imageUrl} alt={promo.title} className="w-full object-cover" style={{ maxHeight: 200 }} />
+          <img src={promo.imageUrl} alt={promo.title} className="w-full" style={{ maxHeight: 200, objectFit: promo.imageObjectFit || 'cover' }} />
         </a>
       )}
       {promo.type === 'link' && (

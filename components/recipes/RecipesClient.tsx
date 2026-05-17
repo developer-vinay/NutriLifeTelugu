@@ -1,10 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import React, { useEffect, useMemo, useState, useRef } from 'react'
+import React, { useEffect, useMemo, useState, useRef, useCallback } from 'react'
 import { useLanguage } from '@/components/LanguageProvider'
-import { Search, UtensilsCrossed, X } from 'lucide-react'
+import { Search, UtensilsCrossed, X, Loader2 } from 'lucide-react'
 import PromotionBlock from '@/components/promotions/PromotionBlock'
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
 
 type DBRecipe = {
   _id: string
@@ -14,6 +15,7 @@ type DBRecipe = {
   category?: string
   tag?: string
   heroImage?: string
+  heroImageObjectFit?: 'cover' | 'contain' | 'fill'
   servings?: number
   prepTimeMinutes?: number
   cookTimeMinutes?: number
@@ -69,11 +71,8 @@ export default function RecipesClient() {
   const { language } = useLanguage()
   const t = UI[language] ?? UI.en
 
-  const [recipes, setRecipes] = useState<DBRecipe[]>([])
-  const [loading, setLoading] = useState(true)
   const [searchInput, setSearchInput] = useState('')
   const [activeTab, setActiveTab] = useState('All')
-  const [visibleCount, setVisibleCount] = useState(12)
   const searchRef = useRef<HTMLInputElement>(null)
   const [featuredPlanPrice, setFeaturedPlanPrice] = useState<string>('₹299')
 
@@ -84,18 +83,31 @@ export default function RecipesClient() {
     return () => clearTimeout(t)
   }, [searchInput])
 
+  // Fetch function for infinite scroll
+  const fetchRecipes = useCallback(async (page: number) => {
+    const res = await fetch(`/api/recipes?lang=${language}&page=${page}&limit=12`)
+    const json = await res.json()
+    return {
+      data: json.data || [],
+      hasMore: json.pagination?.hasMore || false
+    }
+  }, [language])
+
+  // Use infinite scroll hook
+  const { items: recipes, initialLoading, loading, hasMore, loadMoreRef, error, retry } = useInfiniteScroll<DBRecipe>(
+    fetchRecipes,
+    [language]
+  )
+
+  // Reset search when language changes
   useEffect(() => {
-    setLoading(true)
     setSearchInput('')
     setSearch('')
     setActiveTab('All')
-    setVisibleCount(12)
-    fetch(`/api/recipes?lang=${language}&limit=60`)
-      .then((r) => r.json())
-      .then((data) => { setRecipes(Array.isArray(data) ? data : []); setLoading(false) })
-      .catch(() => setLoading(false))
-    
-    // Fetch featured plan price
+  }, [language])
+
+  // Fetch featured plan price
+  useEffect(() => {
     fetch('/api/plans?featured=true&limit=1')
       .then((r) => r.json())
       .then((data) => {
@@ -104,7 +116,7 @@ export default function RecipesClient() {
         }
       })
       .catch(() => {})
-  }, [language])
+  }, [])
 
   const featured = recipes.find((r) => r.isFeatured) ?? recipes[0]
 
@@ -120,8 +132,6 @@ export default function RecipesClient() {
       return matchesSearch && matchesTab
     })
   }, [activeTab, search, recipes])
-
-  const shown = filtered.slice(0, visibleCount)
 
   return (
     <div className="bg-white dark:bg-slate-900">
@@ -164,7 +174,7 @@ export default function RecipesClient() {
               <button
                 key={tab}
                 type="button"
-                onClick={() => { setActiveTab(tab); setVisibleCount(12) }}
+                onClick={() => { setActiveTab(tab); }}
                 className={`whitespace-nowrap pb-2 capitalize transition ${
                   activeTab === tab
                     ? 'border-b-2 border-[#1A5C38] text-[#1A5C38] dark:border-emerald-400 dark:text-emerald-400'
@@ -180,7 +190,7 @@ export default function RecipesClient() {
 
       <div className="mx-auto grid max-w-6xl gap-6 px-4 py-8 md:grid-cols-[70%_30%]">
         <div className="space-y-6">
-          {loading ? (
+          {initialLoading ? (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="h-64 animate-pulse rounded-2xl bg-gray-100 dark:bg-slate-800" />
@@ -192,7 +202,7 @@ export default function RecipesClient() {
               {featured && (
                 <div className="overflow-hidden rounded-2xl border bg-white shadow-sm md:flex dark:border-slate-700 dark:bg-slate-800">
                   {featured.heroImage ? (
-                    <img src={featured.heroImage} alt={featured.title} className="h-56 w-full object-cover md:h-auto md:w-1/2" />
+                    <img src={featured.heroImage} alt={featured.title} className="h-56 w-full md:h-auto md:w-1/2" style={{ objectFit: featured.heroImageObjectFit || 'cover' }} />
                   ) : (
                     <div className="flex h-56 items-center justify-center bg-emerald-100 md:h-auto md:w-1/2 dark:bg-emerald-900/20"><UtensilsCrossed size={40} className="text-emerald-300" /></div>
                   )}
@@ -213,14 +223,14 @@ export default function RecipesClient() {
 
               {/* Grid */}
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {shown.map((r) => (
+                {filtered.map((r) => (
                   <Link
                     key={r.slug}
                     href={`/recipes/${r.slug}`}
                     className="group overflow-hidden rounded-2xl border bg-white shadow-sm transition-transform duration-200 hover:scale-105 hover:border-emerald-200 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-emerald-600"
                   >
                     {r.heroImage ? (
-                      <img src={r.heroImage} alt={r.title} className="h-[200px] w-full object-cover" />
+                      <img src={r.heroImage} alt={r.title} className="h-[200px] w-full" style={{ objectFit: r.heroImageObjectFit || 'cover' }} />
                     ) : (
                       <div className="flex h-[200px] items-center justify-center bg-green-100 dark:bg-emerald-900/20"><UtensilsCrossed size={36} className="text-emerald-300" /></div>
                     )}
@@ -239,17 +249,33 @@ export default function RecipesClient() {
                 ))}
               </div>
 
-              {visibleCount < filtered.length && (
-                <button
-                  type="button"
-                  onClick={() => setVisibleCount((c) => c + 6)}
-                  className="rounded-full border border-[#1A5C38] px-5 py-2 text-sm font-semibold text-[#1A5C38] hover:bg-emerald-50 dark:text-emerald-400 dark:border-emerald-600 dark:hover:bg-emerald-900/20"
-                >
-                  {t.loadMore}
-                </button>
-              )}
+              {/* Infinite scroll trigger */}
+              <div ref={loadMoreRef} className="py-8">
+                {loading && (
+                  <div className="flex items-center justify-center gap-2 text-gray-500 dark:text-slate-400">
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    <span className="text-sm">{t.loadMore}</span>
+                  </div>
+                )}
+                {error && (
+                  <div className="text-center">
+                    <p className="text-sm text-red-600 dark:text-red-400">{t.noResults}</p>
+                    <button
+                      onClick={retry}
+                      className="mt-2 text-sm font-medium text-[#1A5C38] hover:underline dark:text-emerald-400"
+                    >
+                      Retry
+                    </button>
+                  </div>
+                )}
+                {!hasMore && !loading && filtered.length > 12 && (
+                  <p className="text-center text-sm text-gray-500 dark:text-slate-400">
+                    {language === 'te' ? 'అన్ని రెసిపీలు చూపించబడ్డాయి' : language === 'hi' ? 'सभी रेसिपी दिखाई गईं' : 'All recipes loaded'}
+                  </p>
+                )}
+              </div>
 
-              {shown.length === 0 && (
+              {filtered.length === 0 && (
                 <p className="py-10 text-center text-sm text-gray-500">{t.noResults}</p>
               )}
             </>
