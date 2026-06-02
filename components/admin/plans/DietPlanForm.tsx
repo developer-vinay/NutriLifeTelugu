@@ -74,7 +74,7 @@ export default function DietPlanForm({ initialData, onSave, onCancel }: DietPlan
   const [highlightsEn, setHighlightsEn] = useState(initialData?.highlightsEn?.join(', ') || '')
   const [highlightsTe, setHighlightsTe] = useState(initialData?.highlightsTe?.join(', ') || '')
   const [highlightsHi, setHighlightsHi] = useState(initialData?.highlightsHi?.join(', ') || '')
-  const [pdfUrl, setPdfUrl] = useState(initialData?.pdfUrl || '')
+  const [pdfUrl, setPdfUrl] = useState(initialData?.pdfUrl || initialData?.fileUrl || '')
   const [iconName, setIconName] = useState(initialData?.iconName || 'Leaf')
   const [gradient, setGradient] = useState(initialData?.gradient || 'from-emerald-500 to-teal-500')
   const [order, setOrder] = useState(initialData?.order || 0)
@@ -89,7 +89,8 @@ export default function DietPlanForm({ initialData, onSave, onCancel }: DietPlan
     try {
       const formData = new FormData()
       formData.append('file', file)
-      formData.append('folder', 'free-plans')
+      // Use different folder based on plan type
+      formData.append('folder', planType === 'premium' ? 'premium-plans' : 'free-plans')
       formData.append('resource_type', 'raw')
       const res = await fetch('/api/upload', { method: 'POST', body: formData })
       if (!res.ok) throw new Error('Upload failed')
@@ -151,6 +152,7 @@ export default function DietPlanForm({ initialData, onSave, onCancel }: DietPlan
         data.durationWeeks = Number(durationWeeks)
         data.features = features.split('\n').map((f: string) => f.trim()).filter(Boolean)
         data.isFeatured = isFeatured
+        data.fileUrl = pdfUrl // Add PDF URL for premium plans
       } else {
         // Free plan data
         data.tagEn = language === 'en' ? tagEn : (tagEn || '')
@@ -415,6 +417,55 @@ export default function DietPlanForm({ initialData, onSave, onCancel }: DietPlan
               className={inputCls}
             />
             <p className="mt-1 text-xs text-gray-500">Enter each feature on a new line</p>
+          </div>
+
+          <div>
+            <label className={labelCls}>Premium Plan PDF File *</label>
+            <p className="mb-2 text-xs text-gray-600">Upload the PDF that customers will receive after purchase</p>
+            <label className="flex cursor-pointer items-center gap-3 rounded-xl border-2 border-dashed border-amber-300 bg-white p-4 transition hover:border-amber-500 hover:bg-amber-50/30">
+              <Upload size={20} className="shrink-0 text-gray-400" />
+              <div className="min-w-0 flex-1">
+                {uploading ? (
+                  <p className="text-sm text-gray-500">Uploading...</p>
+                ) : pdfUrl ? (
+                  <div className="flex items-center gap-2">
+                    <FileText size={16} className="text-amber-600" />
+                    <p className="truncate text-sm font-medium text-amber-700">PDF uploaded ✓</p>
+                    <button
+                      type="button"
+                      onClick={e => {
+                        e.preventDefault()
+                        setPdfUrl('')
+                      }}
+                      className="ml-auto text-gray-400 hover:text-red-500"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500">Click to upload PDF (max 10MB)</p>
+                )}
+              </div>
+              <input
+                type="file"
+                accept=".pdf,application/pdf"
+                className="hidden"
+                onChange={async e => {
+                  const f = e.target.files?.[0]
+                  if (f) await handlePdfUpload(f)
+                }}
+              />
+            </label>
+            {pdfUrl && (
+              <a
+                href={pdfUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-2 block truncate text-xs text-blue-500 hover:underline"
+              >
+                {pdfUrl}
+              </a>
+            )}
           </div>
 
           <label className="flex cursor-pointer items-center justify-between rounded-xl border border-gray-200 bg-white px-4 py-3">
