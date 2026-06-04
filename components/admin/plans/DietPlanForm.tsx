@@ -129,13 +129,13 @@ export default function DietPlanForm({ initialData, onSave, onCancel }: DietPlan
 
     try {
       const data: any = {
-        // Set all language fields, but primary one is required
-        titleEn: language === 'en' ? titleEn : (titleEn || currentTitle),
-        titleTe: language === 'te' ? titleTe : (titleTe || ''),
-        titleHi: language === 'hi' ? titleHi : (titleHi || ''),
-        descEn: language === 'en' ? descEn : (descEn || ''),
-        descTe: language === 'te' ? descTe : (descTe || ''),
-        descHi: language === 'hi' ? descHi : (descHi || ''),
+        // STRICT: Only save to the selected language field, no fallbacks
+        titleEn: language === 'en' ? titleEn : '',
+        titleTe: language === 'te' ? titleTe : '',
+        titleHi: language === 'hi' ? titleHi : '',
+        descEn: language === 'en' ? descEn : '',
+        descTe: language === 'te' ? descTe : '',
+        descHi: language === 'hi' ? descHi : '',
         isActive,
         language,
         planType, // Include plan type so the parent knows which API to use
@@ -154,10 +154,10 @@ export default function DietPlanForm({ initialData, onSave, onCancel }: DietPlan
         data.isFeatured = isFeatured
         data.fileUrl = pdfUrl // Add PDF URL for premium plans
       } else {
-        // Free plan data
-        data.tagEn = language === 'en' ? tagEn : (tagEn || '')
-        data.tagTe = language === 'te' ? tagTe : (tagTe || '')
-        data.tagHi = language === 'hi' ? tagHi : (tagHi || '')
+        // Free plan data - STRICT: save only to selected language
+        data.tagEn = language === 'en' ? tagEn : ''
+        data.tagTe = language === 'te' ? tagTe : ''
+        data.tagHi = language === 'hi' ? tagHi : ''
         data.highlightsEn = language === 'en' ? highlightsEn.split(',').map((s: string) => s.trim()).filter(Boolean) : []
         data.highlightsTe = language === 'te' ? highlightsTe.split(',').map((s: string) => s.trim()).filter(Boolean) : []
         data.highlightsHi = language === 'hi' ? highlightsHi.split(',').map((s: string) => s.trim()).filter(Boolean) : []

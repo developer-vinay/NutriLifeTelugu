@@ -44,8 +44,13 @@ export default async function DietPlansPage() {
   const plans = await PremiumPlan.find({ isActive: true }).sort({ createdAt: -1 }).lean()
   const serialized = plans.map((p: any) => ({
     _id: p._id.toString(),
-    title: p.title,
-    description: p.description ?? '',
+    // Include all multilingual fields
+    titleEn: p.titleEn || p.title || '',
+    titleTe: p.titleTe || '',
+    titleHi: p.titleHi || '',
+    descEn: p.descEn || p.description || '',
+    descTe: p.descTe || '',
+    descHi: p.descHi || '',
     price: p.price,
     currency: p.currency,
     durationWeeks: p.durationWeeks,

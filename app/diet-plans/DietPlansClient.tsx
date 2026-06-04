@@ -279,6 +279,20 @@ export default function DietPlansClient({
   const [success, setSuccess] = useState<Record<string, boolean>>({})
   const [errors, setErrors] = useState<Record<string, string>>({})
 
+  // Filter premium plans based on language (only show plans with content in selected language)
+  const filteredPremiumPlans = plans.filter((p: any) => {
+    if (language === 'en') {
+      return p.titleEn && p.titleEn.trim() !== ''
+    }
+    if (language === 'te') {
+      return p.titleTe && p.titleTe.trim() !== ''
+    }
+    if (language === 'hi') {
+      return p.titleHi && p.titleHi.trim() !== ''
+    }
+    return false
+  })
+
   // Fetch free plans from API
   useEffect(() => {
     async function fetchFreePlans() {
@@ -286,19 +300,45 @@ export default function DietPlansClient({
         const res = await fetch('/api/free-plans')
         if (res.ok) {
           const data = await res.json()
-          // Map database plans to component format - only show active plans
+          // Map database plans to component format - filter by language strictly
           const mapped = data
-            .filter((p: any) => p.isActive)
+            .filter((p: any) => {
+              if (!p.isActive) return false
+              // STRICT filtering: Only show plans that have content in the SELECTED language
+              if (language === 'en') {
+                return p.titleEn && p.titleEn.trim() !== ''
+              }
+              if (language === 'te') {
+                return p.titleTe && p.titleTe.trim() !== ''
+              }
+              if (language === 'hi') {
+                return p.titleHi && p.titleHi.trim() !== ''
+              }
+              return false
+            })
             .map((p: any) => ({
               _id: p._id,
               icon: iconMap[p.iconName] || Leaf,
-              tag: { te: p.tagTe || p.tagEn, en: p.tagEn, hi: p.tagHi || p.tagEn },
-              title: { te: p.titleTe || p.titleEn, en: p.titleEn, hi: p.titleHi || p.titleEn },
-              desc: { te: p.descTe || p.descEn, en: p.descEn, hi: p.descHi || p.descEn },
+              // Use the selected language content directly (no fallback)
+              tag: { 
+                te: p.tagTe || '', 
+                en: p.tagEn || '', 
+                hi: p.tagHi || '' 
+              },
+              title: { 
+                te: p.titleTe || '', 
+                en: p.titleEn || '', 
+                hi: p.titleHi || '' 
+              },
+              desc: { 
+                te: p.descTe || '', 
+                en: p.descEn || '', 
+                hi: p.descHi || '' 
+              },
               highlights: {
-                te: p.highlightsTe?.length ? p.highlightsTe : (p.highlightsEn || []),
+                te: p.highlightsTe || [],
                 en: p.highlightsEn || [],
-                hi: p.highlightsHi?.length ? p.highlightsHi : (p.highlightsEn || []),
+                hi: p.highlightsHi || [],
               },
               gradient: p.gradient || 'from-emerald-500 to-teal-500',
               bg: p.bgColor || 'bg-emerald-50 dark:bg-emerald-900/10',
@@ -319,7 +359,7 @@ export default function DietPlansClient({
       }
     }
     fetchFreePlans()
-  }, [])
+  }, [language]) // Re-fetch when language changes
 
   // Handle email submission for a specific plan
   async function handleSendEmail(planId: string, planTitle: string) {
@@ -560,7 +600,7 @@ export default function DietPlansClient({
           <h2 className="font-nunito text-3xl font-bold text-gray-900 dark:text-slate-50">{tx.premium_title}</h2>
           <p className="mt-2 text-gray-500 dark:text-slate-400">{tx.premium_sub}</p>
           <div className="mb-8 mt-6"><PromotionBlock placement="diet-plans" language={language} /></div>
-          {plans.length === 0 ? (
+          {filteredPremiumPlans.length === 0 ? (
             <div className="rounded-2xl border-2 border-dashed border-amber-300 bg-amber-50 p-12 text-center dark:border-amber-700 dark:bg-amber-900/10">
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30">
                 <Star size={28} className="text-amber-500" />
@@ -573,8 +613,12 @@ export default function DietPlansClient({
             </div>
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {plans.map((p, idx) => {
+              {filteredPremiumPlans.map((p, idx) => {
                 const isFeatured = idx === 0
+                // Get title and description based on language
+                const title = language === 'te' ? (p.titleTe || p.titleEn) : language === 'hi' ? (p.titleHi || p.titleEn) : p.titleEn
+                const description = language === 'te' ? (p.descTe || p.descEn) : language === 'hi' ? (p.descHi || p.descEn) : p.descEn
+                
                 return (
                   <div key={p._id}
                     className={`relative flex flex-col overflow-hidden rounded-2xl shadow-sm transition hover:-translate-y-1 hover:shadow-xl ${isFeatured ? 'border-2 border-amber-400 bg-gradient-to-b from-amber-50 to-white dark:border-amber-500 dark:from-amber-900/20 dark:to-slate-800' : 'border border-gray-200 bg-white dark:border-slate-700 dark:bg-slate-800'}`}>
@@ -585,8 +629,8 @@ export default function DietPlansClient({
                     )}
                     {!isFeatured && <div className="h-1.5 w-full bg-gradient-to-r from-gray-300 to-gray-400 dark:from-slate-600 dark:to-slate-500" />}
                     <div className="flex flex-1 flex-col p-6">
-                      <p className="font-nunito text-xl font-bold text-gray-900 dark:text-slate-50">{p.title}</p>
-                      {p.description && <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">{p.description}</p>}
+                      <p className="font-nunito text-xl font-bold text-gray-900 dark:text-slate-50">{title}</p>
+                      {description && <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">{description}</p>}
                       <span className="mt-3 inline-flex w-fit items-center gap-1 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">
                         <Clock size={11} /> {p.durationWeeks}{tx.week_plan}
                       </span>
@@ -603,7 +647,7 @@ export default function DietPlansClient({
                           ))}
                         </ul>
                       )}
-                      <div className="mt-auto"><BuyPlanButton planId={p._id} planTitle={p.title} price={p.price} currency={p.currency} /></div>
+                      <div className="mt-auto"><BuyPlanButton planId={p._id} planTitle={title} price={p.price} currency={p.currency} /></div>
                     </div>
                   </div>
                 )
