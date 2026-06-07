@@ -1,8 +1,8 @@
 import mongoose, { Schema, models } from 'mongoose'
 
 const FreeMealPlanSchema = new Schema({
-  // Multilingual title
-  titleEn: { type: String, required: true, trim: true },
+  // Multilingual title - at least one required (validated in API route)
+  titleEn: { type: String, default: '', trim: true },
   titleTe: { type: String, default: '', trim: true },
   titleHi: { type: String, default: '', trim: true },
 
@@ -37,6 +37,12 @@ const FreeMealPlanSchema = new Schema({
 
   isActive: { type: Boolean, default: true },
   order: { type: Number, default: 0 },
+  language: { type: String, enum: ['en', 'te', 'hi'], default: 'en' }, // Track which language this plan is for
 }, { timestamps: true })
 
-export const FreeMealPlan = models.FreeMealPlan || mongoose.model('FreeMealPlan', FreeMealPlanSchema)
+// Delete the cached model to force using the new schema
+if (models.FreeMealPlan) {
+  delete models.FreeMealPlan
+}
+
+export const FreeMealPlan = mongoose.model('FreeMealPlan', FreeMealPlanSchema)

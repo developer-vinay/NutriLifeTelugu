@@ -279,8 +279,25 @@ export default function DietPlansClient({
   const [success, setSuccess] = useState<Record<string, boolean>>({})
   const [errors, setErrors] = useState<Record<string, string>>({})
 
-  // Filter premium plans based on language (only show plans with content in selected language)
+  // Filter premium plans based on language
+  // Priority 1: Use the 'language' field from the database (most reliable)
+  // Priority 2: Fallback to checking if title exists for that language (for old plans)
   const filteredPremiumPlans = plans.filter((p: any) => {
+    // Debug logging (can remove later)
+    if (process.env.NODE_ENV === 'development' && language === 'hi') {
+      console.log('Checking Hindi plan:', {
+        id: p._id,
+        language: p.language,
+        titleHi: p.titleHi?.substring(0, 30),
+        titleEn: p.titleEn?.substring(0, 30),
+      })
+    }
+    
+    if (p.language) {
+      return p.language === language
+    }
+    
+    // Fallback for old plans without language field
     if (language === 'en') {
       return p.titleEn && p.titleEn.trim() !== ''
     }
@@ -292,6 +309,8 @@ export default function DietPlansClient({
     }
     return false
   })
+
+  console.log(`[DietPlans] Language: ${language}, Total plans: ${plans.length}, Filtered: ${filteredPremiumPlans.length}`)
 
   // Fetch free plans from API
   useEffect(() => {
@@ -615,9 +634,9 @@ export default function DietPlansClient({
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {filteredPremiumPlans.map((p, idx) => {
                 const isFeatured = idx === 0
-                // Get title and description based on language
-                const title = language === 'te' ? (p.titleTe || p.titleEn) : language === 'hi' ? (p.titleHi || p.titleEn) : p.titleEn
-                const description = language === 'te' ? (p.descTe || p.descEn) : language === 'hi' ? (p.descHi || p.descEn) : p.descEn
+                // Get title and description based on language (NO FALLBACK - strict language matching)
+                const title = language === 'te' ? p.titleTe : language === 'hi' ? p.titleHi : p.titleEn
+                const description = language === 'te' ? p.descTe : language === 'hi' ? p.descHi : p.descEn
                 
                 return (
                   <div key={p._id}

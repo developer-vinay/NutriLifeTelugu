@@ -23,6 +23,15 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   const { id } = await params
   await connectDB()
   const body = await req.json()
+  
+  // Validate: At least one language title must be provided
+  if (!body.titleEn && !body.titleTe && !body.titleHi) {
+    return NextResponse.json(
+      { error: 'At least one language title is required (titleEn, titleTe, or titleHi)' },
+      { status: 400 }
+    )
+  }
+  
   const plan = await FreeMealPlan.findByIdAndUpdate(id, body, { new: true })
   if (!plan) return NextResponse.json({ error: 'Not found' }, { status: 404 })
   return NextResponse.json(plan)

@@ -268,8 +268,27 @@ export default function AdminPlansPage() {
                       <div className="min-w-0 flex-1">
                         <p className="font-semibold text-gray-900 truncate">{plan.titleEn || plan.title}</p>
                         {plan.titleTe && <p className="text-xs text-gray-500 truncate">{plan.titleTe}</p>}
+                        
+                        {/* Language indicators - show which language fields are filled */}
+                        <div className="mt-1 flex items-center gap-1">
+                          {plan.titleEn && plan.titleEn.trim() && (
+                            <span className="inline-flex rounded px-1.5 py-0.5 text-[9px] font-bold bg-blue-100 text-blue-700">EN</span>
+                          )}
+                          {plan.titleTe && plan.titleTe.trim() && (
+                            <span className="inline-flex rounded px-1.5 py-0.5 text-[9px] font-bold bg-purple-100 text-purple-700">TE</span>
+                          )}
+                          {plan.titleHi && plan.titleHi.trim() && (
+                            <span className="inline-flex rounded px-1.5 py-0.5 text-[9px] font-bold bg-amber-100 text-amber-700">HI</span>
+                          )}
+                          {((plan.titleEn && plan.titleEn.trim()) && (plan.titleTe && plan.titleTe.trim())) || 
+                           ((plan.titleEn && plan.titleEn.trim()) && (plan.titleHi && plan.titleHi.trim())) || 
+                           ((plan.titleTe && plan.titleTe.trim()) && (plan.titleHi && plan.titleHi.trim())) ? (
+                            <span className="text-[9px] text-red-500 font-bold ml-1">⚠ MULTI-LANG</span>
+                          ) : null}
+                        </div>
+                        
                         {isPremium && plan.durationWeeks && (
-                          <p className="text-xs text-gray-500">{plan.durationWeeks}-week · {LANG_LABEL[plan.language] ?? plan.language}</p>
+                          <p className="text-xs text-gray-500 mt-1">{plan.durationWeeks}-week · {LANG_LABEL[plan.language] ?? plan.language}</p>
                         )}
                         {!isPremium && plan.tagEn && (
                           <span className="mt-1 inline-flex rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-600">

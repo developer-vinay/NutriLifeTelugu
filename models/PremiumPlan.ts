@@ -13,6 +13,11 @@ const PremiumPlanSchema = new Schema({
   descTe: { type: String, default: '' },
   descHi: { type: String, default: '' },
   
+  // Category tag (multilingual) - for categorizing premium plans
+  tagEn: { type: String, default: '' },
+  tagTe: { type: String, default: '' },
+  tagHi: { type: String, default: '' },
+  
   price: { type: Number, required: true },
   originalPrice: { type: Number, default: null },
   discountLabel: { type: String, default: '' },

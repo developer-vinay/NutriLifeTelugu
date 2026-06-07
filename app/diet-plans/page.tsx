@@ -55,6 +55,7 @@ export default async function DietPlansPage() {
     currency: p.currency,
     durationWeeks: p.durationWeeks,
     features: p.features ?? [],
+    language: p.language || 'en', // CRITICAL: Pass the language field for filtering!
   }))
 
   // Get free plans count dynamically

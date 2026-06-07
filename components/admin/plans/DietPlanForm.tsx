@@ -71,9 +71,9 @@ export default function DietPlanForm({ initialData, onSave, onCancel }: DietPlan
   const [tagEn, setTagEn] = useState(initialData?.tagEn || '')
   const [tagTe, setTagTe] = useState(initialData?.tagTe || '')
   const [tagHi, setTagHi] = useState(initialData?.tagHi || '')
-  const [highlightsEn, setHighlightsEn] = useState(initialData?.highlightsEn?.join(', ') || '')
-  const [highlightsTe, setHighlightsTe] = useState(initialData?.highlightsTe?.join(', ') || '')
-  const [highlightsHi, setHighlightsHi] = useState(initialData?.highlightsHi?.join(', ') || '')
+  const [highlightsEn, setHighlightsEn] = useState(initialData?.highlightsEn?.join('\n') || '')
+  const [highlightsTe, setHighlightsTe] = useState(initialData?.highlightsTe?.join('\n') || '')
+  const [highlightsHi, setHighlightsHi] = useState(initialData?.highlightsHi?.join('\n') || '')
   const [pdfUrl, setPdfUrl] = useState(initialData?.pdfUrl || initialData?.fileUrl || '')
   const [iconName, setIconName] = useState(initialData?.iconName || 'Leaf')
   const [gradient, setGradient] = useState(initialData?.gradient || 'from-emerald-500 to-teal-500')
@@ -93,10 +93,25 @@ export default function DietPlanForm({ initialData, onSave, onCancel }: DietPlan
       formData.append('folder', planType === 'premium' ? 'premium-plans' : 'free-plans')
       formData.append('resource_type', 'raw')
       const res = await fetch('/api/upload', { method: 'POST', body: formData })
-      if (!res.ok) throw new Error('Upload failed')
+      
+      // Handle non-OK responses
+      if (!res.ok) {
+        let errorMessage = 'Upload failed'
+        try {
+          const errorData = await res.json()
+          errorMessage = errorData.error || errorData.details || errorMessage
+        } catch {
+          // If response is not JSON, use status text
+          errorMessage = `Upload failed: ${res.statusText}`
+        }
+        throw new Error(errorMessage)
+      }
+      
+      // Parse successful response
       const data = await res.json()
       setPdfUrl(data.url)
     } catch (e: any) {
+      console.error('PDF upload error:', e)
       setError(e.message ?? 'Upload failed')
     } finally {
       setUploading(false)
@@ -153,14 +168,18 @@ export default function DietPlanForm({ initialData, onSave, onCancel }: DietPlan
         data.features = features.split('\n').map((f: string) => f.trim()).filter(Boolean)
         data.isFeatured = isFeatured
         data.fileUrl = pdfUrl // Add PDF URL for premium plans
+        // Add category tags for premium plans
+        data.tagEn = language === 'en' ? tagEn : ''
+        data.tagTe = language === 'te' ? tagTe : ''
+        data.tagHi = language === 'hi' ? tagHi : ''
       } else {
         // Free plan data - STRICT: save only to selected language
         data.tagEn = language === 'en' ? tagEn : ''
         data.tagTe = language === 'te' ? tagTe : ''
         data.tagHi = language === 'hi' ? tagHi : ''
-        data.highlightsEn = language === 'en' ? highlightsEn.split(',').map((s: string) => s.trim()).filter(Boolean) : []
-        data.highlightsTe = language === 'te' ? highlightsTe.split(',').map((s: string) => s.trim()).filter(Boolean) : []
-        data.highlightsHi = language === 'hi' ? highlightsHi.split(',').map((s: string) => s.trim()).filter(Boolean) : []
+        data.highlightsEn = language === 'en' ? highlightsEn.split('\n').map((s: string) => s.trim()).filter(Boolean) : []
+        data.highlightsTe = language === 'te' ? highlightsTe.split('\n').map((s: string) => s.trim()).filter(Boolean) : []
+        data.highlightsHi = language === 'hi' ? highlightsHi.split('\n').map((s: string) => s.trim()).filter(Boolean) : []
         data.pdfUrl = pdfUrl
         data.iconName = iconName
         data.gradient = gradient
@@ -356,6 +375,30 @@ export default function DietPlanForm({ initialData, onSave, onCancel }: DietPlan
             Premium Plan Details
           </div>
 
+          <div>
+            <label className={labelCls}>
+              Category Tag (optional)
+              <span className="ml-2 text-xs font-normal text-gray-500">
+                ({language === 'en' ? 'English' : language === 'te' ? 'Telugu' : 'Hindi'})
+              </span>
+            </label>
+            <input
+              value={language === 'en' ? tagEn : language === 'te' ? tagTe : tagHi}
+              onChange={e => {
+                if (language === 'en') setTagEn(e.target.value)
+                else if (language === 'te') setTagTe(e.target.value)
+                else setTagHi(e.target.value)
+              }}
+              placeholder={
+                language === 'en' ? 'Weight Loss' :
+                language === 'te' ? 'వెయిట్ లాస్' :
+                'वजन घटाना'
+              }
+              className={inputCls}
+            />
+            <p className="mt-1 text-xs text-gray-500">e.g., Weight Loss, Diabetes, PCOS</p>
+          </div>
+
           <div className="grid gap-4 sm:grid-cols-3">
             <div>
               <label className={labelCls}>Price *</label>
@@ -520,25 +563,27 @@ export default function DietPlanForm({ initialData, onSave, onCancel }: DietPlan
 
           <div>
             <label className={labelCls}>
-              Highlights - comma separated
+              Highlights (one per line)
               <span className="ml-2 text-xs font-normal text-gray-500">
                 ({language === 'en' ? 'English' : language === 'te' ? 'Telugu' : 'Hindi'})
               </span>
             </label>
-            <input
+            <textarea
               value={language === 'en' ? highlightsEn : language === 'te' ? highlightsTe : highlightsHi}
               onChange={e => {
                 if (language === 'en') setHighlightsEn(e.target.value)
                 else if (language === 'te') setHighlightsTe(e.target.value)
                 else setHighlightsHi(e.target.value)
               }}
+              rows={4}
               placeholder={
-                language === 'en' ? 'Full 7-day menu, Shopping list included, Printable PDF' :
-                language === 'te' ? '7 రోజుల పూర్తి మెనూ, షాపింగ్ లిస్ట్' :
-                'पूरा 7-दिन का मेनू, शॉपिंग लिस्ट'
+                language === 'en' ? 'Full 7-day menu\nShopping list included\nPrintable PDF\nEasy to follow' :
+                language === 'te' ? '7 రోజుల పూర్తి మెనూ\nషాపింగ్ లిస్ట్ ఉంది\nప్రింట్ చేయవచ్చు' :
+                'पूरा 7-दिन का मेनू\nशॉपिंग लिस्ट शामिल\nप्रिंट करने योग्य पीडीएफ'
               }
               className={inputCls}
             />
+            <p className="mt-1 text-xs text-gray-500">Enter each highlight on a new line</p>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">

@@ -56,7 +56,7 @@ export default function AdminShell({
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
-    <div className="min-h-screen w-full bg-[#F6F8F6] lg:flex" style={{ overflowX: 'clip' }}>
+    <div className="flex h-screen w-full overflow-hidden bg-[#F6F8F6]">
 
       {/* ── Mobile top bar ── */}
       <header className="fixed inset-x-0 top-0 z-40 flex h-14 items-center justify-between border-b border-gray-200 bg-white px-4 shadow-sm lg:hidden">
@@ -87,13 +87,13 @@ export default function AdminShell({
       {/* ── Sidebar ── */}
       <aside
         className={`
-          fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-white shadow-xl transition-transform duration-300 ease-in-out
+          fixed inset-y-0 left-0 z-50 flex h-full w-64 flex-col bg-white shadow-xl transition-transform duration-300 ease-in-out
           lg:relative lg:translate-x-0 lg:shadow-none lg:border-r lg:border-gray-200 lg:flex-shrink-0
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
       >
         {/* Logo */}
-        <div className="flex h-14 items-center justify-between border-b border-gray-100 px-4">
+        <div className="flex h-14 flex-shrink-0 items-center justify-between border-b border-gray-100 px-4">
           <div className="flex items-center gap-2.5">
             <img src="/logo.png" alt="NutriLifeMitra" className="h-8 w-8 rounded-full object-cover" />
             <span className="text-base font-bold text-gray-900">NutriAdmin</span>
@@ -107,7 +107,7 @@ export default function AdminShell({
         </div>
 
         {/* User card */}
-        <div className="mx-3 my-3 rounded-xl bg-gradient-to-br from-[#1A5C38] to-emerald-600 p-3">
+        <div className="mx-3 my-3 flex-shrink-0 rounded-xl bg-gradient-to-br from-[#1A5C38] to-emerald-600 p-3">
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/20 text-sm font-bold text-white ring-2 ring-white/30">
               {initials}
@@ -119,7 +119,7 @@ export default function AdminShell({
           </div>
         </div>
 
-        {/* Nav */}
+        {/* Nav - Scrollable */}
         <nav className="flex-1 overflow-y-auto px-3 pb-2">
           <p className="mb-1.5 px-2 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Menu</p>
           <ul className="space-y-0.5">
@@ -155,7 +155,7 @@ export default function AdminShell({
         </nav>
 
         {/* Logout */}
-        <div className="border-t border-gray-100 p-3">
+        <div className="flex-shrink-0 border-t border-gray-100 p-3">
           <button
             onClick={handleLogout}
             className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-500 transition-colors hover:bg-red-50 hover:text-red-600"
@@ -166,10 +166,12 @@ export default function AdminShell({
         </div>
       </aside>
 
-      {/* ── Main ── */}
-      <main className="min-w-0 flex-1 pt-14 lg:pt-0" style={{ overflowX: 'clip' }}>
-        <div className="w-full max-w-7xl p-4 lg:p-6 xl:p-8">
-          {children}
+      {/* ── Main Content - Scrollable ── */}
+      <main className="flex min-w-0 flex-1 flex-col overflow-hidden pt-14 lg:pt-0">
+        <div className="h-full w-full overflow-y-auto">
+          <div className="mx-auto w-full max-w-7xl p-4 lg:p-6 xl:p-8">
+            {children}
+          </div>
         </div>
       </main>
     </div>

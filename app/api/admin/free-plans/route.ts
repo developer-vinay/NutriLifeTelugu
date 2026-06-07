@@ -20,6 +20,15 @@ export async function POST(req: Request) {
   }
   await connectDB()
   const body = await req.json()
+  
+  // Validate: At least one language title must be provided
+  if (!body.titleEn && !body.titleTe && !body.titleHi) {
+    return NextResponse.json(
+      { error: 'At least one language title is required (titleEn, titleTe, or titleHi)' },
+      { status: 400 }
+    )
+  }
+  
   const plan = await FreeMealPlan.create(body)
   return NextResponse.json(plan, { status: 201 })
 }
